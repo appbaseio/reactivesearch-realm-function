@@ -1,0 +1,49 @@
+{
+	"name": "reactivesearch-realm-function",
+	"version": "1.0.0",
+	"description": "",
+	"typings": "lib/cjs/index.d.ts",
+	"main": "lib/cjs/index.js",
+	"module": "lib/esm/index.js",
+	"files": [
+		"lib",
+		"src"
+	],
+	"engines": {
+		"node": ">=10"
+	},
+	"scripts": {
+		"clean": "rm -rf lib",
+		"start": "rollup -w --config rollup.config.test.js",
+		"start:test": "jest --testTimeout=20000 --runInBand --watch",
+		"ts-types": "tsc --emitDeclarationOnly --outDir lib",
+		"build": "npm run clean && rollup --config rollup.config.js --environment INCLUDE_DEPS,BUILD:production",
+		"test": "npm run build && jest --testTimeout=20000 --runInBand",
+		"format": "prettier --write 'src/**/*.(ts)'",
+		"prepublishOnly": "npm run build"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/appbaseio-confidential/reactivesearch-realm-function.git"
+	},
+	"keywords": [],
+	"author": "Lakhan Samani",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/appbaseio-confidential/reactivesearch-realm-function/issues"
+	},
+	"homepage": "https://github.com/appbaseio-confidential/reactivesearch-realm-function#readme",
+	"devDependencies": {
+		"@rollup/plugin-node-resolve": "^13.0.4",
+		"@rollup/plugin-typescript": "^8.2.5",
+		"concurrently": "^6.2.1",
+		"husky": "^7.0.1",
+		"jest": "^27.0.6",
+		"prettier": "^2.3.2",
+		"rollup": "^2.56.2",
+		"rollup-plugin-filesize": "^9.1.1",
+		"rollup-plugin-terser": "^7.0.2",
+		"tslib": "^2.3.1",
+		"typescript": "^4.3.5"
+	}
+}
