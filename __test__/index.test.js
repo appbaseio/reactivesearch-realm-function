@@ -30,6 +30,7 @@ const testQuery = [
 
 describe(`generates search query correctly`, () => {
 	const query = ref.query(testQuery);
+	console.log(`mongo query: `, JSON.stringify(query));
 	it(`should have correct mongo format for searchQuery`, () => {
 		const expected = {
 			$search: { index: `default`, text: { query: `room`, path: [`name`] } },
