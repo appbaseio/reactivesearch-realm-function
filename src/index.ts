@@ -2,7 +2,7 @@ export type ConfigType = {
 	url: string;
 };
 
-export class ReactiveSearchRealm {
+export class Realm {
 	config: ConfigType;
 
 	constructor(config: ConfigType) {

@@ -1,18 +1,18 @@
-import typescript from '@rollup/plugin-typescript';
-import filesize from 'rollup-plugin-filesize';
-import { terser } from 'rollup-plugin-terser';
+const typescript = require('@rollup/plugin-typescript');
+const filesize = require('rollup-plugin-filesize');
+const { terser } = require('rollup-plugin-terser');
 
 const input = `src/index.ts`;
 
-export default [
+module.exports = [
 	{
 		// UMD
 		input,
 		plugins: [typescript(), filesize(), terser()],
 		output: {
-			file: `lib/authorizer.min.js`,
+			file: `lib/reactivesearch-realm.min.js`,
 			format: 'umd',
-			name: 'Authorizer', // this is the name of the global object
+			name: 'reactivesearch', // this is the name of the global object
 			esModule: false,
 			sourcemap: true,
 		},

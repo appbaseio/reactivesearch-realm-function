@@ -14,11 +14,11 @@
 	},
 	"scripts": {
 		"clean": "rm -rf lib",
-		"start": "rollup -w --config rollup.config.test.js",
+		"start": "rollup -w --config rollup.test.config.js",
 		"start:test": "jest --testTimeout=20000 --runInBand --watch",
 		"ts-types": "tsc --emitDeclarationOnly --outDir lib",
 		"build": "npm run clean && rollup --config rollup.config.js --environment INCLUDE_DEPS,BUILD:production",
-		"test": "npm run build && jest --testTimeout=20000 --runInBand",
+		"test": "npm run build && jest --testTimeout=20000 --runInBand --config rollup.config.js",
 		"format": "prettier --write 'src/**/*.(ts)'",
 		"prepublishOnly": "npm run build"
 	},

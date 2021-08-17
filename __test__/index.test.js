@@ -1,7 +1,7 @@
-const { ReactiveSearchRealm } = require('../lib/cjs');
+const { Realm } = require('../lib/cjs');
 
 const mongoURL = `mongodb//real-function-url1`;
-const ref = new ReactiveSearchRealm({
+const ref = new Realm({
 	url: mongoURL,
 });
 
