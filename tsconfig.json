@@ -3,7 +3,7 @@
 		"declaration": true,
 		"target": "es6",
 		"allowUmdGlobalAccess": true,
-		"module": "esnext",
+		"module": "commonjs",
 		"lib": ["dom", "es2015", "es2017", "esnext.asynciterable"],
 		"sourceMap": true,
 		"outDir": "lib",
