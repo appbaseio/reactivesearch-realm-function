@@ -1,13 +1,25 @@
 import express from 'express';
+import cors from 'cors';
+
+import { Realm } from './';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-app.get(`/reactivesearch`, (req, res) => {
-  console.log({p: req.params});
+app.use(cors());
+app.use(express.json());
+
+app.post(`/_reactivesearch`, (req, res) => {
 	res.status(200).send({
-		success: true,
-    p: req.params,
+		data: req.body,
+	});
+});
+
+app.post(`/_reactivesearch/validate`, (req, res) => {
+	const ref = new Realm({ url: `` });
+
+	res.status(200).send({
+		aggPipeline: ref.query(req.body.query),
 	});
 });
 
