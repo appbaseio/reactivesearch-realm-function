@@ -20,18 +20,18 @@ async function main() {
 
 	const realm = new Realm();
 
-	app.post(`/_reactivesearch`, async (req, res) => {
+	app.post(`/:collection/_reactivesearch`, async (req, res) => {
 		const query = realm.query(req.body.query);
 		const collection = client
-			.db('sample_airbnb')
-			.collection('listingsAndReviews');
+			.db(process.env.DB_NAME)
+			.collection(req.params.collection);
 		const data = await collection.aggregate(query).toArray();
 		res.status(200).send({
 			data,
 		});
 	});
 
-	app.post(`/_reactivesearch/validate`, (req, res) => {
+	app.post(`/:collection/_reactivesearch/validate`, (req, res) => {
 		res.status(200).send({
 			aggPipeline: realm.query(req.body.query),
 		});
