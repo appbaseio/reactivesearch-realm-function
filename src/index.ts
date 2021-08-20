@@ -4,8 +4,10 @@ import { ConfigType, RSQuery } from './types';
 export class Realm {
 	config: ConfigType;
 
-	constructor(config: ConfigType) {
-		this.config = config;
+	constructor(config?: ConfigType) {
+		if (config) {
+			this.config = config;
+		}
 	}
 
 	// TODO define type for mongo query
