@@ -48,7 +48,7 @@ export type RecentSearchOptions = {
 };
 
 export type RSQuery = {
-	index: string;
+	index?: string;
 
 	enablePopularSuggestions?: boolean;
 
