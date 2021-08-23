@@ -1,5 +1,6 @@
+import { ConfigType, RSQuery } from './types/types';
+
 import { getSearchQuery } from './targets/search';
-import { ConfigType, RSQuery } from './types';
 
 export class Realm {
 	config: ConfigType;
@@ -11,7 +12,7 @@ export class Realm {
 	}
 
 	// TODO define type for mongo query
-	query = (data: [RSQuery]) => {
+	query = (data: [RSQuery]): [] => {
 		// TODO decide query format from set of multiple queries
 
 		// pipeline used by mongodb aggregation
@@ -29,4 +30,12 @@ export class Realm {
 
 		return aggPipeline;
 	};
+
+	toRealmQuery = (data: [RSQuery]) => {
+		return {
+			config: this.config,
+			query: this.query(data)
+		}
+	}
+
 }

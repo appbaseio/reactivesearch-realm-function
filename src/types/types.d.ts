@@ -1,5 +1,7 @@
 export type ConfigType = {
-	url?: string;
+	url?: string,
+	database?: string,
+	documentCollection?: string
 };
 
 export type MicStatusField = `INACTIVE` | `ACTIVE` | `DENIED`;
@@ -155,3 +157,9 @@ export type MIC_STATUS = {
 	active: `ACTIVE`;
 	denied: `DENIED`;
 };
+
+
+export type RSFunctionQueryData = {
+	config: ConfigType
+	searchQuery: []
+}
