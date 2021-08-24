@@ -1,4 +1,4 @@
-import { ConfigType, RSQuery } from './types/types';
+import { ConfigType, RSFunctionQueryData, RSQuery } from './types/types';
 
 import { getSearchQuery } from './targets/search';
 
@@ -31,10 +31,10 @@ export class Realm {
 		return aggPipeline;
 	};
 
-	toRealmQuery = (data: [RSQuery]) => {
+	toRealmQuery = (data: [RSQuery]): RSFunctionQueryData => {
 		return {
 			config: this.config,
-			query: this.query(data)
+			searchQuery: this.query(data)
 		}
 	}
 

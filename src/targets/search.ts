@@ -1,4 +1,4 @@
-import { RSQuery } from 'src/types';
+import { RSQuery } from 'src/types/types';
 
 // TODO set return type
 export const getSearchQuery = (query: RSQuery): any => {
