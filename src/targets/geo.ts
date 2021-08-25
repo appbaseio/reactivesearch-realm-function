@@ -1,6 +1,4 @@
-import { RSQuery } from 'src/types';
-
-const UNITS = [`mi`, `yd`, `ft`, `km`, `m`, `cm`, `mm`, `nmi`];
+import { RSQuery, GeoPoint, GeoInput } from 'src/types';
 
 const convertToMeter = (distance: number, unit: string): number => {
 	switch (unit) {
@@ -24,40 +22,23 @@ const convertToMeter = (distance: number, unit: string): number => {
 	}
 };
 
-// TODO set return type
-//
-// Target remains $search for geo query as well
-// ref: https://docs.atlas.mongodb.com/reference/atlas-search/geoWithin/
-export const getGeoQuery = (query: RSQuery): any => {
-	const val = query.value;
-	let loc = [];
-	if (typeof val !== `object` || !val.location) {
-		throw new Error(`Invalid object`);
-	}
-
-	if (typeof val.location === `string`) {
-		const data = `${val.location}`.split(`,`);
+const convertLocation = (location: GeoPoint | string | [number, number]) => {
+	let loc: [number, number] = [0, 0];
+	if (typeof location === `string`) {
+		const data = `${location}`.split(`,`);
 		if (data.length !== 2) {
 			throw new Error(`Invalid location`);
 		}
 
-		loc.push(parseFloat(data[0]));
-		loc.push(parseFloat(data[1]));
-	}
-
-	if (Array.isArray(val.location)) {
-		if (val.length !== 2) {
+		loc[0] = parseFloat(data[0]);
+		loc[1] = parseFloat(data[1]);
+	} else if (Array.isArray(location)) {
+		if (location.length !== 2) {
 			throw new Error(`Invalid location`);
 		}
-		loc = val;
-	}
-
-	if (
-		typeof val.location === `object` &&
-		val.location.lat &&
-		val.location.long
-	) {
-		loc = [val.location.lat, val.location.long];
+		loc = location;
+	} else {
+		loc = [location.lat, location.long];
 	}
 
 	if (isNaN(loc[0])) {
@@ -67,45 +48,83 @@ export const getGeoQuery = (query: RSQuery): any => {
 		throw new Error(`Invalid long`);
 	}
 
-	loc[0] = parseFloat(loc[0]);
-	loc[1] = parseFloat(loc[1]);
-	val.location = loc;
+	loc[0] = parseFloat(`${loc[0]}`);
+	loc[1] = parseFloat(`${loc[1]}`);
 
-	if (!val.distance || isNaN(val.distance)) {
-		throw new Error(`Distance is required in value`);
-	}
+	return loc;
+};
 
-	if (!val.unit) {
-		val.unit = `m`;
-	}
+// TODO set return type
+//
+// Target remains $search for geo query as well
+// ref: https://docs.atlas.mongodb.com/reference/atlas-search/geoWithin/
+export const getGeoQuery = (query: RSQuery): any => {
+	try {
+		const val = <GeoInput>{ ...query.value };
+		let search: any = {};
+		console.log(Boolean(val.location), Boolean(val.geoBoundingBox));
+		if (!val.location && !val.geoBoundingBox) {
+			throw new Error(`Invalid object`);
+		}
 
-	if (!UNITS.includes(val.unit)) {
-		throw new Error(`${val.unit} is not supported`);
-	}
+		// geo point query
+		if (val.location) {
+			val.location = convertLocation(val.location);
 
-	if (val.unit !== `m`) {
-		// convert data to meter as mongo only supports meter
-		val.distance = convertToMeter(val.distance, val.unit);
-	}
+			if (!val.distance || isNaN(val.distance)) {
+				throw new Error(`Distance is required in value`);
+			}
 
-	const search: any = {
-		geoWithin: {
-			circle: {
-				center: {
-					type: 'Point',
-					coordinates: val.location,
+			if (!val.unit) {
+				val.unit = `m`;
+			}
+
+			if (val.unit !== `m`) {
+				// convert data to meter as mongo only supports meter
+				val.distance = convertToMeter(val.distance, val.unit);
+			}
+
+			search = {
+				geoWithin: {
+					circle: {
+						center: {
+							type: 'Point',
+							coordinates: val.location,
+						},
+						radius: val.distance,
+					},
+					path: query.dataField,
 				},
-				radius: val.distance,
-			},
-			path: query.dataField,
-		},
-	};
+			};
+		}
 
-	if (query.index) {
-		search.index = query.index;
+		// geo bounding box query
+		if (val.geoBoundingBox) {
+			search = {
+				geoWithin: {
+					box: {
+						bottomLeft: {
+							type: 'Point',
+							coordinates: convertLocation(val.geoBoundingBox.bottomRight),
+						},
+						topRight: {
+							type: 'Point',
+							coordinates: convertLocation(val.geoBoundingBox.topLeft),
+						},
+					},
+					path: query.dataField,
+				},
+			};
+		}
+
+		if (query.index) {
+			search.index = query.index;
+		}
+
+		return {
+			$search: search,
+		};
+	} catch (err) {
+		throw err;
 	}
-
-	return {
-		$search: search,
-	};
 };

@@ -30,7 +30,7 @@ describe(`generates search query correctly`, () => {
 	];
 	const query = ref.query(testQuery);
 
-	console.log(`mongo query: `, JSON.stringify(query));
+	console.log(`text search query: `, JSON.stringify(query));
 	it(`should have correct mongo format for searchQuery`, () => {
 		const expected = {
 			$search: { text: { query: `room`, path: [`name`] } },
@@ -65,8 +65,21 @@ describe(`generate geo query correctly`, () => {
 			id: `geoQuery`,
 			value: {
 				distance: 5,
-				location: '50,40',
+				location: '50, 40',
 				unit: 'mi',
+			},
+			dataField: [`location`],
+			type: `geo`,
+			size: 20,
+			from: 10,
+		},
+		{
+			id: `geoBoundingQuery`,
+			value: {
+				geoBoundingBox: {
+					bottomRight: { lat: 40, long: 60 },
+					topLeft: [20, 30],
+				},
 			},
 			dataField: [`location`],
 			type: `geo`,
@@ -75,7 +88,7 @@ describe(`generate geo query correctly`, () => {
 		},
 	];
 	const query = ref.query(testQuery);
-	console.log(query);
+	console.log(`geo query: `, JSON.stringify(query));
 	it(`should have correct mongo format for geo query`, () => {
 		const expected = {
 			$search: {
@@ -92,5 +105,25 @@ describe(`generate geo query correctly`, () => {
 			},
 		};
 		expect(query[0]).toStrictEqual(expected);
+	});
+	it(`should have correct mongo format for geo bounding query`, () => {
+		const expected = {
+			$search: {
+				geoWithin: {
+					box: {
+						bottomLeft: {
+							type: 'Point',
+							coordinates: [40, 60],
+						},
+						topRight: {
+							type: 'Point',
+							coordinates: [20, 30],
+						},
+					},
+					path: [`location`],
+				},
+			},
+		};
+		expect(query[3]).toStrictEqual(expected);
 	});
 });
