@@ -1,7 +1,11 @@
+// jshint ignore: start
 /// <reference path="../../types/realm.d.ts" />
+
+"use strict";
 
 import { RSFunctionQueryData } from '../../types/types'
 
+// @ts-ignore
 export = async (payload:any) => {
     // @ts-expect-error
     const query:RSFunctionQueryData = EJSON.parse(payload.body.text());

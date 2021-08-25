@@ -21,6 +21,19 @@ if(!Fs.existsSync(configPath)){
     exit()
 }
 
+const httpEndpointConfig = `
+{
+    "name": "http_endpoint",
+    "type": "http",
+    "config": {},
+    "version": 1
+}
+`;
+const httpEndpointDirectory = Path.join(__dirname, `./realm-app/http_endpoints/http_endpoint`)
+Fs.mkdirSync(httpEndpointDirectory, { recursive: true });
+Fs.writeFileSync(`${httpEndpointDirectory}/config.json`, httpEndpointConfig);
+
+
 // Create webhook directory
 const webhookDirectory = Path.join(__dirname, `./realm-app/http_endpoints/http_endpoint/incoming_webhooks/${webHookName}`)
 Fs.mkdirSync(webhookDirectory, { recursive: true });
