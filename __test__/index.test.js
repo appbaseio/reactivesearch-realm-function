@@ -11,36 +11,25 @@ describe(`object creation tests`, () => {
 	});
 });
 
-const testQuery = [
-	{
-		id: `searchQuery`,
-		value: `room`,
-		dataField: [`name`],
-		type: `search`,
-	},
-	{
-		id: `searchQuerySize`,
-		value: `room`,
-		dataField: [`name`],
-		type: `search`,
-		size: 20,
-		from: 10,
-	},
-	{
-		id: `geoQuery`,
-		value: {
-			center: { type: 'Point', coordinates: [40, 5] },
-			radius: 5,
-		},
-		dataField: [`location`],
-		type: `geo`,
-		size: 20,
-		from: 10,
-	},
-];
-
 describe(`generates search query correctly`, () => {
+	const testQuery = [
+		{
+			id: `searchQuery`,
+			value: `room`,
+			dataField: [`name`],
+			type: `search`,
+		},
+		{
+			id: `searchQuerySize`,
+			value: `room`,
+			dataField: [`name`],
+			type: `search`,
+			size: 20,
+			from: 10,
+		},
+	];
 	const query = ref.query(testQuery);
+
 	console.log(`mongo query: `, JSON.stringify(query));
 	it(`should have correct mongo format for searchQuery`, () => {
 		const expected = {
@@ -71,6 +60,20 @@ describe(`generates search query correctly`, () => {
 });
 
 describe(`generate geo query correctly`, () => {
+	const testQuery = [
+		{
+			id: `geoQuery`,
+			value: {
+				distance: 5,
+				location: '50,40',
+				unit: 'mi',
+			},
+			dataField: [`location`],
+			type: `geo`,
+			size: 20,
+			from: 10,
+		},
+	];
 	const query = ref.query(testQuery);
 	console.log(query);
 	it(`should have correct mongo format for geo query`, () => {
@@ -80,14 +83,14 @@ describe(`generate geo query correctly`, () => {
 					circle: {
 						center: {
 							type: 'Point',
-							coordinates: [40, 5],
+							coordinates: [50, 40],
 						},
-						radius: 5,
+						radius: 8046.7,
 					},
 					path: [`location`],
 				},
 			},
 		};
-		expect(query[6]).toStrictEqual(expected);
+		expect(query[0]).toStrictEqual(expected);
 	});
 });
