@@ -1,3 +1,4 @@
+import { getGeoQuery } from './targets/geo';
 import { getSearchQuery } from './targets/search';
 import { ConfigType, RSQuery } from './types';
 
@@ -21,6 +22,10 @@ export class Realm {
 		data.forEach((item) => {
 			if (item.type === `search`) {
 				aggPipeline.push(getSearchQuery(item));
+			}
+
+			if (item.type === `geo`) {
+				aggPipeline.push(getGeoQuery(item));
 			}
 
 			aggPipeline.push({ $limit: item.size || 10 });

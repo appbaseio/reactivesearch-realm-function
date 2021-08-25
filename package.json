@@ -21,7 +21,7 @@
 		"test": "npm run build && jest --testTimeout=20000 --runInBand --config rollup.config.js",
 		"format": "prettier --write 'src/**/*.(ts)'",
 		"prepublishOnly": "npm run build",
-		"dev": "nodemon src/server.ts"
+		"dev": "ts-node --project tsconfig-dev.json src/server.ts"
 	},
 	"repository": {
 		"type": "git",

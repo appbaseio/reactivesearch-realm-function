@@ -8,7 +8,7 @@ export type RequestStatus = `INACTIVE` | `PENDING` | `ERROR`;
 
 export type QueryFormat = `or` | `and`;
 
-export type QueryType = `search`;
+export type QueryType = `search` | `term` | `geo` | `range`;
 
 export type SortType = `asc` | `desc` | `count`;
 

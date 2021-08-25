@@ -26,6 +26,17 @@ const testQuery = [
 		size: 20,
 		from: 10,
 	},
+	{
+		id: `geoQuery`,
+		value: {
+			center: { type: 'Point', coordinates: [40, 5] },
+			radius: 5,
+		},
+		dataField: [`location`],
+		type: `geo`,
+		size: 20,
+		from: 10,
+	},
 ];
 
 describe(`generates search query correctly`, () => {
@@ -33,7 +44,7 @@ describe(`generates search query correctly`, () => {
 	console.log(`mongo query: `, JSON.stringify(query));
 	it(`should have correct mongo format for searchQuery`, () => {
 		const expected = {
-			$search: { index: `default`, text: { query: `room`, path: [`name`] } },
+			$search: { text: { query: `room`, path: [`name`] } },
 		};
 		expect(query[0]).toStrictEqual(expected);
 	});
@@ -56,5 +67,27 @@ describe(`generates search query correctly`, () => {
 	it(`should have user defined skip`, () => {
 		const skipObj = query.find((item) => item.$skip === testQuery[1].from);
 		expect(skipObj.$skip).toEqual(10);
+	});
+});
+
+describe(`generate geo query correctly`, () => {
+	const query = ref.query(testQuery);
+	console.log(query);
+	it(`should have correct mongo format for geo query`, () => {
+		const expected = {
+			$search: {
+				geoWithin: {
+					circle: {
+						center: {
+							type: 'Point',
+							coordinates: [40, 5],
+						},
+						radius: 5,
+					},
+					path: [`location`],
+				},
+			},
+		};
+		expect(query[6]).toStrictEqual(expected);
 	});
 });
