@@ -21,7 +21,11 @@
 		"test": "npm run build && jest --testTimeout=20000 --runInBand --config rollup.config.js",
 		"format": "prettier --write 'src/**/*.(ts)'",
 		"prepublishOnly": "npm run build",
-		"dev": "nodemon src/server.ts"
+		"dev": "nodemon src/server.ts",
+		"realm-login": "realm-cli login",
+		"realm-pull": "rm -rf realm-app && realm-cli pull --local=./realm-app",
+		"realm-build": "node build",
+		"realm-push": "realm-cli push --local=./realm-app"
 	},
 	"repository": {
 		"type": "git",
@@ -55,6 +59,7 @@
 		"cors": "^2.8.5",
 		"dotenv": "^10.0.0",
 		"express": "^4.17.1",
-		"mongodb": "^4.1.0"
+		"mongodb": "^4.1.0",
+		"yargs": "^17.1.1"
 	}
 }
