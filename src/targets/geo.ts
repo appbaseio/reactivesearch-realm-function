@@ -62,7 +62,6 @@ export const getGeoQuery = (query: RSQuery): any => {
 	try {
 		const val = <GeoInput>{ ...query.value };
 		let search: any = {};
-		console.log(Boolean(val.location), Boolean(val.geoBoundingBox));
 		if (!val.location && !val.geoBoundingBox) {
 			throw new Error(`Invalid object`);
 		}
@@ -100,16 +99,27 @@ export const getGeoQuery = (query: RSQuery): any => {
 
 		// geo bounding box query
 		if (val.geoBoundingBox) {
+			// mongo geo bounding accepts bottomRight and topLeft
+			// following is the conversion
+			/**
+			 * topLeft: {x1,y1}
+				bottomRight: {x2,y2}
+
+				topRight: {x2,y1}
+				bottomLeft: {x1,y2}
+			 */
+			const bottomRight = convertLocation(val.geoBoundingBox.bottomRight);
+			const topLeft = convertLocation(val.geoBoundingBox.topLeft);
 			search = {
 				geoWithin: {
 					box: {
 						bottomLeft: {
 							type: 'Point',
-							coordinates: convertLocation(val.geoBoundingBox.bottomRight),
+							coordinates: [topLeft[0], bottomRight[1]],
 						},
 						topRight: {
 							type: 'Point',
-							coordinates: convertLocation(val.geoBoundingBox.topLeft),
+							coordinates: [bottomRight[0], topLeft[1]],
 						},
 					},
 					path: query.dataField,

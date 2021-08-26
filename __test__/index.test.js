@@ -113,11 +113,11 @@ describe(`generate geo query correctly`, () => {
 					box: {
 						bottomLeft: {
 							type: 'Point',
-							coordinates: [40, 60],
+							coordinates: [20, 60],
 						},
 						topRight: {
 							type: 'Point',
-							coordinates: [20, 30],
+							coordinates: [40, 30],
 						},
 					},
 					path: [`location`],
