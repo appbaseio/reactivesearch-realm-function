@@ -1,5 +1,7 @@
 import { getGeoQuery } from './targets/geo';
+import { getRangeQuery } from './targets/range';
 import { getSearchQuery } from './targets/search';
+import { getTermQuery } from './targets/term';
 import { ConfigType, RSQuery } from './types';
 
 export class Realm {
@@ -22,14 +24,23 @@ export class Realm {
 		data.forEach((item) => {
 			if (item.type === `search`) {
 				aggPipeline.push(getSearchQuery(item));
+				aggPipeline.push({ $limit: item.size || 10 });
+				aggPipeline.push({ $skip: item.from || 0 });
 			}
 
 			if (item.type === `geo`) {
 				aggPipeline.push(getGeoQuery(item));
+				aggPipeline.push({ $limit: item.size || 10 });
+				aggPipeline.push({ $skip: item.from || 0 });
 			}
 
-			aggPipeline.push({ $limit: item.size || 10 });
-			aggPipeline.push({ $skip: item.from || 0 });
+			if (item.type == `term`) {
+				aggPipeline.push(getTermQuery(item));
+			}
+
+			if (item.type == `range`) {
+				aggPipeline.push(getRangeQuery(item));
+			}
 		});
 
 		return aggPipeline;
