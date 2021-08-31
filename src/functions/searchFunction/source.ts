@@ -6,7 +6,7 @@
 import { RSFunctionQueryData } from '../../types/types'
 
 // @ts-ignore
-export = async (payload:any) => {
+exports = async (payload:any) => {
     // @ts-expect-error
     const query:RSFunctionQueryData = EJSON.parse(payload.body.text());
     const { config, searchQuery } = query;
