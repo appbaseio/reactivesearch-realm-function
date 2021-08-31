@@ -2,7 +2,6 @@ import { RSQuery } from 'src/types';
 
 // TODO set return type
 export const getSearchQuery = (query: RSQuery<string>): any => {
-	console.log(typeof query.value);
 	const search: any = {
 		text: {
 			query: query.value,

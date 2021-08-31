@@ -30,7 +30,7 @@ describe(`generates search query correctly`, () => {
 	];
 	const query = ref.query(testQuery);
 
-	console.log(`text search query: `, JSON.stringify(query));
+	console.log(`text query: `, JSON.stringify(query));
 	it(`should have correct mongo format for searchQuery`, () => {
 		const expected = {
 			$search: { text: { query: `room`, path: [`name`] } },
@@ -152,6 +152,17 @@ describe(`generates range query correctly`, () => {
 			dataField: [`accommodates`],
 			type: `range`,
 		},
+		{
+			id: `rangeQueryWithNull`,
+			value: {
+				start: 1,
+				end: 20,
+				boost: 1,
+			},
+			dataField: [`accommodates`],
+			includeNullValues: true,
+			type: `range`,
+		},
 	];
 	const query = ref.query(testQuery);
 
@@ -187,5 +198,26 @@ describe(`generates range query correctly`, () => {
 			},
 		};
 		expect(query[8]).toStrictEqual(expected);
+	});
+
+	it(`should have compound query for includeNullValues `, () => {
+		const expected = {
+			$search: {
+				compound: {
+					should: [
+						{
+							range: {
+								path: 'accommodates',
+								gte: 1,
+								lte: 20,
+								score: { boost: 1 },
+							},
+						},
+						{ compound: { mustNot: [{ exists: { path: 'accommodates' } }] } },
+					],
+				},
+			},
+		};
+		expect(query[9]).toStrictEqual(expected);
 	});
 });

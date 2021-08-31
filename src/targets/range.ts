@@ -47,17 +47,20 @@ export const getRangeQuery = (query: RSQuery<RangeValue>): any => {
 			{ $skip: query.from || 0 },
 		];
 
-		console.log({ res: JSON.stringify(res) });
-
-		// TODO add support for includeNullValues using compound query
 		if (query.includeNullValues) {
 			search = {
 				compound: {
-					should: [],
-					mustNot: [
+					should: [
+						{ range: search.range },
 						{
-							exists: {
-								path: field,
+							compound: {
+								mustNot: [
+									{
+										exists: {
+											path: `${field}`,
+										},
+									},
+								],
 							},
 						},
 					],
