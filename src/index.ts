@@ -1,7 +1,7 @@
 import { ConfigType, RSFunctionQueryData, RSQuery } from './types/types';
+import { getSearchQuery, getSearchSortByQuery } from './targets/search';
 
 import { getGeoQuery } from './targets/geo';
-import { getSearchQuery } from './targets/search';
 
 export class Realm {
 	config: ConfigType;
@@ -21,14 +21,15 @@ export class Realm {
 		const aggPipeline: any = [];
 
 		data.forEach((item) => {
-			if (item.type === `search`) {
-				aggPipeline.push(getSearchQuery(item));
+			switch(item.type){
+				case 'search':
+					aggPipeline.push(getSearchQuery(item));
+					aggPipeline.push(getSearchSortByQuery(item));
+					break;
+				case 'geo':
+					aggPipeline.push(getGeoQuery(item));
+					break;
 			}
-
-			if (item.type === `geo`) {
-				aggPipeline.push(getGeoQuery(item));
-			}
-
 			aggPipeline.push({ $limit: item.size || 10 });
 			aggPipeline.push({ $skip: item.from || 0 });
 		});
