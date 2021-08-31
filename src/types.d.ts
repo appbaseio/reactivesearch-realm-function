@@ -16,7 +16,15 @@ export type GeoPoint = { lat: number; long: number };
 
 export type Location = GeoPoint | string | [number, number];
 
-export type GeoInput = {
+export type SingleDataField = string | [string];
+
+export type RangeValue = {
+	start?: number | string;
+	end?: number | string;
+	boost?: number;
+};
+
+export type GeoValue = {
 	location?: Location;
 	distance?: number;
 	unit?: Unit;
@@ -63,7 +71,7 @@ export type RecentSearchOptions = {
 	customEvents?: Object;
 };
 
-export type RSQuery = {
+export type RSQuery<T> = {
 	index?: string;
 
 	enablePopularSuggestions?: boolean;
@@ -119,7 +127,7 @@ export type RSQuery = {
 
 	sortBy?: SortType;
 
-	value?: any;
+	value?: T;
 
 	aggregationField?: string;
 

@@ -1,6 +1,8 @@
 import { getGeoQuery } from './targets/geo';
+import { getRangeQuery } from './targets/range';
 import { getSearchQuery } from './targets/search';
-import { ConfigType, RSQuery } from './types';
+import { getTermQuery } from './targets/term';
+import { ConfigType } from './types';
 
 export class Realm {
 	config: ConfigType;
@@ -12,24 +14,29 @@ export class Realm {
 	}
 
 	// TODO define type for mongo query
-	query = (data: [RSQuery]) => {
+	query = (data: any[]) => {
 		// TODO decide query format from set of multiple queries
 
 		// pipeline used by mongodb aggregation
 		// TODO set type as per mongo query type
-		const aggPipeline: any = [];
+		let aggPipeline: any = [];
 
 		data.forEach((item) => {
 			if (item.type === `search`) {
-				aggPipeline.push(getSearchQuery(item));
+				aggPipeline = [...aggPipeline, ...getSearchQuery(item)];
 			}
 
 			if (item.type === `geo`) {
-				aggPipeline.push(getGeoQuery(item));
+				aggPipeline = [...aggPipeline, ...getGeoQuery(item)];
 			}
 
-			aggPipeline.push({ $limit: item.size || 10 });
-			aggPipeline.push({ $skip: item.from || 0 });
+			if (item.type == `term`) {
+				aggPipeline.push(getTermQuery(item));
+			}
+
+			if (item.type == `range`) {
+				aggPipeline = [...aggPipeline, ...getRangeQuery(item)];
+			}
 		});
 
 		return aggPipeline;
