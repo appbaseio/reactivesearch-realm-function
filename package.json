@@ -21,7 +21,7 @@
 		"test": "npm run build && jest --testTimeout=20000 --runInBand --config rollup.config.js",
 		"format": "prettier --write 'src/**/*.(ts)'",
 		"prepublishOnly": "npm run build",
-		"dev": "ts-node --project tsconfig-dev.json src/server.ts"
+		"dev": "nodemon --watch './**/*.ts' --exec 'ts-node --project tsconfig-dev.json' src/server.ts"
 	},
 	"repository": {
 		"type": "git",
@@ -57,7 +57,6 @@
 		"dotenv": "^10.0.0",
 		"express": "^4.17.1",
 		"lodash.range": "^3.2.0",
-		"mongodb": "^4.1.0",
-		"typescript-is": "^0.18.3"
+		"mongodb": "^4.1.0"
 	}
 }

@@ -24,7 +24,7 @@ export type RangeValue = {
 	boost?: number;
 };
 
-export type GeoInput = {
+export type GeoValue = {
 	location?: Location;
 	distance?: number;
 	unit?: Unit;
@@ -71,7 +71,7 @@ export type RecentSearchOptions = {
 	customEvents?: Object;
 };
 
-export type RSQuery = {
+export type RSQuery<T> = {
 	index?: string;
 
 	enablePopularSuggestions?: boolean;
@@ -127,7 +127,7 @@ export type RSQuery = {
 
 	sortBy?: SortType;
 
-	value?: any;
+	value?: T;
 
 	aggregationField?: string;
 

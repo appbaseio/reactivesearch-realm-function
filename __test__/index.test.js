@@ -1,4 +1,4 @@
-const { Realm } = require('../lib/cjs');
+const { Realm } = require('../');
 
 const mongoURL = `mongodb//real-function-url1`;
 const ref = new Realm({
@@ -140,12 +140,52 @@ describe(`generates range query correctly`, () => {
 			dataField: [`accommodates`],
 			type: `range`,
 		},
+		{
+			id: `rangeQueryWithAggs`,
+			value: {
+				start: 1,
+				end: 20,
+				boost: 1,
+			},
+			aggregations: [`min`, `max`, `histogram`],
+			interval: 2,
+			dataField: [`accommodates`],
+			type: `range`,
+		},
 	];
 	const query = ref.query(testQuery);
 
 	console.log(`range query: `, JSON.stringify(query));
 
-	it(`creates object with passed url`, () => {
-		expect(ref.config.url).toEqual(mongoURL);
+	it(`should have correct mongo format for range query`, () => {
+		const expected = {
+			$search: {
+				range: { path: 'accommodates', gte: 1, lte: 20, score: { boost: 1 } },
+			},
+		};
+		expect(query[0]).toStrictEqual(expected);
+	});
+
+	it(`should have correct min query`, () => {
+		const expected = {
+			$group: { _id: null, min: { $min: '$accommodates' } },
+		};
+		expect(query[6]).toStrictEqual(expected);
+	});
+
+	it(`should have correct max query`, () => {
+		const expected = { $group: { _id: null, max: { $max: '$accommodates' } } };
+		expect(query[7]).toStrictEqual(expected);
+	});
+
+	it(`should have correct histogram query`, () => {
+		const expected = {
+			$bucket: {
+				groupBy: '$accommodates',
+				boundaries: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19],
+				default: 'other',
+			},
+		};
+		expect(query[8]).toStrictEqual(expected);
 	});
 });

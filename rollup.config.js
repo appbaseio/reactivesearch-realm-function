@@ -36,7 +36,7 @@ module.exports = [
 		plugins: [
 			typescript({
 				outDir: 'lib/cjs',
-				module: 'es6',
+				module: 'esnext',
 			}),
 		],
 		output: [

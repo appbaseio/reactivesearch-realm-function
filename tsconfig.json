@@ -22,8 +22,14 @@
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"resolveJsonModule": true,
-		"baseUrl": "."
+		"baseUrl": ".",
+		"plugins": [
+			{
+				"transform": "typescript-is/lib/transform-inline/transformer"
+			}
+		]
 	},
+
 	"exclude": ["node_modules"],
 	"include": ["./src/**/*.ts"]
 }

@@ -1,4 +1,5 @@
-import { RSQuery, GeoPoint, GeoInput } from 'src/types';
+import { RSQuery, GeoPoint, GeoValue } from 'src/types';
+import { validateGeoValue } from 'src/validators/geo';
 
 const convertToMeter = (distance: number, unit: string): number => {
 	switch (unit) {
@@ -24,6 +25,7 @@ const convertToMeter = (distance: number, unit: string): number => {
 
 const convertLocation = (location: GeoPoint | string | [number, number]) => {
 	let loc: [number, number] = [0, 0];
+
 	if (typeof location === `string`) {
 		const data = `${location}`.split(`,`);
 		if (data.length !== 2) {
@@ -58,13 +60,12 @@ const convertLocation = (location: GeoPoint | string | [number, number]) => {
 //
 // Target remains $search for geo query as well
 // ref: https://docs.atlas.mongodb.com/reference/atlas-search/geoWithin/
-export const getGeoQuery = (query: RSQuery): any => {
+export const getGeoQuery = (query: RSQuery<GeoValue>): any => {
 	try {
-		const val = <GeoInput>{ ...query.value };
+		const val = <GeoValue>{ ...query.value };
 		let search: any = {};
-		if (!val.location && !val.geoBoundingBox) {
-			throw new Error(`Invalid object`);
-		}
+
+		validateGeoValue(val);
 
 		// geo point query
 		if (val.location) {

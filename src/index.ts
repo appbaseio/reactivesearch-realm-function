@@ -2,7 +2,7 @@ import { getGeoQuery } from './targets/geo';
 import { getRangeQuery } from './targets/range';
 import { getSearchQuery } from './targets/search';
 import { getTermQuery } from './targets/term';
-import { ConfigType, RSQuery } from './types';
+import { ConfigType } from './types';
 
 export class Realm {
 	config: ConfigType;
@@ -14,7 +14,7 @@ export class Realm {
 	}
 
 	// TODO define type for mongo query
-	query = (data: [RSQuery]) => {
+	query = (data: any[]) => {
 		// TODO decide query format from set of multiple queries
 
 		// pipeline used by mongodb aggregation

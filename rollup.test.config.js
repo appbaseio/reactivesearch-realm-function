@@ -6,16 +6,7 @@ export default [
 	// cjs
 	{
 		input,
-		plugins: [
-			typescript({
-				outDir: 'lib/cjs',
-				tsconfigOverride: {
-					compilerOptions: {
-						module: 'commonjs',
-					},
-				},
-			}),
-		],
+		plugins: [typescript({ outDir: 'lib/cjs', module: 'esnext' })],
 		output: [
 			{
 				dir: 'lib/cjs',
