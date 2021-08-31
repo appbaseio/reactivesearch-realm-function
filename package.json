@@ -21,11 +21,11 @@
 		"test": "npm run build && jest --testTimeout=20000 --runInBand --config rollup.config.js",
 		"format": "prettier --write 'src/**/*.(ts)'",
 		"prepublishOnly": "npm run build",
-		"dev": "nodemon src/server.ts",
 		"realm-login": "realm-cli login",
 		"realm-pull": "rm -rf realm-app && realm-cli pull --local=./realm-app",
 		"realm-build": "node build",
-		"realm-push": "realm-cli push --local=./realm-app"
+		"realm-push": "realm-cli push --local=./realm-app",
+		"dev": "ts-node --project tsconfig-dev.json src/server.ts"
 	},
 	"repository": {
 		"type": "git",

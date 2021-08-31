@@ -11,29 +11,29 @@ describe(`object creation tests`, () => {
 	});
 });
 
-const testQuery = [
-	{
-		id: `searchQuery`,
-		value: `room`,
-		dataField: [`name`],
-		type: `search`,
-	},
-	{
-		id: `searchQuerySize`,
-		value: `room`,
-		dataField: [`name`],
-		type: `search`,
-		size: 20,
-		from: 10,
-	},
-];
-
 describe(`generates search query correctly`, () => {
+	const testQuery = [
+		{
+			id: `searchQuery`,
+			value: `room`,
+			dataField: [`name`],
+			type: `search`,
+		},
+		{
+			id: `searchQuerySize`,
+			value: `room`,
+			dataField: [`name`],
+			type: `search`,
+			size: 20,
+			from: 10,
+		},
+	];
 	const query = ref.query(testQuery);
-	console.log(`mongo query: `, JSON.stringify(query));
+
+	console.log(`text search query: `, JSON.stringify(query));
 	it(`should have correct mongo format for searchQuery`, () => {
 		const expected = {
-			$search: { index: `default`, text: { query: `room`, path: [`name`] } },
+			$search: { text: { query: `room`, path: [`name`] } },
 		};
 		expect(query[0]).toStrictEqual(expected);
 	});
@@ -56,5 +56,74 @@ describe(`generates search query correctly`, () => {
 	it(`should have user defined skip`, () => {
 		const skipObj = query.find((item) => item.$skip === testQuery[1].from);
 		expect(skipObj.$skip).toEqual(10);
+	});
+});
+
+describe(`generate geo query correctly`, () => {
+	const testQuery = [
+		{
+			id: `geoQuery`,
+			value: {
+				distance: 5,
+				location: '50, 40',
+				unit: 'mi',
+			},
+			dataField: [`location`],
+			type: `geo`,
+			size: 20,
+			from: 10,
+		},
+		{
+			id: `geoBoundingQuery`,
+			value: {
+				geoBoundingBox: {
+					bottomRight: { lat: 40, long: 60 },
+					topLeft: [20, 30],
+				},
+			},
+			dataField: [`location`],
+			type: `geo`,
+			size: 20,
+			from: 10,
+		},
+	];
+	const query = ref.query(testQuery);
+	console.log(`geo query: `, JSON.stringify(query));
+	it(`should have correct mongo format for geo query`, () => {
+		const expected = {
+			$search: {
+				geoWithin: {
+					circle: {
+						center: {
+							type: 'Point',
+							coordinates: [50, 40],
+						},
+						radius: 8046.7,
+					},
+					path: [`location`],
+				},
+			},
+		};
+		expect(query[0]).toStrictEqual(expected);
+	});
+	it(`should have correct mongo format for geo bounding query`, () => {
+		const expected = {
+			$search: {
+				geoWithin: {
+					box: {
+						bottomLeft: {
+							type: 'Point',
+							coordinates: [20, 60],
+						},
+						topRight: {
+							type: 'Point',
+							coordinates: [40, 30],
+						},
+					},
+					path: [`location`],
+				},
+			},
+		};
+		expect(query[3]).toStrictEqual(expected);
 	});
 });

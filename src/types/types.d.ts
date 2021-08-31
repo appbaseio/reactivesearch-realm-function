@@ -10,7 +10,23 @@ export type RequestStatus = `INACTIVE` | `PENDING` | `ERROR`;
 
 export type QueryFormat = `or` | `and`;
 
-export type QueryType = `search`;
+export type QueryType = `search` | `term` | `geo` | `range`;
+
+export type Unit = `mi` | `yd` | `ft` | `km` | `m` | `cm` | `mm` | `nmi`;
+
+export type GeoPoint = { lat: number; long: number };
+
+export type Location = GeoPoint | string | [number, number];
+
+export type GeoInput = {
+	location?: Location;
+	distance?: number;
+	unit?: Unit;
+	geoBoundingBox?: {
+		topLeft: Location;
+		bottomRight: Location;
+	};
+};
 
 export type SortType = `asc` | `desc` | `count`;
 
