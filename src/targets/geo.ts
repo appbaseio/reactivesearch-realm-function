@@ -131,9 +131,13 @@ export const getGeoQuery = (query: RSQuery): any => {
 			search.index = query.index;
 		}
 
-		return {
-			$search: search,
-		};
+		return [
+			{
+				$search: search,
+			},
+			{ $limit: query.size || 10 },
+			{ $skip: query.from || 0 },
+		];
 	} catch (err) {
 		throw err;
 	}

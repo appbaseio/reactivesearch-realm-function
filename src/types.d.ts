@@ -16,6 +16,14 @@ export type GeoPoint = { lat: number; long: number };
 
 export type Location = GeoPoint | string | [number, number];
 
+export type SingleDataField = string | [string];
+
+export type RangeValue = {
+	start?: number | string;
+	end?: number | string;
+	boost?: number;
+};
+
 export type GeoInput = {
 	location?: Location;
 	distance?: number;

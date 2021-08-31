@@ -19,19 +19,15 @@ export class Realm {
 
 		// pipeline used by mongodb aggregation
 		// TODO set type as per mongo query type
-		const aggPipeline: any = [];
+		let aggPipeline: any = [];
 
 		data.forEach((item) => {
 			if (item.type === `search`) {
-				aggPipeline.push(getSearchQuery(item));
-				aggPipeline.push({ $limit: item.size || 10 });
-				aggPipeline.push({ $skip: item.from || 0 });
+				aggPipeline = [...aggPipeline, ...getSearchQuery(item)];
 			}
 
 			if (item.type === `geo`) {
-				aggPipeline.push(getGeoQuery(item));
-				aggPipeline.push({ $limit: item.size || 10 });
-				aggPipeline.push({ $skip: item.from || 0 });
+				aggPipeline = [...aggPipeline, ...getGeoQuery(item)];
 			}
 
 			if (item.type == `term`) {
@@ -39,7 +35,7 @@ export class Realm {
 			}
 
 			if (item.type == `range`) {
-				aggPipeline.push(getRangeQuery(item));
+				aggPipeline = [...aggPipeline, ...getRangeQuery(item)];
 			}
 		});
 

@@ -1,10 +1,12 @@
-import { RSQuery } from 'src/types';
-import { validateSingleDataField } from 'src/utils';
+import { is } from 'typescript-is';
+import { RSQuery, SingleDataField } from 'src/types';
 
 // TODO set return type
 export const getTermQuery = (query: RSQuery): any => {
 	try {
-		validateSingleDataField(<string | string[]>query.dataField);
+		if (!is<SingleDataField>(query.dataField)) {
+			throw new Error(`invalid dataField value`);
+		}
 
 		const search: any = {
 			text: {

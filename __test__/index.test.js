@@ -127,3 +127,25 @@ describe(`generate geo query correctly`, () => {
 		expect(query[3]).toStrictEqual(expected);
 	});
 });
+
+describe(`generates range query correctly`, () => {
+	const testQuery = [
+		{
+			id: `rangeQuery`,
+			value: {
+				start: 1,
+				end: 20,
+				boost: 1,
+			},
+			dataField: [`accommodates`],
+			type: `range`,
+		},
+	];
+	const query = ref.query(testQuery);
+
+	console.log(`range query: `, JSON.stringify(query));
+
+	it(`creates object with passed url`, () => {
+		expect(ref.config.url).toEqual(mongoURL);
+	});
+});

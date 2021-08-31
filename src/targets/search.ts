@@ -13,7 +13,9 @@ export const getSearchQuery = (query: RSQuery): any => {
 		search.index = query.index;
 	}
 
-	return {
-		$search: search,
-	};
+	return [
+		{ $search: search },
+		{ $limit: query.size || 10 },
+		{ $skip: query.from || 0 },
+	];
 };

@@ -33,7 +33,12 @@ module.exports = [
 	// cjs
 	{
 		input,
-		plugins: [typescript({ outDir: 'lib/cjs' })],
+		plugins: [
+			typescript({
+				outDir: 'lib/cjs',
+				module: 'es6',
+			}),
+		],
 		output: [
 			{
 				dir: 'lib/cjs',
