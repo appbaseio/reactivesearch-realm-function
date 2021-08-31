@@ -1,5 +1,6 @@
 import { ASCENDING, DESCENDING } from 'src/constants';
-import { DataField, RSQuery } from 'src/types/types';
+
+import { RSQuery } from 'src/types/types';
 
 // TODO set return type
 export const getSearchQuery = (query: RSQuery): any => {
