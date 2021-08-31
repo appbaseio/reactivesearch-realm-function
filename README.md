@@ -21,3 +21,14 @@
   ```sh
   curl -XPOST localhost:8080/listingsAndReviews/_reactivesearch -H 'Content-Type: application/json' -d '{"query": [{"id": "test", "value": "room", "dataField": ["name"], "type": "search", "index": "default"}]}'
   ```
+
+## Deploying realm function
+
+- #### `yarn realm-login`
+  Log the CLI into Realm using a MongoDB Cloud API key
+- #### `yarn realm-pull`
+  Exports the latest version of your Realm app
+- #### `yarn realm-build --webhookname <name>`
+  Compile and build webhook function config and definition
+- #### `yarn realm-push`
+  Deploys webhook to your Realm app

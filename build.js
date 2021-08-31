@@ -62,3 +62,5 @@ Fs.writeFileSync(webHookConfigFilePath, webHookConfigFileContent);
 
 const webHookSourceFilePath =  Path.join(webhookDirectory, "source.js")
 execSync(`tsc ./src/functions/searchFunction/source.ts && mv ./src/functions/searchFunction/source.js ${webHookSourceFilePath}`);
+
+execSync(`sed -i 's/exports\.__esModule = true;//g' ${webHookSourceFilePath}`)
