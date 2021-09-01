@@ -2,6 +2,7 @@ import { ConfigType, RSFunctionQueryData, RSQuery } from './types/types';
 import { getSearchQuery, getSearchSortByQuery } from './targets/search';
 
 import { getGeoQuery } from './targets/geo';
+import { getIncludeExcludeFields } from './targets/common';
 
 export class Realm {
 	config: ConfigType;
@@ -21,7 +22,7 @@ export class Realm {
 		const aggPipeline: any = [];
 
 		data.forEach((item) => {
-			switch(item.type){
+			switch (item.type) {
 				case 'search':
 					aggPipeline.push(getSearchQuery(item));
 					aggPipeline.push(getSearchSortByQuery(item));
@@ -30,6 +31,8 @@ export class Realm {
 					aggPipeline.push(getGeoQuery(item));
 					break;
 			}
+
+			aggPipeline.push(...getIncludeExcludeFields(item));
 			aggPipeline.push({ $limit: item.size || 10 });
 			aggPipeline.push({ $skip: item.from || 0 });
 		});
@@ -40,8 +43,7 @@ export class Realm {
 	toRealmQuery = (data: [RSQuery]): RSFunctionQueryData => {
 		return {
 			config: this.config,
-			searchQuery: this.query(data)
-		}
-	}
-
+			searchQuery: this.query(data),
+		};
+	};
 }
