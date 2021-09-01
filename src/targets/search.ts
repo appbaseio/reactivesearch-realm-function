@@ -35,15 +35,24 @@ export const getSearchSortByQuery = (query: RSQuery): any => {
 				} else {
 					field = queryField.field;
 				}
+			} else {
+				/*
+					From MongoDB documentation
+					In the { <sort-key> } document, set the { $meta: "textScore" } expression 
+					to an arbitrary field name. The field name is ignored by the query system.
+				*/
+				return { $sort: { score: { $meta: 'textScore' }, [field]: sortBy } };
 			}
 		} else {
 			field = query.dataField as string;
 		}
+		return { $sort: { [field]: sortBy } };
+	} else {
+		/*
+			From MongoDB documentation
+			In the { <sort-key> } document, set the { $meta: "textScore" } expression 
+			to an arbitrary field name. The field name is ignored by the query system.
+		*/
+		return { $sort: { score: { $meta: 'textScore' }, [field]: sortBy } };
 	}
-	/*
-		From MongoDB documentation
-		 In the { <sort-key> } document, set the { $meta: "textScore" } expression 
-		 to an arbitrary field name. The field name is ignored by the query system.
-	*/
-	return { $sort: { score: { $meta: 'textScore' }, [field]: sortBy } };
 };
