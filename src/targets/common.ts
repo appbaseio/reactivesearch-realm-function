@@ -5,10 +5,6 @@ import { RSQuery } from 'src/types/types';
 export const getIncludeExcludeFields = (query: RSQuery): any[] => {
 	const { includeFields = [], excludeFields = [] } = query;
 
-	if (ALL_FIELDS in includeFields) {
-		// Don't run the pipeline
-		return [];
-	}
 	if (ALL_FIELDS in excludeFields) {
 		return [
 			{
@@ -17,6 +13,11 @@ export const getIncludeExcludeFields = (query: RSQuery): any[] => {
 				},
 			},
 		];
+	}
+
+	if (ALL_FIELDS in includeFields) {
+		// Don't run the pipeline
+		return [];
 	}
 
 	const aggPipeline: any = [];
