@@ -31,7 +31,7 @@ export class Realm {
 			}
 
 			if (item.type == `term`) {
-				aggPipeline.push(getTermQuery(item));
+				aggPipeline = [...aggPipeline, ...getTermQuery(item)];
 			}
 
 			if (item.type == `range`) {
