@@ -3,6 +3,8 @@ import { getSearchQuery, getSearchSortByQuery } from './targets/search';
 
 import { getGeoQuery } from './targets/geo';
 import { getIncludeExcludeFields } from './targets/common';
+import { getRangeQuery } from './targets/range';
+import { getTermQuery } from './targets/term';
 
 export class Realm {
 	config: ConfigType;
@@ -14,27 +16,29 @@ export class Realm {
 	}
 
 	// TODO define type for mongo query
-	query = (data: [RSQuery]): [] => {
+	query = (data: any[]) => {
 		// TODO decide query format from set of multiple queries
 
 		// pipeline used by mongodb aggregation
 		// TODO set type as per mongo query type
-		const aggPipeline: any = [];
+		let aggPipeline: any = [];
 
 		data.forEach((item) => {
-			switch (item.type) {
-				case 'search':
-					aggPipeline.push(getSearchQuery(item));
-					aggPipeline.push(getSearchSortByQuery(item));
-					break;
-				case 'geo':
-					aggPipeline.push(getGeoQuery(item));
-					break;
+			if (item.type === `search`) {
+				aggPipeline = [...aggPipeline, ...getSearchQuery(item)];
 			}
 
-			aggPipeline.push(...getIncludeExcludeFields(item));
-			aggPipeline.push({ $limit: item.size || 10 });
-			aggPipeline.push({ $skip: item.from || 0 });
+			if (item.type === `geo`) {
+				aggPipeline = [...aggPipeline, ...getGeoQuery(item)];
+			}
+
+			if (item.type == `term`) {
+				aggPipeline.push(getTermQuery(item));
+			}
+
+			if (item.type == `range`) {
+				aggPipeline = [...aggPipeline, ...getRangeQuery(item)];
+			}
 		});
 
 		return aggPipeline;

@@ -3,7 +3,7 @@ import { ASCENDING, DESCENDING } from 'src/constants';
 import { RSQuery } from 'src/types/types';
 
 // TODO set return type
-export const getSearchQuery = (query: RSQuery): any => {
+export const getSearchQuery = (query: RSQuery<string>): any => {
 	const search: any = {
 		text: {
 			query: query.value,
@@ -15,9 +15,11 @@ export const getSearchQuery = (query: RSQuery): any => {
 		search.index = query.index;
 	}
 
-	return {
-		$search: search,
-	};
+	return [
+		{ $search: search },
+		{ $limit: query.size || 10 },
+		{ $skip: query.from || 0 },
+	];
 };
 
 export const getSearchSortByQuery = (query: RSQuery): any => {
