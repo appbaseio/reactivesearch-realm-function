@@ -221,3 +221,35 @@ describe(`generates range query correctly`, () => {
 		expect(query[9]).toStrictEqual(expected);
 	});
 });
+
+describe(`generate term query correctly`, () => {
+	const testQuery = [
+		{
+			id: `term-query`,
+			type: `term`,
+			dataField: `property_type`,
+			sortBy: `asc`,
+			aggregationSize: 3,
+		},
+	];
+
+	const query = ref.query(testQuery);
+	console.log(`term query: `, JSON.stringify(query));
+	it(`should have correct mongo format for term query`, () => {
+		const expected = {
+			$facet: {
+				aggs: [
+					{ $unwind: `$property_type` },
+					{ $sortByCount: `$property_type` },
+					{
+						$sort: {
+							_id: 1,
+						},
+					},
+					{ $limit: 3 },
+				],
+			},
+		};
+		expect(query[0]).toStrictEqual(expected);
+	});
+});
