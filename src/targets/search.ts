@@ -1,4 +1,4 @@
-import { ASCENDING, DESCENDING } from 'src/constants';
+import { ASCENDING, DESCENDING } from '../../src/constants';
 
 import { RSQuery } from 'src/types/types';
 
@@ -22,7 +22,7 @@ export const getSearchQuery = (query: RSQuery<string>): any => {
 	];
 };
 
-export const getSearchSortByQuery = (query: RSQuery): any => {
+export const getSearchSortByQuery = (query: RSQuery<string>): any => {
 	let sortBy = DESCENDING;
 	let field: string = '_id';
 	if (query.sortBy) {

@@ -1,11 +1,11 @@
-import { ALL_FIELDS, EXCLUDE_FIELD, INCLUDE_FIELD } from 'src/constants';
+import { ALL_FIELDS, EXCLUDE_FIELD, INCLUDE_FIELD } from '../constants';
 
 import { RSQuery } from 'src/types/types';
 
-export const getIncludeExcludeFields = (query: RSQuery): any[] => {
-	const { includeFields = [], excludeFields = [] } = query;
+export const getIncludeExcludeFields = (query: RSQuery<any>): any[] => {
+	let { includeFields = [], excludeFields = [] } = query;
 
-	if (ALL_FIELDS in excludeFields) {
+	if (excludeFields.includes(ALL_FIELDS)) {
 		return [
 			{
 				$project: {
@@ -15,28 +15,35 @@ export const getIncludeExcludeFields = (query: RSQuery): any[] => {
 		];
 	}
 
-	if (ALL_FIELDS in includeFields) {
-		// Don't run the pipeline
-		return [];
+	if (includeFields.includes(ALL_FIELDS)) {
+		if (excludeFields.length === 0) {
+			// Don't run the pipeline
+			return [];
+		} else {
+			includeFields = includeFields.filter((item) => item !== ALL_FIELDS);
+		}
 	}
 
 	const aggPipeline: any = [];
 
 	// Exclude pipeline should be run before include
+	let excludeAggregation = {},
+		includeAggregation = {};
 	if (excludeFields.length > 0) {
-		const excludeAggregation = Object.assign(
+		excludeAggregation = Object.assign(
 			{},
 			...Array.from(excludeFields, (field) => ({ [field]: EXCLUDE_FIELD })),
 		);
-		aggPipeline.push({ $project: excludeAggregation });
 	}
 
 	if (includeFields.length > 0) {
-		const includeAggregation = Object.assign(
+		includeAggregation = Object.assign(
 			{},
 			...Array.from(includeFields, (field) => ({ [field]: INCLUDE_FIELD })),
 		);
-		aggPipeline.push({ $project: includeAggregation });
 	}
+	aggPipeline.push({
+		$project: { ...excludeAggregation, ...includeAggregation },
+	});
 	return aggPipeline;
 };

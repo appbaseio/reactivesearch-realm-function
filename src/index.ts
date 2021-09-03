@@ -44,7 +44,7 @@ export class Realm {
 		return aggPipeline;
 	};
 
-	toRealmQuery = (data: [RSQuery]): RSFunctionQueryData => {
+	toRealmQuery = (data: [RSQuery<any>]): RSFunctionQueryData => {
 		return {
 			config: this.config,
 			searchQuery: this.query(data),
