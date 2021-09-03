@@ -1,8 +1,8 @@
+import { ConfigType } from './types/types';
 import { getGeoQuery } from './targets/geo';
 import { getRangeQuery } from './targets/range';
 import { getSearchQuery } from './targets/search';
 import { getTermQuery } from './targets/term';
-import { ConfigType } from './types';
 
 export class Realm {
 	config: ConfigType;
