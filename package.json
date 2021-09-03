@@ -21,10 +21,6 @@
 		"test": "npm run build && jest --testTimeout=20000 --runInBand --config rollup.config.js",
 		"format": "prettier --write 'src/**/*.(ts)'",
 		"prepublishOnly": "npm run build",
-		"realm-login": "realm-cli login",
-		"realm-pull": "rm -rf realm-app && realm-cli pull --local=./realm-app",
-		"realm-build": "node build",
-		"realm-push": "realm-cli push --local=./realm-app",
 		"dev": "nodemon --watch './**/*.ts' --exec 'ts-node --project tsconfig-dev.json' src/server.ts",
 		"prepare": "husky install"
 	},
@@ -64,7 +60,6 @@
 		"express": "^4.17.1",
 		"lodash.range": "^3.2.0",
 		"mongodb": "^4.1.0",
-		"ts-jest": "^27.0.5",
-		"yargs": "^17.1.1"
+		"ts-jest": "^27.0.5"
 	}
 }
