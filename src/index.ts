@@ -1,9 +1,8 @@
 import { ConfigType, RSFunctionQueryData, RSQuery } from './types/types';
-import { getSearchQuery, getSearchSortByQuery } from './targets/search';
 
 import { getGeoQuery } from './targets/geo';
-import { getIncludeExcludeFields } from './targets/common';
 import { getRangeQuery } from './targets/range';
+import { getSearchQuery } from './targets/search';
 import { getTermQuery } from './targets/term';
 
 export class Realm {
