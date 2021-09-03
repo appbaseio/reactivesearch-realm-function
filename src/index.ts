@@ -1,5 +1,4 @@
-import { ConfigType, RSFunctionQueryData, RSQuery } from './types/types';
-
+import { ConfigType } from './types/types';
 import { getGeoQuery } from './targets/geo';
 import { getRangeQuery } from './targets/range';
 import { getSearchQuery } from './targets/search';
