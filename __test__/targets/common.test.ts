@@ -134,5 +134,5 @@ test('buildQueryPipeline get mongo compound queries', () => {
 	const qmap = getQueriesMap(testQuery);
 	const result = buildQueryPipeline(qmap);
 	console.log(JSON.stringify(result));
-	expect(result.geoQuery.mongoQuery[0]).toStrictEqual(expected);
+	expect(result[1][0]).toStrictEqual(expected);
 });

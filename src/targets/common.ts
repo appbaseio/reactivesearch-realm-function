@@ -92,16 +92,18 @@ export const getQueriesMap = (queries: RSQuery<any>[]): QueryMap => {
 // handle customQuery
 
 export const buildQueryPipeline = (queryMap: QueryMap): any => {
-	const res = queryMap;
+	const mongoPipelines: any[] = [];
 
 	Object.keys(queryMap).forEach((item) => {
 		const { rsQuery, mongoQuery } = queryMap[item];
+		let finalMongoQuery = mongoQuery;
 
 		if (rsQuery.react) {
 			let andQuery = [];
 			let orQuery = [];
 			let currentSearch: any = null;
 			const isTermQuery = rsQuery.type === 'term';
+
 			if (!isTermQuery) {
 				currentSearch = mongoQuery[0].$search;
 			}
@@ -171,9 +173,13 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 				compoundQuery.$search.index = index;
 			}
 
-			res[item].mongoQuery = [compoundQuery, ...mongoQuery.slice(1)];
+			finalMongoQuery = [compoundQuery, ...mongoQuery.slice(1)];
+		}
+
+		if (rsQuery.execute === undefined || rsQuery.execute) {
+			mongoPipelines.push(finalMongoQuery);
 		}
 	});
 
-	return res;
+	return mongoPipelines;
 };
