@@ -1,6 +1,10 @@
 import { ALL_FIELDS, EXCLUDE_FIELD, INCLUDE_FIELD } from '../constants';
 
-import { RSQuery } from 'src/types/types';
+import { QueryMap, RSQuery } from 'src/types/types';
+import { getSearchQuery } from './search';
+import { getTermQuery } from './term';
+import { getGeoQuery } from './geo';
+import { getRangeQuery } from './range';
 
 export const getIncludeExcludeFields = (query: RSQuery<any>): any => {
 	let { includeFields = [], excludeFields = [] } = query;
@@ -52,4 +56,124 @@ export const getIncludeExcludeFields = (query: RSQuery<any>): any => {
 	}
 
 	return null;
+};
+
+export const getQueriesMap = (queries: RSQuery<any>[]): QueryMap => {
+	const res: QueryMap = {};
+	queries.forEach((item) => {
+		let itemId: string = item.id || `${Date.now()}`;
+		res[itemId] = {
+			rsQuery: item,
+			mongoQuery: {},
+		};
+
+		if (item.type === `search`) {
+			res[itemId].mongoQuery = getSearchQuery(item);
+		}
+
+		if (item.type === `geo`) {
+			res[itemId].mongoQuery = getGeoQuery(item);
+		}
+
+		if (item.type == `term`) {
+			res[itemId].mongoQuery = getTermQuery(item);
+		}
+
+		if (item.type == `range`) {
+			res[itemId].mongoQuery = getRangeQuery(item);
+		}
+	});
+
+	return res;
+};
+
+// TODO handle term query
+// handle default query
+// handle customQuery
+
+export const buildQueryPipeline = (queryMap: QueryMap): any => {
+	const res = queryMap;
+
+	Object.keys(queryMap).forEach((item) => {
+		const { rsQuery, mongoQuery } = queryMap[item];
+
+		if (rsQuery.react) {
+			let andQuery = [];
+			let orQuery = [];
+			let currentSearch: any = null;
+			const isTermQuery = rsQuery.type === 'term';
+			if (!isTermQuery) {
+				currentSearch = mongoQuery[0].$search;
+			}
+
+			// must query
+			if (rsQuery.react.and) {
+				if (Array.isArray(rsQuery.react.and)) {
+					rsQuery.react.and.forEach((andItem) => {
+						const relevantQuery = queryMap[andItem].mongoQuery;
+						if (!isTermQuery) {
+							andQuery.push(relevantQuery[0].$search);
+						}
+					});
+				} else {
+					const relevantQuery = queryMap[rsQuery.react.and].mongoQuery;
+					if (
+						rsQuery.type === 'search' ||
+						rsQuery === 'range' ||
+						rsQuery === 'geo'
+					) {
+						andQuery.push(relevantQuery[0].$search);
+					}
+				}
+			}
+
+			// should query
+			if (rsQuery.react.or) {
+				if (Array.isArray(rsQuery.react.or)) {
+					rsQuery.react.or.forEach((andItem) => {
+						const relevantQuery = queryMap[andItem].mongoQuery;
+						if (
+							rsQuery.type === 'search' ||
+							rsQuery === 'range' ||
+							rsQuery === 'geo'
+						) {
+							orQuery.push(relevantQuery[0].$search);
+						}
+					});
+				} else {
+					const relevantQuery = queryMap[rsQuery.react.or].mongoQuery;
+					if (
+						rsQuery.type === 'search' ||
+						rsQuery === 'range' ||
+						rsQuery === 'geo'
+					) {
+						orQuery.push(relevantQuery[0].$search);
+					}
+				}
+			}
+
+			let index = currentSearch.index;
+
+			if (index) {
+				delete currentSearch.index;
+			}
+
+			let compoundQuery: any = {
+				$search: {
+					compound: {
+						must: [currentSearch, ...andQuery],
+						should: [currentSearch, ...orQuery],
+					},
+				},
+			};
+
+			if (index) {
+				compoundQuery.$search.index = index;
+			}
+
+			res[item].mongoQuery = [compoundQuery, ...mongoQuery.slice(1)];
+		}
+	});
+
+	return res;
 };

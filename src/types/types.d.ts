@@ -109,7 +109,7 @@ export type RSQuery<T> = {
 
 	type?: QueryType;
 
-	react?: Object;
+	react?: { and?: string | string[]; or?: string | string[] };
 
 	queryFormat?: QueryFormat;
 
@@ -179,3 +179,11 @@ export type MIC_STATUS = {
 	active: `ACTIVE`;
 	denied: `DENIED`;
 };
+
+export type QueryMap = Record<
+	string,
+	{
+		rsQuery: RSQuery<any>;
+		mongoQuery: any;
+	}
+>;
