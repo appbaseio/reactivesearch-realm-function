@@ -1,4 +1,4 @@
-import { GeoValue } from 'src/types';
+import { GeoValue } from 'src/types/types';
 
 export const validateGeoValue = (val: GeoValue) => {
 	if (!val.location && !val.geoBoundingBox) {

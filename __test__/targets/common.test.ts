@@ -5,13 +5,11 @@ test('getIncludeExcludeFields when * is in excludeFields', () => {
 		excludeFields: ['*'],
 		includeFields: ['*'],
 	});
-	const expected = [
-		{
-			$project: {
-				_0923biu3g4h: 1,
-			},
+	const expected = {
+		$project: {
+			_0923biu3g4h: 1,
 		},
-	];
+	};
 	// Snapshot demo
 	expect(result).toStrictEqual(expected);
 });
@@ -21,7 +19,7 @@ test('getIncludeExcludeFields when * is in includeFields and excludeFields is em
 		excludeFields: [],
 		includeFields: ['*'],
 	});
-	const expected: [] = [];
+	const expected = null;
 	// Snapshot demo
 	expect(result).toStrictEqual(expected);
 });
@@ -31,13 +29,11 @@ test('getIncludeExcludeFields when * is in includeFields and excludeFields conta
 		excludeFields: ['test'],
 		includeFields: ['*'],
 	});
-	const expected: [{ $project: {} }] = [
-		{
-			$project: {
-				test: 0,
-			},
+	const expected: any = {
+		$project: {
+			test: 0,
 		},
-	];
+	};
 	// Snapshot demo
 	expect(result).toStrictEqual(expected);
 });
@@ -47,13 +43,11 @@ test('getIncludeExcludeFields when * is in excludeFields and includeFields conta
 		excludeFields: ['*'],
 		includeFields: ['test'],
 	});
-	const expected: [{ $project: {} }] = [
-		{
-			$project: {
-				_0923biu3g4h: 1,
-			},
+	const expected: any = {
+		$project: {
+			_0923biu3g4h: 1,
 		},
-	];
+	};
 	// Snapshot demo
 	expect(result).toStrictEqual(expected);
 });
@@ -63,15 +57,13 @@ test('getIncludeExcludeFields when includeFields and excludeFields contains some
 		excludeFields: ['test'],
 		includeFields: ['test1', 'test2'],
 	});
-	const expected: [{ $project: {} }] = [
-		{
-			$project: {
-				test: 0,
-				test1: 1,
-				test2: 1,
-			},
+	const expected: { $project: {} } = {
+		$project: {
+			test: 0,
+			test1: 1,
+			test2: 1,
 		},
-	];
+	};
 	// Snapshot demo
 	expect(result).toStrictEqual(expected);
 });
