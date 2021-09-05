@@ -1,4 +1,9 @@
-import { ALL_FIELDS, EXCLUDE_FIELD, INCLUDE_FIELD } from '../constants';
+import {
+	ALL_FIELDS,
+	EXCLUDE_FIELD,
+	FUZZINESS_AUTO,
+	INCLUDE_FIELD,
+} from '../constants';
 
 import { RSQuery } from 'src/types/types';
 
@@ -46,4 +51,43 @@ export const getIncludeExcludeFields = (query: RSQuery<any>): any[] => {
 		$project: { ...excludeAggregation, ...includeAggregation },
 	});
 	return aggPipeline;
+};
+
+export const getFuzziness = (
+	query: RSQuery<string>,
+):
+	| {
+			fuzzy: {
+				maxEdits: number;
+			};
+	  }
+	| {} => {
+	const queryLength = query?.value?.length || 0;
+	let fuzziness: string | number | undefined = query.fuzziness;
+
+	if (fuzziness === undefined) {
+		return {};
+	}
+
+	if (typeof fuzziness === 'string') {
+		if (fuzziness.toUpperCase() === FUZZINESS_AUTO) {
+			if (queryLength > 5) {
+				fuzziness = 2;
+			} else if (queryLength >= 3) {
+				fuzziness = 1;
+			} else {
+				fuzziness = 0;
+			}
+		} else {
+			return {};
+		}
+	}
+	if (fuzziness > 2) {
+		throw new Error("Fuzziness value can't be greater than 2");
+	}
+	return {
+		fuzzy: {
+			maxEdits: fuzziness,
+		},
+	};
 };
