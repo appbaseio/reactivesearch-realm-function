@@ -1,25 +1,36 @@
-import { ASCENDING, DESCENDING } from '../../src/constants';
-
 import { RSQuery } from 'src/types/types';
+import { ASCENDING, DESCENDING } from 'src/constants';
+import { getIncludeExcludeFields } from './common';
 
 // TODO set return type
 export const getSearchQuery = (query: RSQuery<string>): any => {
-	const search: any = {
-		text: {
-			query: query.value,
-			path: query.dataField,
-		},
-	};
+	const res: any = [];
 
-	if (query.index) {
-		search.index = query.index;
+	if (query.value) {
+		const search: any = {
+			text: {
+				query: query.value,
+				path: query.dataField,
+			},
+		};
+
+		if (query.index) {
+			search.index = query.index;
+		}
+
+		res.push({ $search: search });
 	}
+	const projectTarget = getIncludeExcludeFields(query);
+	if (projectTarget) {
+		res.push(projectTarget);
+	}
+	if (query.sortBy) {
+		res.push(getSearchSortByQuery(query));
+	}
+	res.push({ $limit: query.size || 10 });
+	res.push({ $skip: query.from || 0 });
 
-	return [
-		{ $search: search },
-		{ $limit: query.size || 10 },
-		{ $skip: query.from || 0 },
-	];
+	return res;
 };
 
 export const getSearchSortByQuery = (query: RSQuery<string>): any => {

@@ -1,5 +1,6 @@
-import { RSQuery, GeoPoint, GeoValue } from 'src/types';
+import { RSQuery, GeoPoint, GeoValue } from 'src/types/types';
 import { validateGeoValue } from 'src/validators/geo';
+import { getIncludeExcludeFields } from './common';
 
 const convertToMeter = (distance: number, unit: string): number => {
 	switch (unit) {
@@ -132,13 +133,18 @@ export const getGeoQuery = (query: RSQuery<GeoValue>): any => {
 			search.index = query.index;
 		}
 
-		return [
+		const res: any[] = [
 			{
 				$search: search,
 			},
-			{ $limit: query.size || 10 },
-			{ $skip: query.from || 0 },
 		];
+		const projectTarget = getIncludeExcludeFields(query);
+		if (projectTarget) {
+			res.push(projectTarget);
+		}
+		res.push({ $limit: query.size || 10 });
+		res.push({ $skip: query.from || 0 });
+		return res;
 	} catch (err) {
 		throw err;
 	}

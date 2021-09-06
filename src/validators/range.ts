@@ -1,4 +1,4 @@
-import { RangeValue } from 'src/types';
+import { RangeValue } from 'src/types/types';
 
 export const validateRangeValue = (value?: RangeValue) => {
 	if (value) {

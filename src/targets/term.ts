@@ -1,4 +1,4 @@
-import { RSQuery, SingleDataField } from 'src/types';
+import { RSQuery, SingleDataField } from 'src/types/types';
 import { validateSingleDataField } from 'src/validators/common';
 
 // TODO set return type

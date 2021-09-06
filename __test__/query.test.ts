@@ -1,14 +1,10 @@
-const { Realm } = require('../');
+import { Realm } from '../src';
+
+// Runs integration tests
 
 const mongoURL = `mongodb//real-function-url1`;
 const ref = new Realm({
 	url: mongoURL,
-});
-
-describe(`object creation tests`, () => {
-	it(`creates object with passed url`, () => {
-		expect(ref.config.url).toEqual(mongoURL);
-	});
 });
 
 describe(`generates search query correctly`, () => {
@@ -32,30 +28,27 @@ describe(`generates search query correctly`, () => {
 
 	console.log(`text query: `, JSON.stringify(query));
 	it(`should have correct mongo format for searchQuery`, () => {
-		const expected = {
-			$search: { text: { query: `room`, path: [`name`] } },
-		};
+		const expected = [
+			{
+				$search: { text: { query: `room`, path: [`name`] } },
+			},
+			{
+				$limit: 10,
+			},
+			{
+				$skip: 0,
+			},
+		];
 		expect(query[0]).toStrictEqual(expected);
 	});
 
-	it(`should have default limit`, () => {
-		const limitObj = query.find((item) => item.$limit !== undefined);
-		expect(limitObj.$limit).toEqual(10);
-	});
-
-	it(`should have default skip`, () => {
-		const skipObj = query.find((item) => item.$skip !== undefined);
-		expect(skipObj.$skip).toEqual(0);
-	});
-
-	it(`should have user defined limit`, () => {
-		const skipObj = query.find((item) => item.$limit === testQuery[1].size);
-		expect(skipObj.$limit).toEqual(20);
-	});
-
-	it(`should have user defined skip`, () => {
-		const skipObj = query.find((item) => item.$skip === testQuery[1].from);
-		expect(skipObj.$skip).toEqual(10);
+	it(`should have user defined limit and skip`, () => {
+		const expected = [
+			{ $search: { text: { query: 'room', path: ['name'] } } },
+			{ $limit: 20 },
+			{ $skip: 10 },
+		];
+		expect(query[1]).toStrictEqual(expected);
 	});
 });
 
@@ -90,41 +83,57 @@ describe(`generate geo query correctly`, () => {
 	const query = ref.query(testQuery);
 	console.log(`geo query: `, JSON.stringify(query));
 	it(`should have correct mongo format for geo query`, () => {
-		const expected = {
-			$search: {
-				geoWithin: {
-					circle: {
-						center: {
-							type: 'Point',
-							coordinates: [50, 40],
+		const expected = [
+			{
+				$search: {
+					geoWithin: {
+						circle: {
+							center: {
+								type: 'Point',
+								coordinates: [50, 40],
+							},
+							radius: 8046.7,
 						},
-						radius: 8046.7,
+						path: ['location'],
 					},
-					path: [`location`],
 				},
 			},
-		};
+			{
+				$limit: 20,
+			},
+			{
+				$skip: 10,
+			},
+		];
 		expect(query[0]).toStrictEqual(expected);
 	});
 	it(`should have correct mongo format for geo bounding query`, () => {
-		const expected = {
-			$search: {
-				geoWithin: {
-					box: {
-						bottomLeft: {
-							type: 'Point',
-							coordinates: [20, 60],
+		const expected = [
+			{
+				$search: {
+					geoWithin: {
+						box: {
+							bottomLeft: {
+								type: 'Point',
+								coordinates: [20, 60],
+							},
+							topRight: {
+								type: 'Point',
+								coordinates: [40, 30],
+							},
 						},
-						topRight: {
-							type: 'Point',
-							coordinates: [40, 30],
-						},
+						path: ['location'],
 					},
-					path: [`location`],
 				},
 			},
-		};
-		expect(query[3]).toStrictEqual(expected);
+			{
+				$limit: 20,
+			},
+			{
+				$skip: 10,
+			},
+		];
+		expect(query[1]).toStrictEqual(expected);
 	});
 });
 
@@ -169,24 +178,41 @@ describe(`generates range query correctly`, () => {
 	console.log(`range query: `, JSON.stringify(query));
 
 	it(`should have correct mongo format for range query`, () => {
-		const expected = {
-			$search: {
-				range: { path: 'accommodates', gte: 1, lte: 20, score: { boost: 1 } },
+		const expected = [
+			{
+				$search: {
+					range: {
+						path: 'accommodates',
+						gte: 1,
+						lte: 20,
+						score: {
+							boost: 1,
+						},
+					},
+				},
 			},
-		};
+			{
+				$limit: 10,
+			},
+			{
+				$skip: 0,
+			},
+		];
 		expect(query[0]).toStrictEqual(expected);
 	});
 
-	it(`should have correct min query`, () => {
-		const expected = {
-			$group: { _id: null, min: { $min: '$accommodates' } },
-		};
-		expect(query[6]).toStrictEqual(expected);
-	});
-
-	it(`should have correct max query`, () => {
-		const expected = { $group: { _id: null, max: { $max: '$accommodates' } } };
-		expect(query[7]).toStrictEqual(expected);
+	it(`should have correct min and max query`, () => {
+		expect(query[1][3]).toStrictEqual({
+			$group: {
+				_id: null,
+				min: {
+					$min: '$accommodates',
+				},
+			},
+		});
+		expect(query[1][4]).toStrictEqual({
+			$group: { _id: null, max: { $max: '$accommodates' } },
+		});
 	});
 
 	it(`should have correct histogram query`, () => {
@@ -197,28 +223,48 @@ describe(`generates range query correctly`, () => {
 				default: 'other',
 			},
 		};
-		expect(query[8]).toStrictEqual(expected);
+		expect(query[1][5]).toStrictEqual(expected);
 	});
 
 	it(`should have compound query for includeNullValues `, () => {
-		const expected = {
-			$search: {
-				compound: {
-					should: [
-						{
-							range: {
-								path: 'accommodates',
-								gte: 1,
-								lte: 20,
-								score: { boost: 1 },
+		const expected = [
+			{
+				$search: {
+					compound: {
+						should: [
+							{
+								range: {
+									path: 'accommodates',
+									gte: 1,
+									lte: 20,
+									score: {
+										boost: 1,
+									},
+								},
 							},
-						},
-						{ compound: { mustNot: [{ exists: { path: 'accommodates' } }] } },
-					],
+							{
+								compound: {
+									mustNot: [
+										{
+											exists: {
+												path: 'accommodates',
+											},
+										},
+									],
+								},
+							},
+						],
+					},
 				},
 			},
-		};
-		expect(query[9]).toStrictEqual(expected);
+			{
+				$limit: 10,
+			},
+			{
+				$skip: 0,
+			},
+		];
+		expect(query[2]).toStrictEqual(expected);
 	});
 });
 
@@ -236,20 +282,18 @@ describe(`generate term query correctly`, () => {
 	const query = ref.query(testQuery);
 	console.log(`term query: `, JSON.stringify(query));
 	it(`should have correct mongo format for term query`, () => {
-		const expected = {
-			$facet: {
-				aggs: [
-					{ $unwind: `$property_type` },
-					{ $sortByCount: `$property_type` },
-					{
-						$sort: {
-							_id: 1,
-						},
-					},
-					{ $limit: 3 },
-				],
+		const expected = [
+			{
+				$facet: {
+					aggs: [
+						{ $unwind: '$property_type' },
+						{ $sortByCount: '$property_type' },
+						{ $sort: { _id: 1 } },
+						{ $limit: 3 },
+					],
+				},
 			},
-		};
+		];
 		expect(query[0]).toStrictEqual(expected);
 	});
 });
