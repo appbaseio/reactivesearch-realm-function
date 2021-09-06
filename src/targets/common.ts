@@ -91,6 +91,9 @@ export const getFuzziness = (
 	if (fuzziness > 2) {
 		throw new Error("Fuzziness value can't be greater than 2");
 	}
+	if (fuzziness === 0) {
+		return {};
+	}
 	return {
 		fuzzy: {
 			maxEdits: fuzziness,

@@ -145,10 +145,15 @@ test('getFuzziness when fuzziness is auto and query length is less than 3', () =
 		value: '12',
 		fuzziness: 'AUTO',
 	});
-	const expected = {
-		fuzzy: {
-			maxEdits: 0,
-		},
-	};
+	const expected = {};
+	expect(result).toStrictEqual(expected);
+});
+
+test('getFuzziness when fuzziness is 0', () => {
+	const result = getFuzziness({
+		value: '12',
+		fuzziness: 0,
+	});
+	const expected = {};
 	expect(result).toStrictEqual(expected);
 });
