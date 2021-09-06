@@ -64,9 +64,11 @@ const convertLocation = (location: GeoPoint | string | [number, number]) => {
 export const getGeoQuery = (query: RSQuery<GeoValue>): any => {
 	try {
 		const val = <GeoValue>{ ...query.value };
-		let search: any = {};
 
 		validateGeoValue(val);
+
+		let res: any = [];
+		let search: any = {};
 
 		// geo point query
 		if (val.location) {
@@ -129,21 +131,25 @@ export const getGeoQuery = (query: RSQuery<GeoValue>): any => {
 			};
 		}
 
+		const compoundQuery: any = {
+			compound: {
+				should: [search],
+			},
+		};
+
 		if (query.index) {
-			search.index = query.index;
+			compoundQuery.index = query.index;
 		}
 
-		const res: any[] = [
-			{
-				$search: search,
-			},
-		];
+		res = [{ $search: compoundQuery }];
+
 		const projectTarget = getIncludeExcludeFields(query);
 		if (projectTarget) {
 			res.push(projectTarget);
 		}
 		res.push({ $limit: query.size || 10 });
 		res.push({ $skip: query.from || 0 });
+
 		return res;
 	} catch (err) {
 		throw err;

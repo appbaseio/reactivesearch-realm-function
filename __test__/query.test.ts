@@ -30,7 +30,9 @@ describe(`generates search query correctly`, () => {
 	it(`should have correct mongo format for searchQuery`, () => {
 		const expected = [
 			{
-				$search: { text: { query: `room`, path: [`name`] } },
+				$search: {
+					compound: { should: [{ text: { query: `room`, path: [`name`] } }] },
+				},
 			},
 			{
 				$limit: 10,
@@ -44,7 +46,11 @@ describe(`generates search query correctly`, () => {
 
 	it(`should have user defined limit and skip`, () => {
 		const expected = [
-			{ $search: { text: { query: 'room', path: ['name'] } } },
+			{
+				$search: {
+					compound: { should: [{ text: { query: 'room', path: ['name'] } }] },
+				},
+			},
 			{ $limit: 20 },
 			{ $skip: 10 },
 		];
@@ -86,15 +92,21 @@ describe(`generate geo query correctly`, () => {
 		const expected = [
 			{
 				$search: {
-					geoWithin: {
-						circle: {
-							center: {
-								type: 'Point',
-								coordinates: [50, 40],
+					compound: {
+						should: [
+							{
+								geoWithin: {
+									circle: {
+										center: {
+											type: 'Point',
+											coordinates: [50, 40],
+										},
+										radius: 8046.7,
+									},
+									path: ['location'],
+								},
 							},
-							radius: 8046.7,
-						},
-						path: ['location'],
+						],
 					},
 				},
 			},
@@ -111,18 +123,24 @@ describe(`generate geo query correctly`, () => {
 		const expected = [
 			{
 				$search: {
-					geoWithin: {
-						box: {
-							bottomLeft: {
-								type: 'Point',
-								coordinates: [20, 60],
+					compound: {
+						should: [
+							{
+								geoWithin: {
+									box: {
+										bottomLeft: {
+											type: 'Point',
+											coordinates: [20, 60],
+										},
+										topRight: {
+											type: 'Point',
+											coordinates: [40, 30],
+										},
+									},
+									path: ['location'],
+								},
 							},
-							topRight: {
-								type: 'Point',
-								coordinates: [40, 30],
-							},
-						},
-						path: ['location'],
+						],
 					},
 				},
 			},
@@ -181,13 +199,19 @@ describe(`generates range query correctly`, () => {
 		const expected = [
 			{
 				$search: {
-					range: {
-						path: 'accommodates',
-						gte: 1,
-						lte: 20,
-						score: {
-							boost: 1,
-						},
+					compound: {
+						should: [
+							{
+								range: {
+									path: 'accommodates',
+									gte: 1,
+									lte: 20,
+									score: {
+										boost: 1,
+									},
+								},
+							},
+						],
 					},
 				},
 			},
