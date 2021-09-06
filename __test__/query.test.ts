@@ -26,7 +26,6 @@ describe(`generates search query correctly`, () => {
 	];
 	const query = ref.query(testQuery);
 
-	console.log(`text query: `, JSON.stringify(query));
 	it(`should have correct mongo format for searchQuery`, () => {
 		const expected = [
 			{
@@ -81,7 +80,6 @@ describe(`generate geo query correctly`, () => {
 		},
 	];
 	const query = ref.query(testQuery);
-	console.log(`geo query: `, JSON.stringify(query));
 	it(`should have correct mongo format for geo query`, () => {
 		const expected = [
 			{
@@ -174,8 +172,6 @@ describe(`generates range query correctly`, () => {
 		},
 	];
 	const query = ref.query(testQuery);
-
-	console.log(`range query: `, JSON.stringify(query));
 
 	it(`should have correct mongo format for range query`, () => {
 		const expected = [
@@ -280,7 +276,6 @@ describe(`generate term query correctly`, () => {
 	];
 
 	const query = ref.query(testQuery);
-	console.log(`term query: `, JSON.stringify(query));
 	it(`should have correct mongo format for term query`, () => {
 		const expected = [
 			{

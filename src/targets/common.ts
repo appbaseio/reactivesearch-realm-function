@@ -47,6 +47,13 @@ export const getIncludeExcludeFields = (query: RSQuery<any>): any => {
 		$project: { ...excludeAggregation, ...includeAggregation },
 	};
 
+	if (query.highlight) {
+		res.$project = {
+			...res.$project,
+			highlights: { $meta: 'searchHighlights' },
+		};
+	}
+
 	if (Object.keys(res).length) {
 		return res;
 	}

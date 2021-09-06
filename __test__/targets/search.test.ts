@@ -1,4 +1,7 @@
-import { getSearchSortByQuery } from '../../src/targets/search';
+import {
+	getHighlightQuery,
+	getSearchSortByQuery,
+} from '../../src/targets/search';
 
 test('getSearchSortByQuery when no datafield is mentioned', () => {
 	const result = getSearchSortByQuery({});
@@ -99,6 +102,130 @@ test('getSearchSortByQuery when datafield is an object array and order by is asc
 	const expected = {
 		$sort: {
 			data1: -1,
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getHighlightQuery when highlight is missing', () => {
+	const result = getHighlightQuery({
+		dataField: [
+			{ field: 'data1', weight: 1 },
+			{ field: 'data2', weight: 1 },
+			{ field: 'data3', weight: 1 },
+		],
+		sortBy: `desc`,
+	});
+	const expected = {};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getHighlightQuery when highlight is false', () => {
+	const result = getHighlightQuery({
+		dataField: [
+			{ field: 'data1', weight: 1 },
+			{ field: 'data2', weight: 1 },
+			{ field: 'data3', weight: 1 },
+		],
+		sortBy: `desc`,
+		highlight: false,
+	});
+	const expected = {};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getHighlightQuery when highlight is true and datafield is an array of DataField', () => {
+	const result = getHighlightQuery({
+		dataField: [
+			{ field: 'data1', weight: 1 },
+			{ field: 'data2', weight: 1 },
+			{ field: 'data3', weight: 1 },
+		],
+		sortBy: `desc`,
+		highlight: true,
+	});
+	const expected = {
+		highlight: {
+			path: ['data1', 'data2', 'data3'],
+			maxCharsToExamine: 500000,
+			maxNumPassages: 5,
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getHighlightQuery when highlight is true and datafield is an array of DataField', () => {
+	const result = getHighlightQuery({
+		dataField: [
+			{ field: 'data1', weight: 1 },
+			{ field: 'data2', weight: 1 },
+			{ field: 'data3', weight: 1 },
+		],
+		sortBy: `desc`,
+		highlight: true,
+	});
+	const expected = {
+		highlight: {
+			path: ['data1', 'data2', 'data3'],
+			maxCharsToExamine: 500000,
+			maxNumPassages: 5,
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getHighlightQuery when highlight is true and datafield is an array of string', () => {
+	const result = getHighlightQuery({
+		dataField: ['data1', 'data2', 'data3'],
+		sortBy: `desc`,
+		highlight: true,
+	});
+	const expected = {
+		highlight: {
+			path: ['data1', 'data2', 'data3'],
+			maxCharsToExamine: 500000,
+			maxNumPassages: 5,
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getHighlightQuery when highlight is true and highlightField is a string', () => {
+	const result = getHighlightQuery({
+		dataField: 'data',
+		sortBy: `desc`,
+		highlight: true,
+		highlightField: 'field1',
+	});
+	const expected = {
+		highlight: {
+			path: ['field1'],
+			maxCharsToExamine: 500000,
+			maxNumPassages: 5,
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getHighlightQuery when highlight is true and highlightField is an array', () => {
+	const result = getHighlightQuery({
+		dataField: 'data',
+		sortBy: `desc`,
+		highlight: true,
+		highlightField: ['field1', 'field2'],
+	});
+	const expected = {
+		highlight: {
+			path: ['field1', 'field2'],
+			maxCharsToExamine: 500000,
+			maxNumPassages: 5,
 		},
 	};
 	// Snapshot demo
