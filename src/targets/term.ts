@@ -1,5 +1,5 @@
-import { RSQuery, SingleDataField } from 'src/types/types';
-import { validateSingleDataField } from 'src/validators/common';
+import { RSQuery, SingleDataField } from '../types/types';
+import { validateSingleDataField } from '../validators/common';
 
 // TODO set return type
 export const getTermQuery = (

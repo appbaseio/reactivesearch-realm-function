@@ -119,11 +119,7 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 					});
 				} else {
 					const relevantQuery = queryMap[rsQuery.react.and].mongoQuery;
-					if (
-						rsQuery.type === 'search' ||
-						rsQuery === 'range' ||
-						rsQuery === 'geo'
-					) {
+					if (!isTermQuery) {
 						andQuery.push(relevantQuery[0].$search);
 					}
 				}
@@ -134,21 +130,13 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 				if (Array.isArray(rsQuery.react.or)) {
 					rsQuery.react.or.forEach((andItem) => {
 						const relevantQuery = queryMap[andItem].mongoQuery;
-						if (
-							rsQuery.type === 'search' ||
-							rsQuery === 'range' ||
-							rsQuery === 'geo'
-						) {
+						if (!isTermQuery) {
 							orQuery.push(relevantQuery[0].$search);
 						}
 					});
 				} else {
 					const relevantQuery = queryMap[rsQuery.react.or].mongoQuery;
-					if (
-						rsQuery.type === 'search' ||
-						rsQuery === 'range' ||
-						rsQuery === 'geo'
-					) {
+					if (!isTermQuery) {
 						orQuery.push(relevantQuery[0].$search);
 					}
 				}

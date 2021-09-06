@@ -1,5 +1,5 @@
 import { RSQuery } from 'src/types/types';
-import { ASCENDING, DESCENDING } from 'src/constants';
+import { ASCENDING, DESCENDING } from '../constants';
 import { getIncludeExcludeFields } from './common';
 
 // TODO set return type

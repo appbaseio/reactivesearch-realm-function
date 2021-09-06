@@ -1,5 +1,5 @@
-import { RSQuery, GeoPoint, GeoValue } from 'src/types/types';
-import { validateGeoValue } from 'src/validators/geo';
+import { RSQuery, GeoPoint, GeoValue } from '../types/types';
+import { validateGeoValue } from '../validators/geo';
 import { getIncludeExcludeFields } from './common';
 
 const convertToMeter = (distance: number, unit: string): number => {

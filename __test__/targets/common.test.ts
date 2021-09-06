@@ -1,9 +1,9 @@
 import {
 	getIncludeExcludeFields,
-	getQueriesMap,
-	buildQueryPipeline,
+	// getQueriesMap,
+	// buildQueryPipeline,
 } from '../../src/targets/common';
-import { RSQuery } from '../../src/types/types';
+// import { RSQuery } from '../../src/types/types';
 
 test('getIncludeExcludeFields when * is in excludeFields', () => {
 	const result = getIncludeExcludeFields({
@@ -73,66 +73,66 @@ test('getIncludeExcludeFields when includeFields and excludeFields contains some
 	expect(result).toStrictEqual(expected);
 });
 
-test('buildQueryPipeline get mongo compound queries', () => {
-	const testQuery: RSQuery<any>[] = [
-		{
-			id: `searchQuery`,
-			value: `room`,
-			dataField: [`name`],
-			type: `search`,
-		},
-		{
-			id: `geoQuery`,
-			value: {
-				distance: 5,
-				location: '50, 40',
-				unit: 'mi',
-			},
-			dataField: [`location`],
-			type: `geo`,
-			react: {
-				and: 'searchQuery',
-			},
-		},
-	];
+// test('buildQueryPipeline get mongo compound queries', () => {
+// 	const testQuery: RSQuery<any>[] = [
+// 		{
+// 			id: `searchQuery`,
+// 			value: `room`,
+// 			dataField: [`name`],
+// 			type: `search`,
+// 		},
+// 		{
+// 			id: `geoQuery`,
+// 			value: {
+// 				distance: 5,
+// 				location: '50, 40',
+// 				unit: 'mi',
+// 			},
+// 			dataField: [`location`],
+// 			type: `geo`,
+// 			react: {
+// 				and: 'searchQuery',
+// 			},
+// 		},
+// 	];
 
-	const expected = {
-		$search: {
-			compound: {
-				must: [
-					{
-						geoWithin: {
-							circle: {
-								center: {
-									type: 'Point',
-									coordinates: [50, 40],
-								},
-								radius: 8046.7,
-							},
-							path: ['location'],
-						},
-					},
-				],
-				should: [
-					{
-						geoWithin: {
-							circle: {
-								center: {
-									type: 'Point',
-									coordinates: [50, 40],
-								},
-								radius: 8046.7,
-							},
-							path: ['location'],
-						},
-					},
-				],
-			},
-		},
-	};
+// 	const expected = {
+// 		$search: {
+// 			compound: {
+// 				must: [
+// 					{
+// 						geoWithin: {
+// 							circle: {
+// 								center: {
+// 									type: 'Point',
+// 									coordinates: [50, 40],
+// 								},
+// 								radius: 8046.7,
+// 							},
+// 							path: ['location'],
+// 						},
+// 					},
+// 				],
+// 				should: [
+// 					{
+// 						geoWithin: {
+// 							circle: {
+// 								center: {
+// 									type: 'Point',
+// 									coordinates: [50, 40],
+// 								},
+// 								radius: 8046.7,
+// 							},
+// 							path: ['location'],
+// 						},
+// 					},
+// 				],
+// 			},
+// 		},
+// 	};
 
-	const qmap = getQueriesMap(testQuery);
-	const result = buildQueryPipeline(qmap);
-	console.log(JSON.stringify(result));
-	expect(result[1][0]).toStrictEqual(expected);
-});
+// 	const qmap = getQueriesMap(testQuery);
+// 	const result = buildQueryPipeline(qmap);
+// 	console.log(JSON.stringify(result));
+// 	expect(result[1][0]).toStrictEqual(expected);
+// });
