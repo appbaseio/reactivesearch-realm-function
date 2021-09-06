@@ -7,16 +7,15 @@ import { getIncludeExcludeFields } from './common';
 // TODO set return type
 export const getRangeQuery = (query: RSQuery<RangeValue>): any => {
 	try {
-		let res: any = [];
 		validateSingleDataField(<SingleDataField>query.dataField);
 		validateRangeValue(query.value);
 
-		// if (query.size) {
+		let res: any = [];
 		const field = Array.isArray(query.dataField)
 			? query.dataField[0]
 			: query.dataField;
 
-		let search: any = {
+		const search: any = {
 			range: {
 				path: field,
 			},
@@ -36,47 +35,35 @@ export const getRangeQuery = (query: RSQuery<RangeValue>): any => {
 			};
 		}
 
+		const compoundQuery: any = {
+			compound: {
+				should: [search],
+			},
+		};
+
 		if (query.index) {
-			search.index = query.index;
+			compoundQuery.index = query.index;
 		}
 
-		res = [
-			{
-				$search: search,
-			},
-		];
-
 		if (query.includeNullValues) {
-			search = {
+			compoundQuery.compound.should.push({
 				compound: {
-					should: [
-						{ range: search.range },
+					mustNot: [
 						{
-							compound: {
-								mustNot: [
-									{
-										exists: {
-											path: `${field}`,
-										},
-									},
-								],
+							exists: {
+								path: `${field}`,
 							},
 						},
 					],
 				},
-			};
-
-			if (query.index) {
-				search.index = query.index;
-			}
-
-			res = [
-				{
-					$search: search,
-				},
-			];
+			});
 		}
-		// }
+
+		res = [
+			{
+				$search: compoundQuery,
+			},
+		];
 
 		const projectTarget = getIncludeExcludeFields(query);
 		if (projectTarget) {
