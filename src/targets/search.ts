@@ -4,7 +4,7 @@ import { getIncludeExcludeFields } from './common';
 
 // TODO set return type
 export const getSearchQuery = (query: RSQuery<string>): any => {
-	const res: any = [];
+	let res: any = [];
 
 	if (query.value) {
 		const search: any = {
@@ -14,19 +14,27 @@ export const getSearchQuery = (query: RSQuery<string>): any => {
 			},
 		};
 
+		const compoundQuery: any = {
+			compound: {
+				should: [search],
+			},
+		};
+
 		if (query.index) {
-			search.index = query.index;
+			compoundQuery.index = query.index;
 		}
 
-		res.push({ $search: search });
+		res.push({ $search: compoundQuery });
 	}
 	const projectTarget = getIncludeExcludeFields(query);
 	if (projectTarget) {
 		res.push(projectTarget);
 	}
+
 	if (query.sortBy) {
 		res.push(getSearchSortByQuery(query));
 	}
+
 	res.push({ $limit: query.size || 10 });
 	res.push({ $skip: query.from || 0 });
 
