@@ -149,7 +149,7 @@ export type RSQuery<T> = {
 
 	highlightField?: string | Array<string>;
 
-	customHighlight?: Object;
+	customHighlight?: { maxCharsToExamine: number; maxNumPassages: number };
 
 	interval?: number;
 
@@ -166,6 +166,8 @@ export type RSQuery<T> = {
 	execute?: boolean;
 
 	enableSynonyms?: boolean;
+
+	synonymsField?: string;
 
 	selectAllLabel?: string;
 

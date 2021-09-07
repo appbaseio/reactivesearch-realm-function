@@ -1,6 +1,10 @@
-import { RSQuery } from 'src/types/types';
 import { ASCENDING, DESCENDING } from '../constants';
-import { getIncludeExcludeFields } from './common';
+import { DataField, RSQuery } from '../types/types';
+import {
+	getFieldsFromDataField,
+	getIncludeExcludeFields,
+	getSynonymsQuery,
+} from './common';
 
 // TODO set return type
 export const getSearchQuery = (query: RSQuery<string>): any => {
@@ -14,9 +18,16 @@ export const getSearchQuery = (query: RSQuery<string>): any => {
 			},
 		};
 
+		let shouldAggregation = [search];
+
+		const synonyms = getSynonymsQuery(query);
+		if (synonyms) {
+			shouldAggregation.push(synonyms);
+		}
+
 		const compoundQuery: any = {
 			compound: {
-				should: [search],
+				should: shouldAggregation,
 			},
 		};
 
@@ -50,24 +61,11 @@ export const getSearchSortByQuery = (query: RSQuery<string>): any => {
 		sortBy = query.sortBy === `asc` ? ASCENDING : DESCENDING;
 	}
 	if (query.dataField) {
-		if (Array.isArray(query.dataField)) {
-			if (query.dataField.length > 0) {
-				const queryField = query.dataField[0];
-				if (typeof queryField === 'string' || queryField instanceof String) {
-					field = queryField as string;
-				} else {
-					field = queryField.field;
-				}
-			} else {
-				/*
-					From MongoDB documentation
-					In the { <sort-key> } document, set the { $meta: "textScore" } expression 
-					to an arbitrary field name. The field name is ignored by the query system.
-				*/
-				return { $sort: { score: { $meta: 'textScore' }, [field]: sortBy } };
-			}
+		const _field = _getFirstDataFieldValue(query.dataField);
+		if (_field) {
+			field = _field;
 		} else {
-			field = query.dataField as string;
+			return { $sort: { score: { $meta: 'textScore' }, [field]: sortBy } };
 		}
 		return { $sort: { [field]: sortBy } };
 	} else {
@@ -77,5 +75,78 @@ export const getSearchSortByQuery = (query: RSQuery<string>): any => {
 			to an arbitrary field name. The field name is ignored by the query system.
 		*/
 		return { $sort: { score: { $meta: 'textScore' }, [field]: sortBy } };
+	}
+};
+
+export const getQueryStringQuery = (query: RSQuery<string>): any => {
+	const { queryString = false, dataField, value } = query;
+	if (queryString && dataField && value) {
+		const field = _getFirstDataFieldValue(dataField);
+		if (field) {
+			return {
+				queryString: {
+					defaultPath: field,
+					query: value,
+				},
+			};
+		}
+	}
+	return {};
+};
+
+const _getFirstDataFieldValue = (
+	dataField: string | Array<string | DataField>,
+): string | null => {
+	let field = null;
+	if (Array.isArray(dataField)) {
+		if (dataField.length > 0) {
+			const queryField = dataField[0];
+			if (typeof queryField === 'string' || queryField instanceof String) {
+				field = queryField as string;
+			} else {
+				field = queryField.field;
+			}
+		}
+	} else {
+		field = dataField as string;
+	}
+	return field;
+};
+
+export const getHighlightQuery = (query: RSQuery<string>): any => {
+	const {
+		highlight = false,
+		highlightField,
+		customHighlight,
+		dataField,
+	} = query;
+	const { maxCharsToExamine = 500000, maxNumPassages = 5 } =
+		customHighlight || {};
+
+	if (highlight) {
+		let fields: string[] = [];
+		if (highlightField) {
+			if (typeof highlightField === 'string') {
+				fields = [highlightField as string];
+			} else {
+				fields = highlightField as string[];
+			}
+		} else {
+			const _fields = getFieldsFromDataField(dataField);
+			if (_fields) {
+				fields = _fields;
+			} else {
+				return {};
+			}
+		}
+		return {
+			highlight: {
+				path: fields,
+				maxCharsToExamine,
+				maxNumPassages,
+			},
+		};
+	} else {
+		return {};
 	}
 };

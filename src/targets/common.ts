@@ -1,10 +1,36 @@
-import { ALL_FIELDS, EXCLUDE_FIELD, INCLUDE_FIELD } from '../constants';
-
-import { QueryMap, RSQuery } from 'src/types/types';
+import {
+	ALL_FIELDS,
+	EXCLUDE_FIELD,
+	FUZZINESS_AUTO,
+	INCLUDE_FIELD,
+} from '../constants';
+import { QueryMap, RSQuery, DataField } from '../types/types';
 import { getSearchQuery } from './search';
 import { getTermQuery } from './term';
 import { getGeoQuery } from './geo';
 import { getRangeQuery } from './range';
+
+export const getFieldsFromDataField = (
+	dataField: string | Array<string | DataField> | undefined,
+) => {
+	let fields = null;
+	if (dataField) {
+		if (typeof dataField === 'string') {
+			fields = [dataField];
+		} else {
+			// It's an array
+			if (dataField.length > 0) {
+				const queryField = dataField[0];
+				if (typeof queryField === 'string' || queryField instanceof String) {
+					fields = dataField as string[];
+				} else {
+					fields = dataField.map((value: any) => value.field);
+				}
+			}
+		}
+	}
+	return fields;
+};
 
 export const getIncludeExcludeFields = (query: RSQuery<any>): any => {
 	let { includeFields = [], excludeFields = [] } = query;
@@ -50,6 +76,13 @@ export const getIncludeExcludeFields = (query: RSQuery<any>): any => {
 	const res = {
 		$project: { ...excludeAggregation, ...includeAggregation },
 	};
+
+	if (query.highlight) {
+		res.$project = {
+			...res.$project,
+			highlights: { $meta: 'searchHighlights' },
+		};
+	}
 
 	if (Object.keys(res).length) {
 		return res;
@@ -307,4 +340,66 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 	});
 
 	return mongoPipelines;
+};
+export const getFuzziness = (
+	query: RSQuery<string>,
+):
+	| {
+			fuzzy: {
+				maxEdits: number;
+			};
+	  }
+	| {} => {
+	const queryLength = query?.value?.length || 0;
+	let fuzziness: string | number | undefined = query.fuzziness;
+
+	if (fuzziness === undefined) {
+		return {};
+	}
+
+	if (typeof fuzziness === 'string') {
+		if (fuzziness.toUpperCase() === FUZZINESS_AUTO) {
+			if (queryLength > 5) {
+				fuzziness = 2;
+			} else if (queryLength >= 3) {
+				fuzziness = 1;
+			} else {
+				fuzziness = 0;
+			}
+		} else {
+			return {};
+		}
+	}
+	if (fuzziness > 2) {
+		throw new Error("Fuzziness value can't be greater than 2");
+	}
+	if (fuzziness === 0) {
+		return {};
+	}
+	return {
+		fuzzy: {
+			maxEdits: fuzziness,
+		},
+	};
+};
+
+export const getSynonymsQuery = (query: RSQuery<string>): any => {
+	const { fuzziness, enableSynonyms, synonymsField, value, dataField } = query;
+	if (fuzziness && enableSynonyms) {
+		throw new Error("Fuzziness and Synonyms can't be used together");
+	}
+
+	if (enableSynonyms) {
+		const fields = getFieldsFromDataField(dataField);
+		if (fields) {
+			return {
+				text: {
+					query: value,
+					path: fields,
+					synonyms: synonymsField,
+				},
+			};
+		}
+	}
+	return null;
 };
