@@ -1,4 +1,7 @@
-import { getSearchSortByQuery } from '../../src/targets/search';
+import {
+	getQueryStringQuery,
+	getSearchSortByQuery,
+} from '../../src/targets/search';
 
 test('getSearchSortByQuery when no datafield is mentioned', () => {
 	const result = getSearchSortByQuery({});
@@ -99,6 +102,80 @@ test('getSearchSortByQuery when datafield is an object array and order by is asc
 	const expected = {
 		$sort: {
 			data1: -1,
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getQueryStringQuery when datafield is a string and queryString is false', () => {
+	const result = getQueryStringQuery({
+		dataField: 'column1',
+		value: 'value',
+		queryString: false,
+	});
+	const expected = {};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getQueryStringQuery when datafield is a string and queryString is true', () => {
+	const result = getQueryStringQuery({
+		dataField: 'column1',
+		value: 'value',
+		queryString: true,
+	});
+	const expected = {
+		queryString: {
+			defaultPath: 'column1',
+			query: 'value',
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getQueryStringQuery when datafield is an empty array and queryString is true', () => {
+	const result = getQueryStringQuery({
+		dataField: [],
+		value: 'value',
+		queryString: true,
+	});
+	const expected = {};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getQueryStringQuery when datafield is a string array and queryString is true', () => {
+	const result = getQueryStringQuery({
+		dataField: ['data1', 'data2', 'data3'],
+		value: 'value',
+		queryString: true,
+	});
+	const expected = {
+		queryString: {
+			defaultPath: 'data1',
+			query: 'value',
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getQueryStringQuery when datafield is an object array and queryString is true', () => {
+	const result = getQueryStringQuery({
+		dataField: [
+			{ field: 'data1', weight: 1 },
+			{ field: 'data2', weight: 1 },
+			{ field: 'data3', weight: 1 },
+		],
+		value: 'value',
+		queryString: true,
+	});
+	const expected = {
+		queryString: {
+			defaultPath: 'data1',
+			query: 'value',
 		},
 	};
 	// Snapshot demo

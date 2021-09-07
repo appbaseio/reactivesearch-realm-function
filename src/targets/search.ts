@@ -1,5 +1,6 @@
-import { RSQuery } from 'src/types/types';
 import { ASCENDING, DESCENDING } from 'src/constants';
+import { DataField, RSQuery } from 'src/types/types';
+
 import { getIncludeExcludeFields } from './common';
 
 // TODO set return type
@@ -48,24 +49,11 @@ export const getSearchSortByQuery = (query: RSQuery<string>): any => {
 		sortBy = query.sortBy === `asc` ? ASCENDING : DESCENDING;
 	}
 	if (query.dataField) {
-		if (Array.isArray(query.dataField)) {
-			if (query.dataField.length > 0) {
-				const queryField = query.dataField[0];
-				if (typeof queryField === 'string' || queryField instanceof String) {
-					field = queryField as string;
-				} else {
-					field = queryField.field;
-				}
-			} else {
-				/*
-					From MongoDB documentation
-					In the { <sort-key> } document, set the { $meta: "textScore" } expression 
-					to an arbitrary field name. The field name is ignored by the query system.
-				*/
-				return { $sort: { score: { $meta: 'textScore' }, [field]: sortBy } };
-			}
+		const _field = _getFirstDataFieldValue(query.dataField);
+		if (_field) {
+			field = _field;
 		} else {
-			field = query.dataField as string;
+			return { $sort: { score: { $meta: 'textScore' }, [field]: sortBy } };
 		}
 		return { $sort: { [field]: sortBy } };
 	} else {
@@ -76,4 +64,41 @@ export const getSearchSortByQuery = (query: RSQuery<string>): any => {
 		*/
 		return { $sort: { score: { $meta: 'textScore' }, [field]: sortBy } };
 	}
+};
+
+export const getQueryStringQuery = (query: RSQuery<string>): any => {
+	const { queryString = false, dataField, value } = query;
+
+	console.log(queryString, dataField, value);
+	if (queryString && dataField && value) {
+		const field = _getFirstDataFieldValue(dataField);
+		if (field) {
+			return {
+				queryString: {
+					defaultPath: field,
+					query: value,
+				},
+			};
+		}
+	}
+	return {};
+};
+
+const _getFirstDataFieldValue = (
+	dataField: string | Array<string | DataField>,
+): string | null => {
+	let field = null;
+	if (Array.isArray(dataField)) {
+		if (dataField.length > 0) {
+			const queryField = dataField[0];
+			if (typeof queryField === 'string' || queryField instanceof String) {
+				field = queryField as string;
+			} else {
+				field = queryField.field;
+			}
+		}
+	} else {
+		field = dataField as string;
+	}
+	return field;
 };
