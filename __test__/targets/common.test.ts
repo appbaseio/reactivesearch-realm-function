@@ -178,16 +178,16 @@ test('getIncludeExcludeFields when includeFields, excludeFields contains some co
 });
 
 test('getSynonymsQuery when both fuzziness and synonyms are enabled', () => {
-	const result = getSynonymsQuery({
-		fuzziness: 'AUTO',
-		enableSynonyms: true,
-		synonymsField: 'mySynonyms',
-		value: 'valueField',
-		dataField: 'data1',
-	});
-
 	// Snapshot demo
-	expect(result).toThrowError();
+	expect(() => {
+		getSynonymsQuery({
+			fuzziness: 'AUTO',
+			enableSynonyms: true,
+			synonymsField: 'mySynonyms',
+			value: 'valueField',
+			dataField: 'data1',
+		});
+	}).toThrowError();
 });
 
 test('getSynonymsQuery when synonym is enabled', () => {
@@ -200,10 +200,10 @@ test('getSynonymsQuery when synonym is enabled', () => {
 	const expected = {
 		text: {
 			query: 'valueField',
-			path: 'data1',
+			path: ['data1'],
 			synonyms: 'mySynonyms',
 		},
 	};
 	// Snapshot demo
-	expect(result).toThrowError();
+	expect(result).toStrictEqual(expected);
 });

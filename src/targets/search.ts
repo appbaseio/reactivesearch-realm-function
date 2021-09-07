@@ -78,8 +78,6 @@ export const getSearchSortByQuery = (query: RSQuery<string>): any => {
 
 export const getQueryStringQuery = (query: RSQuery<string>): any => {
 	const { queryString = false, dataField, value } = query;
-
-	console.log(queryString, dataField, value);
 	if (queryString && dataField && value) {
 		const field = _getFirstDataFieldValue(dataField);
 		if (field) {
