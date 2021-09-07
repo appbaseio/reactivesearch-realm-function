@@ -134,8 +134,7 @@ const generateTermRelevantQuery = (
 	return null;
 };
 
-// handle default query
-// handle customQuery
+// TODO handle default query
 export const buildQueryPipeline = (queryMap: QueryMap): any => {
 	const mongoPipelines: Record<string, any> = {};
 
@@ -172,7 +171,13 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 									}
 								}
 							} else {
-								andQuery.push(relevantMongoQuery[0].$search);
+								if (relevantMongoQuery[0]?.$search) {
+									andQuery.push(relevantMongoQuery[0].$search);
+								}
+							}
+
+							if (relevantRSQuery.customQuery) {
+								andQuery.push(relevantRSQuery.customQuery);
 							}
 						}
 					});
@@ -199,7 +204,13 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 									}
 								}
 							} else {
-								orQuery.push(relevantMongoQuery[0].$search);
+								if (relevantMongoQuery[0]?.$search) {
+									orQuery.push(relevantMongoQuery[0].$search);
+								}
+							}
+
+							if (relevantRSQuery.customQuery) {
+								orQuery.push(relevantRSQuery.customQuery);
 							}
 						}
 					});
