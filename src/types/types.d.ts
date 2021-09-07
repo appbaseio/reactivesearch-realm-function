@@ -159,9 +159,9 @@ export type RSQuery<T> = {
 
 	showMissing?: boolean;
 
-	defaultQuery?: Object;
+	defaultQuery?: any;
 
-	customQuery?: Object;
+	customQuery?: any;
 
 	execute?: boolean;
 

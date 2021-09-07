@@ -167,14 +167,41 @@ const generateTermRelevantQuery = (
 	return null;
 };
 
-// TODO handle default query
 export const buildQueryPipeline = (queryMap: QueryMap): any => {
 	const mongoPipelines: Record<string, any> = {};
+	// other pipelines added because of default or custom query
+	const extraTargets: any[] = [];
 
 	Object.keys(queryMap).forEach((item) => {
 		const { rsQuery, mongoQuery } = queryMap[item];
 		if (rsQuery.execute === undefined || rsQuery.execute) {
-			let finalMongoQuery = mongoQuery;
+			let finalMongoQuery = [...mongoQuery];
+
+			if (rsQuery.defaultQuery) {
+				const defaultQueryTargets = Array.isArray(rsQuery.defaultQuery)
+					? rsQuery.defaultQuery
+					: [rsQuery.defaultQuery];
+				const mongoQueryIndexesToDelete: number[] = [];
+				mongoQuery.forEach((mongoQueryItem: any) => {
+					const key = Object.keys(mongoQueryItem)[0];
+					// check if defaultQuery has that value then use defaultQuery target,
+					// eg. $limit exists in both then use the one passed in defaultQuery
+					const indexToDelete = defaultQueryTargets.findIndex(
+						(defaultQueryItem) => Object.keys(defaultQueryItem)[0] === key,
+					);
+
+					if (indexToDelete > -1) {
+						mongoQueryIndexesToDelete.push(indexToDelete);
+					}
+				});
+
+				finalMongoQuery = [
+					...defaultQueryTargets,
+					...mongoQuery.filter(
+						(_: any, i: number) => mongoQueryIndexesToDelete.indexOf(i) === -1,
+					),
+				];
+			}
 
 			if (rsQuery.react) {
 				let andQuery: any = [];
@@ -210,7 +237,11 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 							}
 
 							if (relevantRSQuery.customQuery) {
-								andQuery.push(relevantRSQuery.customQuery);
+								if (Array.isArray(relevantRSQuery.customQuery)) {
+									extraTargets.push(...relevantRSQuery.customQuery);
+								} else {
+									extraTargets.push(relevantRSQuery.customQuery);
+								}
 							}
 						}
 					});
@@ -243,7 +274,11 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 							}
 
 							if (relevantRSQuery.customQuery) {
-								orQuery.push(relevantRSQuery.customQuery);
+								if (Array.isArray(relevantRSQuery.customQuery)) {
+									extraTargets.push(...relevantRSQuery.customQuery);
+								} else {
+									extraTargets.push(relevantRSQuery.customQuery);
+								}
 							}
 						}
 					});
@@ -257,7 +292,6 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 
 				if (!isTermQuery) {
 					currentSearch = mongoQuery[0].$search;
-
 					// if has both the clause
 					// perform and with the current query and (and & or) with react queries
 					// example: must: {  must: { A, should: B}, $currentComponentQuery }
@@ -292,7 +326,7 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 								],
 							};
 						}
-					} else {
+					} else if (orQuery.length || andQuery.length) {
 						if (orQuery.length) {
 							compoundQuery.$search.compound = {
 								should: currentSearch ? [currentSearch, ...orQuery] : orQuery,
@@ -303,6 +337,8 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 								must: currentSearch ? [currentSearch, ...andQuery] : andQuery,
 							};
 						}
+					} else {
+						compoundQuery.$search = currentSearch;
 					}
 
 					let index = (currentSearch || {}).index;
@@ -316,8 +352,8 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 					}
 
 					finalMongoQuery = currentSearch
-						? [compoundQuery, ...mongoQuery.slice(1)]
-						: [compoundQuery, ...mongoQuery];
+						? [...extraTargets, compoundQuery, ...mongoQuery.slice(1)]
+						: [...extraTargets, compoundQuery, ...mongoQuery];
 				} else {
 					if (orQuery.length) {
 						compoundQuery.$search.compound = {
@@ -331,7 +367,7 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 						};
 					}
 
-					finalMongoQuery = [compoundQuery, ...mongoQuery];
+					finalMongoQuery = [...extraTargets, compoundQuery, ...mongoQuery];
 				}
 			}
 
@@ -341,6 +377,7 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 
 	return mongoPipelines;
 };
+
 export const getFuzziness = (
 	query: RSQuery<string>,
 ):
