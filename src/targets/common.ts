@@ -137,7 +137,7 @@ const generateTermRelevantQuery = (
 // handle default query
 // handle customQuery
 export const buildQueryPipeline = (queryMap: QueryMap): any => {
-	const mongoPipelines: any[] = [];
+	const mongoPipelines: Record<string, any> = {};
 
 	Object.keys(queryMap).forEach((item) => {
 		const { rsQuery, mongoQuery } = queryMap[item];
@@ -157,18 +157,23 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 						? rsQuery.react.and
 						: [rsQuery.react.and];
 					relevantAndRef.forEach((andItem) => {
-						const { rsQuery: relevantRSQuery, mongoQuery: relevantMongoQuery } =
-							queryMap[andItem];
-						// handles case where relevant query is term query
-						if (relevantRSQuery.type === 'term') {
-							if (!isTermQuery) {
-								const relTermQuery = generateTermRelevantQuery(relevantRSQuery);
-								if (relTermQuery) {
-									andQuery.push(relTermQuery);
+						if (queryMap[andItem]) {
+							const {
+								rsQuery: relevantRSQuery,
+								mongoQuery: relevantMongoQuery,
+							} = queryMap[andItem];
+							// handles case where relevant query is term query
+							if (relevantRSQuery.type === 'term') {
+								if (!isTermQuery) {
+									const relTermQuery =
+										generateTermRelevantQuery(relevantRSQuery);
+									if (relTermQuery) {
+										andQuery.push(relTermQuery);
+									}
 								}
+							} else {
+								andQuery.push(relevantMongoQuery[0].$search);
 							}
-						} else {
-							andQuery.push(relevantMongoQuery[0].$search);
 						}
 					});
 				}
@@ -180,17 +185,22 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 						? rsQuery.react.or
 						: [rsQuery.react.or];
 					relevantOrRef.forEach((orItem) => {
-						const { rsQuery: relevantRSQuery, mongoQuery: relevantMongoQuery } =
-							queryMap[orItem];
-						if (relevantRSQuery.type === 'term') {
-							if (!isTermQuery) {
-								const relTermQuery = generateTermRelevantQuery(relevantRSQuery);
-								if (relTermQuery) {
-									orQuery.push(relTermQuery);
+						if (queryMap[orItem]) {
+							const {
+								rsQuery: relevantRSQuery,
+								mongoQuery: relevantMongoQuery,
+							} = queryMap[orItem];
+							if (relevantRSQuery.type === 'term') {
+								if (!isTermQuery) {
+									const relTermQuery =
+										generateTermRelevantQuery(relevantRSQuery);
+									if (relTermQuery) {
+										orQuery.push(relTermQuery);
+									}
 								}
+							} else {
+								orQuery.push(relevantMongoQuery[0].$search);
 							}
-						} else {
-							orQuery.push(relevantMongoQuery[0].$search);
 						}
 					});
 				}
@@ -204,15 +214,51 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 				if (!isTermQuery) {
 					currentSearch = mongoQuery[0].$search;
 
-					if (orQuery.length) {
-						compoundQuery.$search.compound = {
-							should: currentSearch ? [currentSearch, ...orQuery] : orQuery,
-						};
-					}
-					if (andQuery.length) {
-						compoundQuery.$search.compound = {
-							must: currentSearch ? [currentSearch, ...andQuery] : andQuery,
-						};
+					// if has both the clause
+					// perform and with the current query and (and & or) with react queries
+					// example: must: {  must: { A, should: B}, $currentComponentQuery }
+					if (orQuery.length && andQuery.length) {
+						if (currentSearch) {
+							compoundQuery.$search.compound = {
+								must: [
+									currentSearch,
+									{
+										compound: {
+											must: [
+												...andQuery,
+												{
+													compound: {
+														should: [...orQuery],
+													},
+												},
+											],
+										},
+									},
+								],
+							};
+						} else {
+							compoundQuery.$search.compound = {
+								must: [
+									...andQuery,
+									{
+										compound: {
+											should: [...orQuery],
+										},
+									},
+								],
+							};
+						}
+					} else {
+						if (orQuery.length) {
+							compoundQuery.$search.compound = {
+								should: currentSearch ? [currentSearch, ...orQuery] : orQuery,
+							};
+						}
+						if (andQuery.length) {
+							compoundQuery.$search.compound = {
+								must: currentSearch ? [currentSearch, ...andQuery] : andQuery,
+							};
+						}
 					}
 
 					let index = (currentSearch || {}).index;
@@ -245,7 +291,7 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 				}
 			}
 
-			mongoPipelines.push(finalMongoQuery);
+			mongoPipelines[rsQuery.id || `${Date.now()}`] = finalMongoQuery;
 		}
 	});
 

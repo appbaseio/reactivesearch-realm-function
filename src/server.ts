@@ -35,9 +35,7 @@ async function main() {
 	app.post(`/:collection/_reactivesearch/validate`, (req, res) => {
 		const qmap = getQueriesMap(req.body.query);
 		const result = buildQueryPipeline(qmap);
-		res.status(200).send({
-			aggPipeline: result,
-		});
+		res.status(200).send(result);
 	});
 
 	app.listen(PORT, () => {
