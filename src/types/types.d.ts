@@ -167,6 +167,8 @@ export type RSQuery<T> = {
 
 	enableSynonyms?: boolean;
 
+	synonymsField?: string;
+
 	selectAllLabel?: string;
 
 	pagination?: boolean;

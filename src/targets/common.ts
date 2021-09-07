@@ -4,8 +4,29 @@ import {
 	FUZZINESS_AUTO,
 	INCLUDE_FIELD,
 } from '../constants';
+import { DataField, RSQuery } from 'src/types/types';
 
-import { RSQuery } from 'src/types/types';
+export const getFieldsFromDataField = (
+	dataField: string | Array<string | DataField> | undefined,
+) => {
+	let fields = null;
+	if (dataField) {
+		if (typeof dataField === 'string') {
+			fields = [dataField];
+		} else {
+			// It's an array
+			if (dataField.length > 0) {
+				const queryField = dataField[0];
+				if (typeof queryField === 'string' || queryField instanceof String) {
+					fields = dataField as string[];
+				} else {
+					fields = dataField.map((value: any) => value.field);
+				}
+			}
+		}
+	}
+	return fields;
+};
 
 export const getIncludeExcludeFields = (query: RSQuery<any>): any => {
 	let { includeFields = [], excludeFields = [] } = query;
@@ -106,4 +127,25 @@ export const getFuzziness = (
 			maxEdits: fuzziness,
 		},
 	};
+};
+
+export const getSynonymsQuery = (query: RSQuery<string>): any => {
+	const { fuzziness, enableSynonyms, synonymsField, value, dataField } = query;
+	if (fuzziness && enableSynonyms) {
+		throw new Error("Fuzziness and Synonyms can't be used together");
+	}
+
+	if (enableSynonyms) {
+		const fields = getFieldsFromDataField(dataField);
+		if (fields) {
+			return {
+				text: {
+					query: value,
+					path: fields,
+					synonyms: synonymsField,
+				},
+			};
+		}
+	}
+	return null;
 };
