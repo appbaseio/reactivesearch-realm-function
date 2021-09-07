@@ -35,8 +35,10 @@ export const getSearchQuery = (query: RSQuery<string>): any => {
 		res.push(getSearchSortByQuery(query));
 	}
 
+	if (query.from) {
+		res.push({ $skip: query.from || 0 });
+	}
 	res.push({ $limit: query.size || 10 });
-	res.push({ $skip: query.from || 0 });
 
 	return res;
 };

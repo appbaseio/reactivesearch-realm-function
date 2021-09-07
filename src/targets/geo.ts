@@ -147,8 +147,10 @@ export const getGeoQuery = (query: RSQuery<GeoValue>): any => {
 		if (projectTarget) {
 			res.push(projectTarget);
 		}
+		if (query.from) {
+			res.push({ $skip: query.from || 0 });
+		}
 		res.push({ $limit: query.size || 10 });
-		res.push({ $skip: query.from || 0 });
 
 		return res;
 	} catch (err) {

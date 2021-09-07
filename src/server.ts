@@ -3,6 +3,7 @@ import cors from 'cors';
 import { MongoClient } from 'mongodb';
 
 import { Realm } from './';
+import { getQueriesMap, buildQueryPipeline } from './targets/common';
 
 require('dotenv').config();
 
@@ -32,8 +33,10 @@ async function main() {
 	});
 
 	app.post(`/:collection/_reactivesearch/validate`, (req, res) => {
+		const qmap = getQueriesMap(req.body.query);
+		const result = buildQueryPipeline(qmap);
 		res.status(200).send({
-			aggPipeline: realm.query(req.body.query),
+			aggPipeline: result,
 		});
 	});
 

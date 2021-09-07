@@ -70,8 +70,10 @@ export const getRangeQuery = (query: RSQuery<RangeValue>): any => {
 			res.push(projectTarget);
 		}
 
+		if (query.from) {
+			res.push({ $skip: query.from || 0 });
+		}
 		res.push({ $limit: query.size || 10 });
-		res.push({ $skip: query.from || 0 });
 
 		if (query.aggregations && query.aggregations.length) {
 			if (query.aggregations.includes(`min`)) {

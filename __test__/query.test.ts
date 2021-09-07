@@ -37,9 +37,6 @@ describe(`generates search query correctly`, () => {
 			{
 				$limit: 10,
 			},
-			{
-				$skip: 0,
-			},
 		];
 		expect(query[0]).toStrictEqual(expected);
 	});
@@ -51,8 +48,8 @@ describe(`generates search query correctly`, () => {
 					compound: { should: [{ text: { query: 'room', path: ['name'] } }] },
 				},
 			},
-			{ $limit: 20 },
 			{ $skip: 10 },
+			{ $limit: 20 },
 		];
 		expect(query[1]).toStrictEqual(expected);
 	});
@@ -111,10 +108,10 @@ describe(`generate geo query correctly`, () => {
 				},
 			},
 			{
-				$limit: 20,
+				$skip: 10,
 			},
 			{
-				$skip: 10,
+				$limit: 20,
 			},
 		];
 		expect(query[0]).toStrictEqual(expected);
@@ -145,10 +142,10 @@ describe(`generate geo query correctly`, () => {
 				},
 			},
 			{
-				$limit: 20,
+				$skip: 10,
 			},
 			{
-				$skip: 10,
+				$limit: 20,
 			},
 		];
 		expect(query[1]).toStrictEqual(expected);
@@ -218,15 +215,12 @@ describe(`generates range query correctly`, () => {
 			{
 				$limit: 10,
 			},
-			{
-				$skip: 0,
-			},
 		];
 		expect(query[0]).toStrictEqual(expected);
 	});
 
 	it(`should have correct min and max query`, () => {
-		expect(query[1][3]).toStrictEqual({
+		expect(query[1][2]).toStrictEqual({
 			$group: {
 				_id: null,
 				min: {
@@ -234,7 +228,7 @@ describe(`generates range query correctly`, () => {
 				},
 			},
 		});
-		expect(query[1][4]).toStrictEqual({
+		expect(query[1][3]).toStrictEqual({
 			$group: { _id: null, max: { $max: '$accommodates' } },
 		});
 	});
@@ -247,7 +241,7 @@ describe(`generates range query correctly`, () => {
 				default: 'other',
 			},
 		};
-		expect(query[1][5]).toStrictEqual(expected);
+		expect(query[1][4]).toStrictEqual(expected);
 	});
 
 	it(`should have compound query for includeNullValues `, () => {
@@ -283,9 +277,6 @@ describe(`generates range query correctly`, () => {
 			},
 			{
 				$limit: 10,
-			},
-			{
-				$skip: 0,
 			},
 		];
 		expect(query[2]).toStrictEqual(expected);
