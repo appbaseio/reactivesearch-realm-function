@@ -157,3 +157,21 @@ test('getFuzziness when fuzziness is 0', () => {
 	const expected = {};
 	expect(result).toStrictEqual(expected);
 });
+
+test('getIncludeExcludeFields when includeFields, excludeFields contains some column and highlight is true', () => {
+	const result = getIncludeExcludeFields({
+		excludeFields: ['test'],
+		includeFields: ['test1', 'test2'],
+		highlight: true,
+	});
+	const expected = {
+		$project: {
+			test: 0,
+			test1: 1,
+			test2: 1,
+			highlights: { $meta: 'searchHighlights' },
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});

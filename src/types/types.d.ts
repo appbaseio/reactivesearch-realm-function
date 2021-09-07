@@ -149,7 +149,7 @@ export type RSQuery<T> = {
 
 	highlightField?: string | Array<string>;
 
-	customHighlight?: Object;
+	customHighlight?: { maxCharsToExamine: number; maxNumPassages: number };
 
 	interval?: number;
 
