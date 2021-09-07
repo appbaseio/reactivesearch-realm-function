@@ -231,3 +231,25 @@ test('getHighlightQuery when highlight is true and highlightField is an array', 
 	// Snapshot demo
 	expect(result).toStrictEqual(expected);
 });
+
+test('getHighlightQuery when highlight is true and customHighlight is passed', () => {
+	const result = getHighlightQuery({
+		dataField: 'data',
+		sortBy: `desc`,
+		highlight: true,
+		highlightField: ['field1', 'field2'],
+		customHighlight: {
+			maxCharsToExamine: 250000,
+			maxNumPassages: 10,
+		},
+	});
+	const expected = {
+		highlight: {
+			path: ['field1', 'field2'],
+			maxCharsToExamine: 250000,
+			maxNumPassages: 10,
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
