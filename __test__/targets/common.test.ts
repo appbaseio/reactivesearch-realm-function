@@ -1,6 +1,7 @@
 import {
 	getFuzziness,
 	getIncludeExcludeFields,
+	getSynonymsQuery,
 } from '../../src/targets/common';
 
 test('getIncludeExcludeFields when * is in excludeFields', () => {
@@ -174,4 +175,35 @@ test('getIncludeExcludeFields when includeFields, excludeFields contains some co
 	};
 	// Snapshot demo
 	expect(result).toStrictEqual(expected);
+});
+
+test('getSynonymsQuery when both fuzziness and synonyms are enabled', () => {
+	const result = getSynonymsQuery({
+		fuzziness: 'AUTO',
+		enableSynonyms: true,
+		synonymsField: 'mySynonyms',
+		value: 'valueField',
+		dataField: 'data1',
+	});
+
+	// Snapshot demo
+	expect(result).toThrowError();
+});
+
+test('getSynonymsQuery when synonym is enabled', () => {
+	const result = getSynonymsQuery({
+		enableSynonyms: true,
+		synonymsField: 'mySynonyms',
+		value: 'valueField',
+		dataField: 'data1',
+	});
+	const expected = {
+		text: {
+			query: 'valueField',
+			path: 'data1',
+			synonyms: 'mySynonyms',
+		},
+	};
+	// Snapshot demo
+	expect(result).toThrowError();
 });

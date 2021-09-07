@@ -1,7 +1,10 @@
 import { ASCENDING, DESCENDING } from 'src/constants';
 import { DataField, RSQuery } from 'src/types/types';
-
-import { getIncludeExcludeFields } from './common';
+import {
+	getFieldsFromDataField,
+	getIncludeExcludeFields,
+	getSynonymsQuery,
+} from './common';
 
 // TODO set return type
 export const getSearchQuery = (query: RSQuery<string>): any => {
@@ -15,9 +18,16 @@ export const getSearchQuery = (query: RSQuery<string>): any => {
 			},
 		};
 
+		let shouldAggregation = [search];
+
+		const synonyms = getSynonymsQuery(query);
+		if (synonyms) {
+			shouldAggregation.push(synonyms);
+		}
+
 		const compoundQuery: any = {
 			compound: {
-				should: [search],
+				should: shouldAggregation,
 			},
 		};
 
@@ -122,25 +132,9 @@ export const getHighlightQuery = (query: RSQuery<string>): any => {
 				fields = highlightField as string[];
 			}
 		} else {
-			if (dataField) {
-				if (typeof dataField === 'string') {
-					fields = [dataField];
-				} else {
-					// It's an array
-					if (dataField.length > 0) {
-						const queryField = dataField[0];
-						if (
-							typeof queryField === 'string' ||
-							queryField instanceof String
-						) {
-							fields = dataField as string[];
-						} else {
-							fields = dataField.map((value: any) => value.field);
-						}
-					} else {
-						return {};
-					}
-				}
+			const _fields = getFieldsFromDataField(dataField);
+			if (_fields) {
+				fields = _fields;
 			} else {
 				return {};
 			}
