@@ -1,4 +1,7 @@
-import { getIncludeExcludeFields } from '../../src/targets/common';
+import {
+	getFuzziness,
+	getIncludeExcludeFields,
+} from '../../src/targets/common';
 
 test('getIncludeExcludeFields when * is in excludeFields', () => {
 	const result = getIncludeExcludeFields({
@@ -65,5 +68,92 @@ test('getIncludeExcludeFields when includeFields and excludeFields contains some
 		},
 	};
 	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getFuzziness when fuzziness is undefined', () => {
+	const result = getFuzziness({
+		value: 'query',
+	});
+	const expected = {};
+	expect(result).toStrictEqual(expected);
+});
+
+test('getFuzziness when fuzziness is a string other than AUTO', () => {
+	const result = getFuzziness({
+		value: 'query',
+		fuzziness: 'fuzziness',
+	});
+	const expected = {};
+	expect(result).toStrictEqual(expected);
+});
+
+test('getFuzziness when fuzziness is a number', () => {
+	const result = getFuzziness({
+		value: 'query',
+		fuzziness: 1,
+	});
+	const expected = {
+		fuzzy: {
+			maxEdits: 1,
+		},
+	};
+	expect(result).toStrictEqual(expected);
+});
+
+test('getFuzziness when fuzziness is auto and query length is greater than 5', () => {
+	const result = getFuzziness({
+		value: '123456',
+		fuzziness: 'AUTO',
+	});
+	const expected = {
+		fuzzy: {
+			maxEdits: 2,
+		},
+	};
+	expect(result).toStrictEqual(expected);
+});
+
+test('getFuzziness when fuzziness is auto and query length is between 3 and 5', () => {
+	const result = getFuzziness({
+		value: '1234',
+		fuzziness: 'AUTO',
+	});
+	const expected = {
+		fuzzy: {
+			maxEdits: 1,
+		},
+	};
+	expect(result).toStrictEqual(expected);
+});
+
+test('getFuzziness when fuzziness is auto and query length is 3', () => {
+	const result = getFuzziness({
+		value: '123',
+		fuzziness: 'AUTO',
+	});
+	const expected = {
+		fuzzy: {
+			maxEdits: 1,
+		},
+	};
+	expect(result).toStrictEqual(expected);
+});
+
+test('getFuzziness when fuzziness is auto and query length is less than 3', () => {
+	const result = getFuzziness({
+		value: '12',
+		fuzziness: 'AUTO',
+	});
+	const expected = {};
+	expect(result).toStrictEqual(expected);
+});
+
+test('getFuzziness when fuzziness is 0', () => {
+	const result = getFuzziness({
+		value: '12',
+		fuzziness: 0,
+	});
+	const expected = {};
 	expect(result).toStrictEqual(expected);
 });
