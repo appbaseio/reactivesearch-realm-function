@@ -102,3 +102,57 @@ const _getFirstDataFieldValue = (
 	}
 	return field;
 };
+
+export const getHighlightQuery = (query: RSQuery<string>): any => {
+	const {
+		highlight = false,
+		highlightField,
+		customHighlight,
+		dataField,
+	} = query;
+	const { maxCharsToExamine = 500000, maxNumPassages = 5 } =
+		customHighlight || {};
+
+	if (highlight) {
+		let fields: string[] = [];
+		if (highlightField) {
+			if (typeof highlightField === 'string') {
+				fields = [highlightField as string];
+			} else {
+				fields = highlightField as string[];
+			}
+		} else {
+			if (dataField) {
+				if (typeof dataField === 'string') {
+					fields = [dataField];
+				} else {
+					// It's an array
+					if (dataField.length > 0) {
+						const queryField = dataField[0];
+						if (
+							typeof queryField === 'string' ||
+							queryField instanceof String
+						) {
+							fields = dataField as string[];
+						} else {
+							fields = dataField.map((value: any) => value.field);
+						}
+					} else {
+						return {};
+					}
+				}
+			} else {
+				return {};
+			}
+		}
+		return {
+			highlight: {
+				path: fields,
+				maxCharsToExamine,
+				maxNumPassages,
+			},
+		};
+	} else {
+		return {};
+	}
+};
