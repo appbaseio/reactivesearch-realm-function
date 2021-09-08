@@ -1,41 +1,106 @@
-import { ConfigType } from './types/types';
-import { getGeoQuery } from './targets/geo';
-import { getRangeQuery } from './targets/range';
-import { getSearchQuery } from './targets/search';
-import { getTermQuery } from './targets/term';
+import { getQueriesMap, buildQueryPipeline } from './targets/common';
+import { ConfigType, RSQuery } from './types/types';
 
-export class Realm {
+export class ReactiveSearch {
+	// for realm function client is generated via context
+	// fot test env client is generated via npm mongodb package
 	config: ConfigType;
 
-	constructor(config?: ConfigType) {
-		if (config) {
-			this.config = config;
-		}
+	constructor(config: ConfigType) {
+		this.config = {
+			client: config.client,
+			database: config.database,
+		};
 	}
 
 	// TODO define type for mongo query
-	query = (data: any[]) => {
-		// TODO decide query format from set of multiple queries
+	translate = (data: RSQuery<any>[]): Record<string, any> => {
+		const queryMap = getQueriesMap(data);
+		const result = buildQueryPipeline(queryMap);
+		return result;
+	};
 
-		// pipeline used by mongodb aggregation
-		// TODO set type as per mongo query type
+	query = (data: RSQuery<any>[], collectionName: string): any => {
+		const queryMap = getQueriesMap(data);
+		// TODO check if toArray is supported on mongo realm env
+		const aggregationsObject = buildQueryPipeline(queryMap);
+		try {
+			return Promise.all(
+				Object.keys(aggregationsObject).map(async (item: any) => {
+					try {
+						const collection = this.config.client
+							.db(this.config.database)
+							.collection(collectionName);
+						const res = await collection.aggregate(aggregationsObject[item]);
+						const hits = await res.toArray();
+						const { rsQuery } = queryMap[item];
+						if (hits[0].aggregations) {
+							return {
+								id: item,
+								hits: {},
+								status: 200,
+								aggregations: {
+									[<string>rsQuery.dataField]: {
+										doc_count_error_upper_bound: 0,
+										// TODO get this count
+										sum_other_doc_count: 0,
+										buckets: hits[0].aggregations.map(
+											(item: { _id: string; count: number }) => ({
+												key: item._id,
+												doc_count: item.count,
+											}),
+										),
+									},
+								},
+							};
+						}
+						return {
+							id: item,
+							hits: {
+								// TODO add total
+								total: {
+									value: 100,
+									relation: `eq`,
+								},
+								// TODO add max score
+								max_score: 0,
+								hits: hits.map((item: any) => ({
+									_index: rsQuery.index || `default`,
+									_type: collectionName,
+									_id: item._id,
+									// TODO add score pipeline
+									_score: 0,
+									_source: item,
+								})),
+							},
+							error: null,
+							status: 200,
+						};
+					} catch (err) {
+						console.log({ err });
+						return {
+							id: item,
+							hits: null,
+							error: err.toString(),
+							status: 400,
+						};
+					}
+				}),
+			).then((res) => {
+				const transformedRes: any = {
+					settings: {
+						took: 100,
+					},
+				};
 
-		return data.map((item) => {
-			if (item.type === `search`) {
-				return getSearchQuery(item);
-			}
-
-			if (item.type === `geo`) {
-				return getGeoQuery(item);
-			}
-
-			if (item.type == `term`) {
-				return getTermQuery(item);
-			}
-
-			if (item.type == `range`) {
-				return getRangeQuery(item);
-			}
-		});
+				res.forEach((item: any) => {
+					const { id, ...rest } = item;
+					transformedRes[id] = rest;
+				});
+				return transformedRes;
+			});
+		} catch (err) {
+			throw err;
+		}
 	};
 }

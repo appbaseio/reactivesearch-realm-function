@@ -80,7 +80,7 @@ export const getTermQuery = (
 
 		res.push({
 			$facet: {
-				aggs: facetQuery,
+				aggregations: facetQuery,
 			},
 		});
 
