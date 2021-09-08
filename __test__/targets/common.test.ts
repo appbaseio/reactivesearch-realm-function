@@ -178,7 +178,7 @@ test('getIncludeExcludeFields when includeFields, excludeFields contains some co
 	});
 	const expected = {
 		$project: {
-			test: 1,
+			test: 0,
 			test1: 1,
 			test2: 1,
 			highlights: { $meta: 'searchHighlights' },
