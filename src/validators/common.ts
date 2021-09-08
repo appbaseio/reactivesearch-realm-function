@@ -1,4 +1,4 @@
-import { SingleDataField } from 'src/types/types';
+import { SingleDataField } from '../types/types';
 
 export const validateSingleDataField = (field: SingleDataField) => {
 	if (typeof field !== 'string' && !Array.isArray(field)) {

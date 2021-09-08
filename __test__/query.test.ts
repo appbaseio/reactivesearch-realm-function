@@ -1,14 +1,14 @@
-import { Realm } from '../src';
+import { ReactiveSearch } from '../src';
+import { DataField, GeoValue, RangeValue, RSQuery } from '../src/types/types';
 
 // Runs integration tests
 
-const mongoURL = `mongodb//real-function-url1`;
-const ref = new Realm({
-	url: mongoURL,
+const ref = new ReactiveSearch({
+	database: 'sample_airbnb',
 });
 
 describe(`generates search query correctly`, () => {
-	const testQuery = [
+	const testQuery: RSQuery<string | string[] | DataField[]>[] = [
 		{
 			id: `searchQuery`,
 			value: `room`,
@@ -24,8 +24,8 @@ describe(`generates search query correctly`, () => {
 			from: 10,
 		},
 	];
-	const query = ref.query(testQuery);
-
+	const query = ref.translate(testQuery);
+	console.log(JSON.stringify(query));
 	it(`should have correct mongo format for searchQuery`, () => {
 		const expected = [
 			{
@@ -52,11 +52,8 @@ describe(`generates search query correctly`, () => {
 			{
 				$limit: 10,
 			},
-			{
-				$skip: 0,
-			},
 		];
-		expect(query[0]).toStrictEqual(expected);
+		expect(query.searchQuery).toStrictEqual(expected);
 	});
 
 	it(`should have user defined limit and skip`, () => {
@@ -82,15 +79,15 @@ describe(`generates search query correctly`, () => {
 					},
 				},
 			},
-			{ $limit: 20 },
 			{ $skip: 10 },
+			{ $limit: 20 },
 		];
-		expect(query[1]).toStrictEqual(expected);
+		expect(query.searchQuerySize).toStrictEqual(expected);
 	});
 });
 
 describe(`generate geo query correctly`, () => {
-	const testQuery = [
+	const testQuery: RSQuery<GeoValue>[] = [
 		{
 			id: `geoQuery`,
 			value: {
@@ -117,7 +114,7 @@ describe(`generate geo query correctly`, () => {
 			from: 10,
 		},
 	];
-	const query = ref.query(testQuery);
+	const query = ref.translate(testQuery);
 	it(`should have correct mongo format for geo query`, () => {
 		const expected = [
 			{
@@ -141,13 +138,13 @@ describe(`generate geo query correctly`, () => {
 				},
 			},
 			{
-				$limit: 20,
-			},
-			{
 				$skip: 10,
 			},
+			{
+				$limit: 20,
+			},
 		];
-		expect(query[0]).toStrictEqual(expected);
+		expect(query.geoQuery).toStrictEqual(expected);
 	});
 	it(`should have correct mongo format for geo bounding query`, () => {
 		const expected = [
@@ -175,18 +172,18 @@ describe(`generate geo query correctly`, () => {
 				},
 			},
 			{
-				$limit: 20,
-			},
-			{
 				$skip: 10,
 			},
+			{
+				$limit: 20,
+			},
 		];
-		expect(query[1]).toStrictEqual(expected);
+		expect(query.geoBoundingQuery).toStrictEqual(expected);
 	});
 });
 
 describe(`generates range query correctly`, () => {
-	const testQuery = [
+	const testQuery: RSQuery<RangeValue>[] = [
 		{
 			id: `rangeQuery`,
 			value: {
@@ -221,7 +218,7 @@ describe(`generates range query correctly`, () => {
 			type: `range`,
 		},
 	];
-	const query = ref.query(testQuery);
+	const query = ref.translate(testQuery);
 
 	it(`should have correct mongo format for range query`, () => {
 		const expected = [
@@ -246,15 +243,12 @@ describe(`generates range query correctly`, () => {
 			{
 				$limit: 10,
 			},
-			{
-				$skip: 0,
-			},
 		];
-		expect(query[0]).toStrictEqual(expected);
+		expect(query.rangeQuery).toStrictEqual(expected);
 	});
 
 	it(`should have correct min and max query`, () => {
-		expect(query[1][3]).toStrictEqual({
+		expect(query.rangeQueryWithAggs[2]).toStrictEqual({
 			$group: {
 				_id: null,
 				min: {
@@ -262,7 +256,7 @@ describe(`generates range query correctly`, () => {
 				},
 			},
 		});
-		expect(query[1][4]).toStrictEqual({
+		expect(query.rangeQueryWithAggs[3]).toStrictEqual({
 			$group: { _id: null, max: { $max: '$accommodates' } },
 		});
 	});
@@ -275,7 +269,7 @@ describe(`generates range query correctly`, () => {
 				default: 'other',
 			},
 		};
-		expect(query[1][5]).toStrictEqual(expected);
+		expect(query.rangeQueryWithAggs[4]).toStrictEqual(expected);
 	});
 
 	it(`should have compound query for includeNullValues `, () => {
@@ -312,18 +306,15 @@ describe(`generates range query correctly`, () => {
 			{
 				$limit: 10,
 			},
-			{
-				$skip: 0,
-			},
 		];
-		expect(query[2]).toStrictEqual(expected);
+		expect(query.rangeQueryWithNull).toStrictEqual(expected);
 	});
 });
 
 describe(`generate term query correctly`, () => {
-	const testQuery = [
+	const testQuery: RSQuery<string | string[]>[] = [
 		{
-			id: `term-query`,
+			id: `termQuery`,
 			type: `term`,
 			dataField: `property_type`,
 			sortBy: `asc`,
@@ -331,12 +322,12 @@ describe(`generate term query correctly`, () => {
 		},
 	];
 
-	const query = ref.query(testQuery);
+	const query = ref.translate(testQuery);
 	it(`should have correct mongo format for term query`, () => {
 		const expected = [
 			{
 				$facet: {
-					aggs: [
+					aggregations: [
 						{ $unwind: '$property_type' },
 						{ $sortByCount: '$property_type' },
 						{ $sort: { _id: 1 } },
@@ -345,6 +336,6 @@ describe(`generate term query correctly`, () => {
 				},
 			},
 		];
-		expect(query[0]).toStrictEqual(expected);
+		expect(query.termQuery).toStrictEqual(expected);
 	});
 });

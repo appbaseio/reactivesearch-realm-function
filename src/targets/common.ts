@@ -4,7 +4,11 @@ import {
 	FUZZINESS_AUTO,
 	INCLUDE_FIELD,
 } from '../constants';
-import { DataField, RSQuery } from 'src/types/types';
+import { QueryMap, RSQuery, DataField } from '../types/types';
+import { getSearchQuery } from './search';
+import { getTermQuery } from './term';
+import { getGeoQuery } from './geo';
+import { getRangeQuery } from './range';
 
 export const getStringFieldsFromDataField = (
 	dataField: string | Array<string | DataField> | undefined,
@@ -110,6 +114,297 @@ export const getIncludeExcludeFields = (query: RSQuery<any>): any => {
 	}
 
 	return null;
+};
+
+export const getQueriesMap = (queries: RSQuery<any>[]): QueryMap => {
+	const res: QueryMap = {};
+	queries.forEach((item) => {
+		let itemId: string = item.id || `${Date.now()}`;
+		res[itemId] = {
+			rsQuery: item,
+			mongoQuery: {},
+		};
+
+		if (item.type === `search`) {
+			res[itemId].mongoQuery = getSearchQuery(item);
+		}
+
+		if (item.type === `geo`) {
+			res[itemId].mongoQuery = getGeoQuery(item);
+		}
+
+		if (item.type == `term`) {
+			res[itemId].mongoQuery = getTermQuery(item);
+		}
+
+		if (item.type == `range`) {
+			res[itemId].mongoQuery = getRangeQuery(item);
+		}
+	});
+
+	return res;
+};
+
+const generateTermRelevantQuery = (
+	relevantRSQuery: RSQuery<string | string[] | number | number[]>,
+): any => {
+	if (relevantRSQuery.value) {
+		if (relevantRSQuery.queryFormat === 'and') {
+			let filter: any = {};
+			if (Array.isArray(relevantRSQuery.value)) {
+				filter = relevantRSQuery.value.map((v) => ({
+					text: {
+						query: [v],
+						path: relevantRSQuery.dataField,
+					},
+				}));
+			} else {
+				filter = [
+					{
+						text: {
+							query: [relevantRSQuery.value],
+							path: relevantRSQuery.dataField,
+						},
+					},
+				];
+			}
+			return {
+				compound: {
+					filter,
+				},
+			};
+		}
+		// by default returns for OR query format
+		return {
+			compound: {
+				filter: {
+					text: {
+						query: Array.isArray(relevantRSQuery.value)
+							? relevantRSQuery.value
+							: [relevantRSQuery.value],
+						path: relevantRSQuery.dataField,
+					},
+				},
+			},
+		};
+	}
+
+	return null;
+};
+
+export const buildQueryPipeline = (queryMap: QueryMap): any => {
+	const mongoPipelines: Record<string, any> = {};
+	// other pipelines added because of default or custom query
+	const extraTargets: any[] = [];
+
+	Object.keys(queryMap).forEach((item) => {
+		const { rsQuery, mongoQuery } = queryMap[item];
+		if (rsQuery.execute === undefined || rsQuery.execute) {
+			let finalMongoQuery = [...mongoQuery];
+
+			if (rsQuery.defaultQuery) {
+				const defaultQueryTargets = Array.isArray(rsQuery.defaultQuery)
+					? rsQuery.defaultQuery
+					: [rsQuery.defaultQuery];
+				const mongoQueryIndexesToDelete: number[] = [];
+				mongoQuery.forEach((mongoQueryItem: any) => {
+					const key = Object.keys(mongoQueryItem)[0];
+					// check if defaultQuery has that value then use defaultQuery target,
+					// eg. $limit exists in both then use the one passed in defaultQuery
+					const indexToDelete = defaultQueryTargets.findIndex(
+						(defaultQueryItem) => Object.keys(defaultQueryItem)[0] === key,
+					);
+
+					if (indexToDelete > -1) {
+						mongoQueryIndexesToDelete.push(indexToDelete);
+					}
+				});
+
+				finalMongoQuery = [
+					...defaultQueryTargets,
+					...mongoQuery.filter(
+						(_: any, i: number) => mongoQueryIndexesToDelete.indexOf(i) === -1,
+					),
+				];
+			}
+
+			if (rsQuery.react) {
+				let andQuery: any = [];
+				let orQuery: any = [];
+				let currentSearch: any = null;
+				const isTermQuery = rsQuery.type === 'term';
+
+				// must query
+				if (rsQuery.react.and) {
+					// if and is not array convert it to array
+					const relevantAndRef = Array.isArray(rsQuery.react.and)
+						? rsQuery.react.and
+						: [rsQuery.react.and];
+					relevantAndRef.forEach((andItem) => {
+						if (queryMap[andItem]) {
+							const {
+								rsQuery: relevantRSQuery,
+								mongoQuery: relevantMongoQuery,
+							} = queryMap[andItem];
+							// handles case where relevant query is term query
+							if (relevantRSQuery.type === 'term') {
+								if (!isTermQuery) {
+									const relTermQuery =
+										generateTermRelevantQuery(relevantRSQuery);
+									if (relTermQuery) {
+										andQuery.push(relTermQuery);
+									}
+								}
+							} else {
+								if (relevantMongoQuery[0]?.$search) {
+									andQuery.push(relevantMongoQuery[0].$search);
+								}
+							}
+
+							if (relevantRSQuery.customQuery) {
+								if (Array.isArray(relevantRSQuery.customQuery)) {
+									extraTargets.push(...relevantRSQuery.customQuery);
+								} else {
+									extraTargets.push(relevantRSQuery.customQuery);
+								}
+							}
+						}
+					});
+				}
+
+				// should query
+				if (rsQuery.react.or) {
+					// if or is not array convert it to array
+					const relevantOrRef = Array.isArray(rsQuery.react.or)
+						? rsQuery.react.or
+						: [rsQuery.react.or];
+					relevantOrRef.forEach((orItem) => {
+						if (queryMap[orItem]) {
+							const {
+								rsQuery: relevantRSQuery,
+								mongoQuery: relevantMongoQuery,
+							} = queryMap[orItem];
+							if (relevantRSQuery.type === 'term') {
+								if (!isTermQuery) {
+									const relTermQuery =
+										generateTermRelevantQuery(relevantRSQuery);
+									if (relTermQuery) {
+										orQuery.push(relTermQuery);
+									}
+								}
+							} else {
+								if (relevantMongoQuery[0]?.$search) {
+									orQuery.push(relevantMongoQuery[0].$search);
+								}
+							}
+
+							if (relevantRSQuery.customQuery) {
+								if (Array.isArray(relevantRSQuery.customQuery)) {
+									extraTargets.push(...relevantRSQuery.customQuery);
+								} else {
+									extraTargets.push(relevantRSQuery.customQuery);
+								}
+							}
+						}
+					});
+				}
+
+				let compoundQuery: any = {
+					$search: {
+						compound: {},
+					},
+				};
+
+				if (!isTermQuery) {
+					currentSearch = mongoQuery[0].$search;
+					// if has both the clause
+					// perform and with the current query and (and & or) with react queries
+					// example: must: {  must: { A, should: B}, $currentComponentQuery }
+					if (orQuery.length && andQuery.length) {
+						if (currentSearch) {
+							compoundQuery.$search.compound = {
+								must: [
+									currentSearch,
+									{
+										compound: {
+											must: [
+												...andQuery,
+												{
+													compound: {
+														should: [...orQuery],
+													},
+												},
+											],
+										},
+									},
+								],
+							};
+						} else {
+							compoundQuery.$search.compound = {
+								must: [
+									...andQuery,
+									{
+										compound: {
+											should: [...orQuery],
+										},
+									},
+								],
+							};
+						}
+					} else if (orQuery.length || andQuery.length) {
+						if (orQuery.length) {
+							compoundQuery.$search.compound = {
+								should: currentSearch ? [currentSearch, ...orQuery] : orQuery,
+							};
+						}
+						if (andQuery.length) {
+							compoundQuery.$search.compound = {
+								must: currentSearch ? [currentSearch, ...andQuery] : andQuery,
+							};
+						}
+					} else {
+						compoundQuery.$search = currentSearch;
+					}
+
+					let index = (currentSearch || {}).index;
+
+					if (index) {
+						delete currentSearch.index;
+					}
+
+					if (currentSearch && index) {
+						compoundQuery.$search.index = index;
+					}
+
+					finalMongoQuery = currentSearch
+						? [...extraTargets, compoundQuery, ...finalMongoQuery.slice(1)]
+						: [...extraTargets, compoundQuery, ...finalMongoQuery];
+				} else {
+					if (orQuery.length) {
+						compoundQuery.$search.compound = {
+							should: orQuery,
+						};
+					}
+
+					if (andQuery.length) {
+						compoundQuery.$search.compound = {
+							must: andQuery,
+						};
+					}
+
+					finalMongoQuery = [
+						...extraTargets,
+						compoundQuery,
+						...finalMongoQuery,
+					];
+				}
+			}
+
+			mongoPipelines[rsQuery.id || `${Date.now()}`] = finalMongoQuery;
+		}
+	});
+
+	return mongoPipelines;
 };
 
 export const getFuzziness = (

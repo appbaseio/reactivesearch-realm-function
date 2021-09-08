@@ -1,5 +1,5 @@
-import { ASCENDING, DESCENDING } from 'src/constants';
-import { DataField, RSQuery } from 'src/types/types';
+import { ASCENDING, DESCENDING } from '../constants';
+import { DataField, RSQuery } from '../types/types';
 import {
 	getAutoCompleteQuery,
 	getFieldsFromDataField,
@@ -31,7 +31,7 @@ export const getSearchAggregation = (query: RSQuery<string>): any => {
 // TODO set return type
 export const getSearchQuery = (query: RSQuery<string>): any => {
 	let searchQuery: any = [];
-	const { value, index, size, from } = query;
+	const { value, index } = query;
 
 	if (value) {
 		const shouldAggregation = [];
@@ -72,8 +72,10 @@ export const getSearchQuery = (query: RSQuery<string>): any => {
 		searchQuery.push(getSearchSortByQuery(query));
 	}
 
-	searchQuery.push({ $limit: size || 10 });
-	searchQuery.push({ $skip: from || 0 });
+	if (query.from) {
+		searchQuery.push({ $skip: query.from || 0 });
+	}
+	searchQuery.push({ $limit: query.size || 10 });
 
 	return searchQuery;
 };

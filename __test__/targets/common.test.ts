@@ -1,8 +1,8 @@
 import {
-	getAutoCompleteQuery,
-	getFuzziness,
 	getIncludeExcludeFields,
+	getFuzziness,
 	getSynonymsQuery,
+	getAutoCompleteQuery,
 } from '../../src/targets/common';
 
 test('getIncludeExcludeFields when * is in excludeFields', () => {

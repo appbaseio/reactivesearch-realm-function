@@ -1,5 +1,6 @@
 export type ConfigType = {
-	url?: string;
+	client?: any;
+	database: string;
 };
 
 export type MicStatusField = `INACTIVE` | `ACTIVE` | `DENIED`;
@@ -109,7 +110,7 @@ export type RSQuery<T> = {
 
 	type?: QueryType;
 
-	react?: Object;
+	react?: { and?: string | string[]; or?: string | string[] };
 
 	queryFormat?: QueryFormat;
 
@@ -159,9 +160,9 @@ export type RSQuery<T> = {
 
 	showMissing?: boolean;
 
-	defaultQuery?: Object;
+	defaultQuery?: any;
 
-	customQuery?: Object;
+	customQuery?: any;
 
 	execute?: boolean;
 
@@ -183,3 +184,11 @@ export type MIC_STATUS = {
 	active: `ACTIVE`;
 	denied: `DENIED`;
 };
+
+export type QueryMap = Record<
+	string,
+	{
+		rsQuery: RSQuery<any>;
+		mongoQuery: any;
+	}
+>;

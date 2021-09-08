@@ -1,7 +1,7 @@
 import range from 'lodash.range';
-import { RangeValue, RSQuery, SingleDataField } from 'src/types/types';
-import { validateSingleDataField } from 'src/validators/common';
-import { validateRangeValue } from 'src/validators/range';
+import { RangeValue, RSQuery, SingleDataField } from '../types/types';
+import { validateSingleDataField } from '../validators/common';
+import { validateRangeValue } from '../validators/range';
 import { getIncludeExcludeFields } from './common';
 
 // TODO set return type
@@ -70,8 +70,10 @@ export const getRangeQuery = (query: RSQuery<RangeValue>): any => {
 			res.push(projectTarget);
 		}
 
+		if (query.from) {
+			res.push({ $skip: query.from || 0 });
+		}
 		res.push({ $limit: query.size || 10 });
-		res.push({ $skip: query.from || 0 });
 
 		if (query.aggregations && query.aggregations.length) {
 			if (query.aggregations.includes(`min`)) {
