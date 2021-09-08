@@ -180,7 +180,7 @@ export const getAutoCompleteQuery = (query: RSQuery<string>): any => {
 					autocomplete: {
 						path: x.field,
 						query: value,
-						score: { boost: x.weight },
+						score: { boost: { value: x.weight } },
 						...fuzziness,
 					},
 				})),

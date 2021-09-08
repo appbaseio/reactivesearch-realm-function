@@ -243,7 +243,7 @@ test('getAutoCompleteQuery when autocompleteField is a string', () => {
 					autocomplete: {
 						query: 'valueField',
 						path: 'autocomplete',
-						score: { boost: 1 },
+						score: { boost: { value: 1 } },
 					},
 				},
 			],
@@ -267,7 +267,7 @@ test('getAutoCompleteQuery when autocompleteField is a string and fuzziness is p
 					autocomplete: {
 						query: 'valueField',
 						path: 'autocomplete',
-						score: { boost: 1 },
+						score: { boost: { value: 1 } },
 						fuzzy: {
 							maxEdits: 1,
 						},
@@ -294,7 +294,7 @@ test('getAutoCompleteQuery when autocompleteField is an array of string and fuzz
 					autocomplete: {
 						query: 'valueField',
 						path: 'autocomplete',
-						score: { boost: 1 },
+						score: { boost: { value: 1 } },
 						fuzzy: {
 							maxEdits: 1,
 						},
@@ -304,7 +304,7 @@ test('getAutoCompleteQuery when autocompleteField is an array of string and fuzz
 					autocomplete: {
 						query: 'valueField',
 						path: 'autocomplete1',
-						score: { boost: 1 },
+						score: { boost: { value: 1 } },
 						fuzzy: {
 							maxEdits: 1,
 						},
@@ -335,7 +335,7 @@ test('getAutoCompleteQuery when autocompleteField is an array of DataField and f
 					autocomplete: {
 						query: 'valueField',
 						path: 'autocomplete',
-						score: { boost: 3 },
+						score: { boost: { value: 3 } },
 						fuzzy: {
 							maxEdits: 1,
 						},
@@ -345,7 +345,7 @@ test('getAutoCompleteQuery when autocompleteField is an array of DataField and f
 					autocomplete: {
 						query: 'valueField',
 						path: 'autocomplete1',
-						score: { boost: 1.5 },
+						score: { boost: { value: 1.5 } },
 						fuzzy: {
 							maxEdits: 1,
 						},
@@ -355,7 +355,7 @@ test('getAutoCompleteQuery when autocompleteField is an array of DataField and f
 					autocomplete: {
 						query: 'valueField',
 						path: 'autocomplete2',
-						score: { boost: 1 },
+						score: { boost: { value: 1 } },
 						fuzzy: {
 							maxEdits: 1,
 						},
