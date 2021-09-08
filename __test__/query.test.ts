@@ -30,7 +30,23 @@ describe(`generates search query correctly`, () => {
 		const expected = [
 			{
 				$search: {
-					compound: { should: [{ text: { query: `room`, path: [`name`] } }] },
+					compound: {
+						should: [
+							{
+								compound: {
+									must: [
+										{
+											text: {
+												query: `room`,
+												path: `name`,
+												score: { boost: { value: 1 } },
+											},
+										},
+									],
+								},
+							},
+						],
+					},
 				},
 			},
 			{
@@ -47,7 +63,23 @@ describe(`generates search query correctly`, () => {
 		const expected = [
 			{
 				$search: {
-					compound: { should: [{ text: { query: 'room', path: ['name'] } }] },
+					compound: {
+						should: [
+							{
+								compound: {
+									must: [
+										{
+											text: {
+												query: `room`,
+												path: `name`,
+												score: { boost: { value: 1 } },
+											},
+										},
+									],
+								},
+							},
+						],
+					},
 				},
 			},
 			{ $limit: 20 },

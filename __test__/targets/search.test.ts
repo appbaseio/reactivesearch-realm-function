@@ -1,10 +1,102 @@
 import {
 	getHighlightQuery,
 	getQueryStringQuery,
+	getSearchAggregation,
 	getSearchSortByQuery,
 } from '../../src/targets/search';
 
-test('getSearchSortByQuery when no datafield is mentioned', () => {
+test('getSearchAggregation when dataField is a string', () => {
+	const result = getSearchAggregation({
+		value: 'valueField',
+		dataField: 'data',
+	});
+	const expected = {
+		compound: {
+			must: [
+				{
+					text: {
+						query: 'valueField',
+						path: 'data',
+						score: { boost: { value: 1 } },
+					},
+				},
+			],
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getSearchAggregation when autocompleteField is an array of string', () => {
+	const result = getSearchAggregation({
+		dataField: ['data1', 'data2'],
+		value: 'valueField',
+	});
+	const expected = {
+		compound: {
+			must: [
+				{
+					text: {
+						query: 'valueField',
+						path: 'data1',
+						score: { boost: { value: 1 } },
+					},
+				},
+				{
+					text: {
+						query: 'valueField',
+						path: 'data2',
+						score: { boost: { value: 1 } },
+					},
+				},
+			],
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getSearchAggregation when autocompleteField is an array of DataField', () => {
+	const result = getSearchAggregation({
+		dataField: [
+			{ field: 'data1', weight: 3 },
+			{ field: 'data2', weight: 1.5 },
+			{ field: 'data3', weight: 1 },
+		],
+		value: 'valueField',
+	});
+	const expected = {
+		compound: {
+			must: [
+				{
+					text: {
+						query: 'valueField',
+						path: 'data1',
+						score: { boost: { value: 3 } },
+					},
+				},
+				{
+					text: {
+						query: 'valueField',
+						path: 'data2',
+						score: { boost: { value: 1.5 } },
+					},
+				},
+				{
+					text: {
+						query: 'valueField',
+						path: 'data3',
+						score: { boost: { value: 1 } },
+					},
+				},
+			],
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getSearchSortByQuery when no dataField is mentioned', () => {
 	const result = getSearchSortByQuery({});
 	const expected = {
 		$sort: { score: { $meta: 'textScore' }, _id: -1 },
