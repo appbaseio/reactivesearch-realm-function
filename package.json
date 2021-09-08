@@ -23,7 +23,8 @@
 		"format": "prettier --write 'src/**/*.(ts)'",
 		"prepublishOnly": "npm run build",
 		"dev": "nodemon --watch './**/*.ts' --exec 'ts-node --project tsconfig-dev.json' src/server.ts",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"unit-test": "yarn jest"
 	},
 	"repository": {
 		"type": "git",
