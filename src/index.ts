@@ -22,7 +22,7 @@ export class ReactiveSearch {
 
 	query = (data: RSQuery<any>[], collectionName: string): any => {
 		const queryMap = getQueriesMap(data);
-		// TODO check if toArray is supported on mongo realm env
+
 		const aggregationsObject = buildQueryPipeline(queryMap);
 		try {
 			const totalStart = performance.now();
@@ -66,7 +66,6 @@ export class ReactiveSearch {
 							id: item,
 							took: 100,
 							hits: {
-								// TODO add total
 								total: {
 									value: total[0].count,
 									relation: `eq`,
