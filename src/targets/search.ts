@@ -1,6 +1,7 @@
 import { ASCENDING, DESCENDING } from 'src/constants';
 import { DataField, RSQuery } from 'src/types/types';
 import {
+	getAutoCompleteQuery,
 	getFieldsFromDataField,
 	getIncludeExcludeFields,
 	getSynonymsQuery,
@@ -23,6 +24,11 @@ export const getSearchQuery = (query: RSQuery<string>): any => {
 		const synonyms = getSynonymsQuery(query);
 		if (synonyms) {
 			shouldAggregation.push(synonyms);
+		}
+
+		const autocomplete = getAutoCompleteQuery(query);
+		if (autocomplete) {
+			shouldAggregation.push(autocomplete);
 		}
 
 		const compoundQuery: any = {

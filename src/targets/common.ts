@@ -149,3 +149,17 @@ export const getSynonymsQuery = (query: RSQuery<string>): any => {
 	}
 	return null;
 };
+
+export const getAutoCompleteQuery = (query: RSQuery<string>): any => {
+	const { autocompleteField, value } = query;
+	if (autocompleteField) {
+		return {
+			autocomplete: {
+				query: value,
+				path: autocompleteField,
+				...getFuzziness(query),
+			},
+		};
+	}
+	return null;
+};

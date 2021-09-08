@@ -1,4 +1,5 @@
 import {
+	getAutoCompleteQuery,
 	getFuzziness,
 	getIncludeExcludeFields,
 	getSynonymsQuery,
@@ -159,6 +160,16 @@ test('getFuzziness when fuzziness is 0', () => {
 	expect(result).toStrictEqual(expected);
 });
 
+test('getFuzziness when fuzziness is greater than 2', () => {
+	// Snapshot demo
+	expect(() => {
+		getFuzziness({
+			value: '12',
+			fuzziness: 3,
+		});
+	}).toThrowError();
+});
+
 test('getIncludeExcludeFields when includeFields, excludeFields contains some column and highlight is true', () => {
 	const result = getIncludeExcludeFields({
 		excludeFields: ['test'],
@@ -202,6 +213,53 @@ test('getSynonymsQuery when synonym is enabled', () => {
 			query: 'valueField',
 			path: ['data1'],
 			synonyms: 'mySynonyms',
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getAutoCompleteQuery when autocompleteField is missing', () => {
+	const result = getAutoCompleteQuery({
+		enableSynonyms: true,
+		value: 'valueField',
+		dataField: 'data1',
+	});
+	const expected = null;
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getAutoCompleteQuery when autocompleteField is mentioned', () => {
+	const result = getAutoCompleteQuery({
+		autocompleteField: 'autocomplete',
+		value: 'valueField',
+		dataField: ['data1', 'data2'],
+	});
+	const expected = {
+		autocomplete: {
+			query: 'valueField',
+			path: 'autocomplete',
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getAutoCompleteQuery when autocompleteField and fuzziness is present', () => {
+	const result = getAutoCompleteQuery({
+		autocompleteField: 'autocomplete',
+		value: 'valueField',
+		dataField: 'data2',
+		fuzziness: 1,
+	});
+	const expected = {
+		autocomplete: {
+			query: 'valueField',
+			path: 'autocomplete',
+			fuzzy: {
+				maxEdits: 1,
+			},
 		},
 	};
 	// Snapshot demo

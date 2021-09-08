@@ -174,6 +174,8 @@ export type RSQuery<T> = {
 	pagination?: boolean;
 
 	queryString?: boolean;
+
+	autocompleteField?: string;
 };
 
 export type MIC_STATUS = {
