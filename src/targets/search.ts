@@ -4,6 +4,7 @@ import {
 	getAutoCompleteQuery,
 	getFieldsFromDataField,
 	getIncludeExcludeFields,
+	getPaginationMap,
 	getStringFieldsFromDataField,
 	getSynonymsQuery,
 } from './common';
@@ -72,10 +73,7 @@ export const getSearchQuery = (query: RSQuery<string>): any => {
 		searchQuery.push(getSearchSortByQuery(query));
 	}
 
-	if (query.from) {
-		searchQuery.push({ $skip: query.from || 0 });
-	}
-	searchQuery.push({ $limit: query.size || 10 });
+	searchQuery.push(getPaginationMap(query));
 
 	return searchQuery;
 };

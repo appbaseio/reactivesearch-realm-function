@@ -25,7 +25,7 @@ describe(`generates search query correctly`, () => {
 		},
 	];
 	const query = ref.translate(testQuery);
-	console.log(JSON.stringify(query));
+	console.log(`search query:`, JSON.stringify(query));
 	it(`should have correct mongo format for searchQuery`, () => {
 		const expected = [
 			{
@@ -50,7 +50,18 @@ describe(`generates search query correctly`, () => {
 				},
 			},
 			{
-				$limit: 10,
+				$facet: {
+					hits: [
+						{
+							$limit: 10,
+						},
+					],
+					total: [
+						{
+							$count: 'count',
+						},
+					],
+				},
 			},
 		];
 		expect(query.searchQuery).toStrictEqual(expected);
@@ -79,8 +90,23 @@ describe(`generates search query correctly`, () => {
 					},
 				},
 			},
-			{ $skip: 10 },
-			{ $limit: 20 },
+			{
+				$facet: {
+					hits: [
+						{
+							$skip: 10,
+						},
+						{
+							$limit: 20,
+						},
+					],
+					total: [
+						{
+							$count: 'count',
+						},
+					],
+				},
+			},
 		];
 		expect(query.searchQuerySize).toStrictEqual(expected);
 	});
@@ -115,6 +141,7 @@ describe(`generate geo query correctly`, () => {
 		},
 	];
 	const query = ref.translate(testQuery);
+	console.log(`geo query:`, JSON.stringify(query));
 	it(`should have correct mongo format for geo query`, () => {
 		const expected = [
 			{
@@ -138,10 +165,21 @@ describe(`generate geo query correctly`, () => {
 				},
 			},
 			{
-				$skip: 10,
-			},
-			{
-				$limit: 20,
+				$facet: {
+					hits: [
+						{
+							$skip: 10,
+						},
+						{
+							$limit: 20,
+						},
+					],
+					total: [
+						{
+							$count: 'count',
+						},
+					],
+				},
 			},
 		];
 		expect(query.geoQuery).toStrictEqual(expected);
@@ -172,10 +210,21 @@ describe(`generate geo query correctly`, () => {
 				},
 			},
 			{
-				$skip: 10,
-			},
-			{
-				$limit: 20,
+				$facet: {
+					hits: [
+						{
+							$skip: 10,
+						},
+						{
+							$limit: 20,
+						},
+					],
+					total: [
+						{
+							$count: 'count',
+						},
+					],
+				},
 			},
 		];
 		expect(query.geoBoundingQuery).toStrictEqual(expected);
@@ -219,7 +268,7 @@ describe(`generates range query correctly`, () => {
 		},
 	];
 	const query = ref.translate(testQuery);
-
+	console.log(`range query:`, JSON.stringify(query));
 	it(`should have correct mongo format for range query`, () => {
 		const expected = [
 			{
@@ -241,35 +290,87 @@ describe(`generates range query correctly`, () => {
 				},
 			},
 			{
-				$limit: 10,
+				$facet: {
+					hits: [
+						{
+							$limit: 10,
+						},
+					],
+					total: [
+						{
+							$count: 'count',
+						},
+					],
+				},
 			},
 		];
 		expect(query.rangeQuery).toStrictEqual(expected);
 	});
 
-	it(`should have correct min and max query`, () => {
-		expect(query.rangeQueryWithAggs[2]).toStrictEqual({
-			$group: {
-				_id: null,
-				min: {
-					$min: '$accommodates',
+	it(`should have correct min and max query and histogram`, () => {
+		expect(query.rangeQueryWithAggs).toStrictEqual([
+			{
+				$search: {
+					compound: {
+						should: [
+							{
+								range: {
+									path: 'accommodates',
+									gte: 1,
+									lte: 20,
+									score: {
+										boost: 1,
+									},
+								},
+							},
+						],
+					},
 				},
 			},
-		});
-		expect(query.rangeQueryWithAggs[3]).toStrictEqual({
-			$group: { _id: null, max: { $max: '$accommodates' } },
-		});
-	});
-
-	it(`should have correct histogram query`, () => {
-		const expected = {
-			$bucket: {
-				groupBy: '$accommodates',
-				boundaries: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19],
-				default: 'other',
+			{
+				$facet: {
+					hits: [
+						{
+							$limit: 10,
+						},
+					],
+					total: [
+						{
+							$count: 'count',
+						},
+					],
+					min: [
+						{
+							$group: {
+								_id: null,
+								min: {
+									$min: '$accommodates',
+								},
+							},
+						},
+					],
+					max: [
+						{
+							$group: {
+								_id: null,
+								max: {
+									$max: '$accommodates',
+								},
+							},
+						},
+					],
+					histogram: [
+						{
+							$bucket: {
+								groupBy: '$accommodates',
+								boundaries: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19],
+								default: 'other',
+							},
+						},
+					],
+				},
 			},
-		};
-		expect(query.rangeQueryWithAggs[4]).toStrictEqual(expected);
+		]);
 	});
 
 	it(`should have compound query for includeNullValues `, () => {
@@ -304,7 +405,18 @@ describe(`generates range query correctly`, () => {
 				},
 			},
 			{
-				$limit: 10,
+				$facet: {
+					hits: [
+						{
+							$limit: 10,
+						},
+					],
+					total: [
+						{
+							$count: 'count',
+						},
+					],
+				},
 			},
 		];
 		expect(query.rangeQueryWithNull).toStrictEqual(expected);
@@ -323,6 +435,7 @@ describe(`generate term query correctly`, () => {
 	];
 
 	const query = ref.translate(testQuery);
+	console.log(`term query:`, JSON.stringify(query));
 	it(`should have correct mongo format for term query`, () => {
 		const expected = [
 			{

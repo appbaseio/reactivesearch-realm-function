@@ -116,6 +116,25 @@ export const getIncludeExcludeFields = (query: RSQuery<any>): any => {
 	return null;
 };
 
+export const getPaginationMap = (query: RSQuery<any>) => {
+	const hits: any = [];
+	if (query.from) {
+		hits.push({ $skip: query.from });
+	}
+
+	hits.push({ $limit: query.size || 10 });
+	return {
+		$facet: {
+			hits,
+			total: [
+				{
+					$count: 'count',
+				},
+			],
+		},
+	};
+};
+
 export const getQueriesMap = (queries: RSQuery<any>[]): QueryMap => {
 	const res: QueryMap = {};
 	queries.forEach((item) => {
@@ -203,22 +222,70 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 			let finalMongoQuery = [...mongoQuery];
 
 			if (rsQuery.defaultQuery) {
-				const defaultQueryTargets = Array.isArray(rsQuery.defaultQuery)
+				let defaultQueryTargets = Array.isArray(rsQuery.defaultQuery)
 					? rsQuery.defaultQuery
 					: [rsQuery.defaultQuery];
 				const mongoQueryIndexesToDelete: number[] = [];
-				mongoQuery.forEach((mongoQueryItem: any) => {
+				let skip: any = null;
+				let limit: any = null;
+				// delete skip and limit from defaultQuery if present
+				defaultQueryTargets = defaultQueryTargets.filter((defaultQueryItem) => {
+					const defaultKey = Object.keys(defaultQueryItem)[0];
+					if (defaultKey === `$skip`) {
+						skip = defaultQueryItem[`$skip`];
+					}
+					if (defaultKey === `$limit`) {
+						limit = defaultQueryItem[`$limit`];
+					}
+					return defaultKey !== `$skip` && defaultKey !== `$limit`;
+				});
+
+				console.log({ limit, skip });
+
+				mongoQuery.forEach((mongoQueryItem: any, index: number) => {
 					const key = Object.keys(mongoQueryItem)[0];
+
 					// check if defaultQuery has that value then use defaultQuery target,
 					// eg. $limit exists in both then use the one passed in defaultQuery
-					const indexToDelete = defaultQueryTargets.findIndex(
-						(defaultQueryItem) => Object.keys(defaultQueryItem)[0] === key,
-					);
-
-					if (indexToDelete > -1) {
-						mongoQueryIndexesToDelete.push(indexToDelete);
-					}
+					defaultQueryTargets.forEach((defaultQueryItem) => {
+						const defaultKey = Object.keys(defaultQueryItem)[0];
+						if (defaultKey === key) {
+							mongoQueryIndexesToDelete.push(index);
+						}
+					});
 				});
+
+				// generated facet pipeline for skip and limit
+				// if present in default query
+				// and remove them from root mongo query
+				const hits: any = [];
+
+				if (skip !== null) {
+					hits.push({ $skip: skip });
+				}
+
+				if (limit !== null) {
+					hits.push({ $limit: limit });
+				}
+
+				if (hits.length) {
+					const facetIndex = mongoQuery.findIndex((item: any) => {
+						return item.$facet && item.$facet.hits;
+					});
+
+					if (facetIndex > -1) {
+						mongoQuery[facetIndex] = {
+							$facet: {
+								hits,
+								total: [
+									{
+										$count: 'count',
+									},
+								],
+							},
+						};
+					}
+				}
 
 				finalMongoQuery = [
 					...defaultQueryTargets,

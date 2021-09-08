@@ -2,7 +2,7 @@ import range from 'lodash.range';
 import { RangeValue, RSQuery, SingleDataField } from '../types/types';
 import { validateSingleDataField } from '../validators/common';
 import { validateRangeValue } from '../validators/range';
-import { getIncludeExcludeFields } from './common';
+import { getIncludeExcludeFields, getPaginationMap } from './common';
 
 // TODO set return type
 export const getRangeQuery = (query: RSQuery<RangeValue>): any => {
@@ -70,35 +70,36 @@ export const getRangeQuery = (query: RSQuery<RangeValue>): any => {
 			res.push(projectTarget);
 		}
 
-		if (query.from) {
-			res.push({ $skip: query.from || 0 });
-		}
-		res.push({ $limit: query.size || 10 });
+		const facet: any = getPaginationMap(query);
 
 		if (query.aggregations && query.aggregations.length) {
 			if (query.aggregations.includes(`min`)) {
-				res.push({
-					$group: {
-						_id: null,
-						min: {
-							$min: Array.isArray(query.dataField)
-								? `$${query.dataField[0]}`
-								: `$${query.dataField}`,
+				facet.$facet.min = [
+					{
+						$group: {
+							_id: null,
+							min: {
+								$min: Array.isArray(query.dataField)
+									? `$${query.dataField[0]}`
+									: `$${query.dataField}`,
+							},
 						},
 					},
-				});
+				];
 			}
 			if (query.aggregations.includes(`max`)) {
-				res.push({
-					$group: {
-						_id: null,
-						max: {
-							$max: Array.isArray(query.dataField)
-								? `$${query.dataField[0]}`
-								: `$${query.dataField}`,
+				facet.$facet.max = [
+					{
+						$group: {
+							_id: null,
+							max: {
+								$max: Array.isArray(query.dataField)
+									? `$${query.dataField[0]}`
+									: `$${query.dataField}`,
+							},
 						},
 					},
-				});
+				];
 			}
 			if (query.value && query.aggregations.includes(`histogram`)) {
 				if (
@@ -113,22 +114,25 @@ export const getRangeQuery = (query: RSQuery<RangeValue>): any => {
 					throw new Error(`invalid interval`);
 				}
 
-				res.push({
-					$bucket: {
-						groupBy: Array.isArray(query.dataField)
-							? `$${query.dataField[0]}`
-							: `$${query.dataField}`,
-						boundaries: range(
-							<number>query.value.start,
-							<number>query.value.end,
-							query.interval,
-						),
-						default: `other`,
+				facet.$facet.histogram = [
+					{
+						$bucket: {
+							groupBy: Array.isArray(query.dataField)
+								? `$${query.dataField[0]}`
+								: `$${query.dataField}`,
+							boundaries: range(
+								<number>query.value.start,
+								<number>query.value.end,
+								query.interval,
+							),
+							default: `other`,
+						},
 					},
-				});
+				];
 			}
 		}
 
+		res.push(facet);
 		return res;
 	} catch (err) {
 		throw err;

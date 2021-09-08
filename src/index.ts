@@ -25,26 +25,33 @@ export class ReactiveSearch {
 		// TODO check if toArray is supported on mongo realm env
 		const aggregationsObject = buildQueryPipeline(queryMap);
 		try {
+			const totalStart = performance.now();
 			return Promise.all(
 				Object.keys(aggregationsObject).map(async (item: any) => {
 					try {
+						const start = performance.now();
 						const collection = this.config.client
 							.db(this.config.database)
 							.collection(collectionName);
-						const res = await collection.aggregate(aggregationsObject[item]);
-						const hits = await res.toArray();
+
+						const res = await collection
+							.aggregate(aggregationsObject[item])
+							.toArray();
+
 						const { rsQuery } = queryMap[item];
-						if (hits[0].aggregations) {
+						const end = performance.now();
+						if (res[0].aggregations) {
+							const dataField = Array.isArray(rsQuery.dataField)
+								? `${rsQuery.dataField[0]}`
+								: `${rsQuery.dataField}`;
 							return {
 								id: item,
+								took: Number((end - start).toFixed(2)),
 								hits: {},
 								status: 200,
 								aggregations: {
-									[<string>rsQuery.dataField]: {
-										doc_count_error_upper_bound: 0,
-										// TODO get this count
-										sum_other_doc_count: 0,
-										buckets: hits[0].aggregations.map(
+									[dataField]: {
+										buckets: res[0].aggregations.map(
 											(item: { _id: string; count: number }) => ({
 												key: item._id,
 												doc_count: item.count,
@@ -54,12 +61,14 @@ export class ReactiveSearch {
 								},
 							};
 						}
-						return {
+						const { hits, total, min, max, histogram } = res[0];
+						const dataToReturn: any = {
 							id: item,
+							took: 100,
 							hits: {
 								// TODO add total
 								total: {
-									value: 100,
+									value: total[0].count,
 									relation: `eq`,
 								},
 								// TODO add max score
@@ -76,6 +85,37 @@ export class ReactiveSearch {
 							error: null,
 							status: 200,
 						};
+
+						if (min || max || histogram) {
+							dataToReturn.aggregations = {};
+						}
+
+						if (min) {
+							dataToReturn.aggregations.min = {
+								value: min[0].min,
+							};
+						}
+
+						if (max) {
+							dataToReturn.aggregations.max = {
+								value: max[0].max,
+							};
+						}
+
+						if (histogram) {
+							const dataField = Array.isArray(rsQuery.dataField)
+								? `${rsQuery.dataField[0]}`
+								: `${rsQuery.dataField}`;
+							dataToReturn.aggregations[dataField] = {
+								buckets: histogram.map(
+									(item: { _id: string | number; count: number }) => ({
+										key: item._id,
+										doc_count: item.count,
+									}),
+								),
+							};
+						}
+						return dataToReturn;
 					} catch (err) {
 						console.log({ err });
 						return {
@@ -87,9 +127,10 @@ export class ReactiveSearch {
 					}
 				}),
 			).then((res) => {
+				const totalEnd = performance.now();
 				const transformedRes: any = {
 					settings: {
-						took: 100,
+						took: Number((totalEnd - totalStart).toFixed(2)),
 					},
 				};
 
