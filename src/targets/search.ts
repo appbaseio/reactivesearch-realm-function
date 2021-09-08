@@ -31,7 +31,7 @@ export const getSearchAggregation = (query: RSQuery<string>): any => {
 // TODO set return type
 export const getSearchQuery = (query: RSQuery<string>): any => {
 	let searchQuery: any = [];
-	const { value, index, size, from } = query;
+	const { value, index } = query;
 
 	if (value) {
 		const shouldAggregation = [];
