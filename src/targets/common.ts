@@ -152,12 +152,38 @@ export const getSynonymsQuery = (query: RSQuery<string>): any => {
 
 export const getAutoCompleteQuery = (query: RSQuery<string>): any => {
 	const { autocompleteField, value } = query;
+	let fields: DataField[] = [];
 	if (autocompleteField) {
+		if (typeof autocompleteField === 'string') {
+			fields = [{ field: autocompleteField, weight: 1 }];
+		} else {
+			// It's an array
+			if (autocompleteField.length > 0) {
+				const queryField = autocompleteField[0];
+				if (typeof queryField === 'string' || queryField instanceof String) {
+					fields = autocompleteField.map((field) => ({
+						field: field as string,
+						weight: 1,
+					}));
+				} else {
+					fields = autocompleteField as DataField[];
+				}
+			} else {
+				return null;
+			}
+		}
+
+		const fuzziness = getFuzziness(query);
 		return {
-			autocomplete: {
-				query: value,
-				path: autocompleteField,
-				...getFuzziness(query),
+			compound: {
+				should: fields.map((x) => ({
+					autocomplete: {
+						path: x.field,
+						query: value,
+						score: { boost: x.weight },
+						...fuzziness,
+					},
+				})),
 			},
 		};
 	}
