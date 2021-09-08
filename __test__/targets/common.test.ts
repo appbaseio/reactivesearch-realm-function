@@ -2,6 +2,7 @@ import {
 	getIncludeExcludeFields,
 	getFuzziness,
 	getSynonymsQuery,
+	getAutoCompleteQuery,
 } from '../../src/targets/common';
 
 test('getIncludeExcludeFields when * is in excludeFields', () => {
@@ -159,6 +160,16 @@ test('getFuzziness when fuzziness is 0', () => {
 	expect(result).toStrictEqual(expected);
 });
 
+test('getFuzziness when fuzziness is greater than 2', () => {
+	// Snapshot demo
+	expect(() => {
+		getFuzziness({
+			value: '12',
+			fuzziness: 3,
+		});
+	}).toThrowError();
+});
+
 test('getIncludeExcludeFields when includeFields, excludeFields contains some column and highlight is true', () => {
 	const result = getIncludeExcludeFields({
 		excludeFields: ['test'],
@@ -208,66 +219,151 @@ test('getSynonymsQuery when synonym is enabled', () => {
 	expect(result).toStrictEqual(expected);
 });
 
-// test('buildQueryPipeline get mongo compound queries', () => {
-// 	const testQuery: RSQuery<any>[] = [
-// 		{
-// 			id: `searchQuery`,
-// 			value: `room`,
-// 			dataField: [`name`],
-// 			type: `search`,
-// 		},
-// 		{
-// 			id: `geoQuery`,
-// 			value: {
-// 				distance: 5,
-// 				location: '50, 40',
-// 				unit: 'mi',
-// 			},
-// 			dataField: [`location`],
-// 			type: `geo`,
-// 			react: {
-// 				and: 'searchQuery',
-// 			},
-// 		},
-// 	];
+test('getAutoCompleteQuery when autocompleteField is missing', () => {
+	const result = getAutoCompleteQuery({
+		enableSynonyms: true,
+		value: 'valueField',
+		dataField: 'data1',
+	});
+	const expected = null;
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
 
-// 	const expected = {
-// 		$search: {
-// 			compound: {
-// 				must: [
-// 					{
-// 						geoWithin: {
-// 							circle: {
-// 								center: {
-// 									type: 'Point',
-// 									coordinates: [50, 40],
-// 								},
-// 								radius: 8046.7,
-// 							},
-// 							path: ['location'],
-// 						},
-// 					},
-// 				],
-// 				should: [
-// 					{
-// 						geoWithin: {
-// 							circle: {
-// 								center: {
-// 									type: 'Point',
-// 									coordinates: [50, 40],
-// 								},
-// 								radius: 8046.7,
-// 							},
-// 							path: ['location'],
-// 						},
-// 					},
-// 				],
-// 			},
-// 		},
-// 	};
+test('getAutoCompleteQuery when autocompleteField is a string', () => {
+	const result = getAutoCompleteQuery({
+		autocompleteField: 'autocomplete',
+		value: 'valueField',
+		dataField: ['data1', 'data2'],
+	});
+	const expected = {
+		compound: {
+			should: [
+				{
+					autocomplete: {
+						query: 'valueField',
+						path: 'autocomplete',
+						score: { boost: { value: 1 } },
+					},
+				},
+			],
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
 
-// 	const qmap = getQueriesMap(testQuery);
-// 	const result = buildQueryPipeline(qmap);
-// 	console.log(JSON.stringify(result));
-// 	expect(result[1][0]).toStrictEqual(expected);
-// });
+test('getAutoCompleteQuery when autocompleteField is a string and fuzziness is present', () => {
+	const result = getAutoCompleteQuery({
+		autocompleteField: 'autocomplete',
+		value: 'valueField',
+		dataField: 'data2',
+		fuzziness: 1,
+	});
+	const expected = {
+		compound: {
+			should: [
+				{
+					autocomplete: {
+						query: 'valueField',
+						path: 'autocomplete',
+						score: { boost: { value: 1 } },
+						fuzzy: {
+							maxEdits: 1,
+						},
+					},
+				},
+			],
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getAutoCompleteQuery when autocompleteField is an array of string and fuzziness is present', () => {
+	const result = getAutoCompleteQuery({
+		autocompleteField: ['autocomplete', 'autocomplete1'],
+		value: 'valueField',
+		dataField: 'data2',
+		fuzziness: 1,
+	});
+	const expected = {
+		compound: {
+			should: [
+				{
+					autocomplete: {
+						query: 'valueField',
+						path: 'autocomplete',
+						score: { boost: { value: 1 } },
+						fuzzy: {
+							maxEdits: 1,
+						},
+					},
+				},
+				{
+					autocomplete: {
+						query: 'valueField',
+						path: 'autocomplete1',
+						score: { boost: { value: 1 } },
+						fuzzy: {
+							maxEdits: 1,
+						},
+					},
+				},
+			],
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getAutoCompleteQuery when autocompleteField is an array of DataField and fuzziness is present', () => {
+	const result = getAutoCompleteQuery({
+		autocompleteField: [
+			{ field: 'autocomplete', weight: 3 },
+			{ field: 'autocomplete1', weight: 1.5 },
+			{ field: 'autocomplete2', weight: 1 },
+		],
+		value: 'valueField',
+		dataField: 'data2',
+		fuzziness: 1,
+	});
+	const expected = {
+		compound: {
+			should: [
+				{
+					autocomplete: {
+						query: 'valueField',
+						path: 'autocomplete',
+						score: { boost: { value: 3 } },
+						fuzzy: {
+							maxEdits: 1,
+						},
+					},
+				},
+				{
+					autocomplete: {
+						query: 'valueField',
+						path: 'autocomplete1',
+						score: { boost: { value: 1.5 } },
+						fuzzy: {
+							maxEdits: 1,
+						},
+					},
+				},
+				{
+					autocomplete: {
+						query: 'valueField',
+						path: 'autocomplete2',
+						score: { boost: { value: 1 } },
+						fuzzy: {
+							maxEdits: 1,
+						},
+					},
+				},
+			],
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});

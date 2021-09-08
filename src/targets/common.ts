@@ -10,9 +10,9 @@ import { getTermQuery } from './term';
 import { getGeoQuery } from './geo';
 import { getRangeQuery } from './range';
 
-export const getFieldsFromDataField = (
+export const getStringFieldsFromDataField = (
 	dataField: string | Array<string | DataField> | undefined,
-) => {
+): string[] | null => {
 	let fields = null;
 	if (dataField) {
 		if (typeof dataField === 'string') {
@@ -30,6 +30,31 @@ export const getFieldsFromDataField = (
 		}
 	}
 	return fields;
+};
+
+export const getFieldsFromDataField = (
+	fields: string | Array<string | DataField> | undefined,
+): DataField[] | null => {
+	let dataFields: DataField[] | null = null;
+	if (fields) {
+		if (typeof fields === 'string') {
+			dataFields = [{ field: fields, weight: 1 }];
+		} else {
+			// It's an array
+			if (fields.length > 0) {
+				const queryField = fields[0];
+				if (typeof queryField === 'string' || queryField instanceof String) {
+					dataFields = fields.map((field) => ({
+						field: field as string,
+						weight: 1,
+					}));
+				} else {
+					dataFields = fields as DataField[];
+				}
+			}
+		}
+	}
+	return dataFields;
 };
 
 export const getIncludeExcludeFields = (query: RSQuery<any>): any => {
@@ -431,7 +456,7 @@ export const getSynonymsQuery = (query: RSQuery<string>): any => {
 	}
 
 	if (enableSynonyms) {
-		const fields = getFieldsFromDataField(dataField);
+		const fields = getStringFieldsFromDataField(dataField);
 		if (fields) {
 			return {
 				text: {
@@ -441,6 +466,27 @@ export const getSynonymsQuery = (query: RSQuery<string>): any => {
 				},
 			};
 		}
+	}
+	return null;
+};
+
+export const getAutoCompleteQuery = (query: RSQuery<string>): any => {
+	const { autocompleteField, value } = query;
+	let fields: DataField[] | null = getFieldsFromDataField(autocompleteField);
+	if (fields) {
+		const fuzziness = getFuzziness(query);
+		return {
+			compound: {
+				should: fields.map((x) => ({
+					autocomplete: {
+						path: x.field,
+						query: value,
+						score: { boost: { value: x.weight } },
+						...fuzziness,
+					},
+				})),
+			},
+		};
 	}
 	return null;
 };
