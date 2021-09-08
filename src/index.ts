@@ -1,46 +1,154 @@
-import { ConfigType, RSFunctionQueryData, RSQuery } from './types/types';
+import { ConfigType, RSQuery } from './types/types';
+import { buildQueryPipeline, getQueriesMap } from './targets/common';
 
-import { getGeoQuery } from './targets/geo';
-import { getSearchQuery } from './targets/search';
-
-export class Realm {
+export class ReactiveSearch {
+	// for realm function client is generated via context
+	// fot test env client is generated via npm mongodb package
 	config: ConfigType;
 
-	constructor(config?: ConfigType) {
-		if (config) {
-			this.config = config;
-		}
+	constructor(config: ConfigType) {
+		this.config = {
+			client: config.client,
+			database: config.database,
+			documentCollection: config.documentCollection,
+		};
 	}
 
 	// TODO define type for mongo query
-	query = (data: [RSQuery]): [] => {
-		// TODO decide query format from set of multiple queries
+	translate = (data: RSQuery<any>[]): Record<string, any> => {
+		const queryMap = getQueriesMap(data);
+		const result = buildQueryPipeline(queryMap);
+		return result;
+	};
 
-		// pipeline used by mongodb aggregation
-		// TODO set type as per mongo query type
-		const aggPipeline: any = [];
+	query = (data: RSQuery<any>[], collectionName: string): any => {
+		const queryMap = getQueriesMap(data);
 
-		data.forEach((item) => {
-			if (item.type === `search`) {
-				aggPipeline.push(getSearchQuery(item));
-			}
+		const aggregationsObject = buildQueryPipeline(queryMap);
+		try {
+			const totalStart = performance.now();
+			return Promise.all(
+				Object.keys(aggregationsObject).map(async (item: any) => {
+					try {
+						const start = performance.now();
+						const collection = this.config.client
+							.db(this.config.database)
+							.collection(collectionName);
 
-			if (item.type === `geo`) {
-				aggPipeline.push(getGeoQuery(item));
-			}
+						const res = await collection
+							.aggregate(aggregationsObject[item])
+							.toArray();
 
-			aggPipeline.push({ $limit: item.size || 10 });
-			aggPipeline.push({ $skip: item.from || 0 });
-		});
+						const { rsQuery } = queryMap[item];
+						const end = performance.now();
+						if (res[0].aggregations) {
+							const dataField = Array.isArray(rsQuery.dataField)
+								? `${rsQuery.dataField[0]}`
+								: `${rsQuery.dataField}`;
+							return {
+								id: item,
+								took: Number((end - start).toFixed(2)),
+								hits: {},
+								status: 200,
+								aggregations: {
+									[dataField]: {
+										buckets: res[0].aggregations.map(
+											(item: { _id: string; count: number }) => ({
+												key: item._id,
+												doc_count: item.count,
+											}),
+										),
+									},
+								},
+							};
+						}
+						const { hits, total, min, max, histogram } = res[0];
+						const dataToReturn: any = {
+							id: item,
+							took: 100,
+							hits: {
+								total: {
+									value: total[0].count,
+									relation: `eq`,
+								},
+								// TODO add max score
+								max_score: 0,
+								hits: hits.map((item: any) => ({
+									_index: rsQuery.index || `default`,
+									_collection: collectionName,
+									_id: item._id,
+									// TODO add score pipeline
+									_score: 0,
+									_source: item,
+								})),
+							},
+							error: null,
+							status: 200,
+						};
 
-		return aggPipeline;
+						if (min || max || histogram) {
+							dataToReturn.aggregations = {};
+						}
+
+						if (min) {
+							dataToReturn.aggregations.min = {
+								value: min[0].min,
+							};
+						}
+
+						if (max) {
+							dataToReturn.aggregations.max = {
+								value: max[0].max,
+							};
+						}
+
+						if (histogram) {
+							const dataField = Array.isArray(rsQuery.dataField)
+								? `${rsQuery.dataField[0]}`
+								: `${rsQuery.dataField}`;
+							dataToReturn.aggregations[dataField] = {
+								buckets: histogram.map(
+									(item: { _id: string | number; count: number }) => ({
+										key: item._id,
+										doc_count: item.count,
+									}),
+								),
+							};
+						}
+						return dataToReturn;
+					} catch (err) {
+						console.log({ err });
+						return {
+							id: item,
+							hits: null,
+							error: err.toString(),
+							status: 400,
+						};
+					}
+				}),
+			).then((res) => {
+				const totalEnd = performance.now();
+				const transformedRes: any = {
+					settings: {
+						took: Number((totalEnd - totalStart).toFixed(2)),
+					},
+				};
+
+				res.forEach((item: any) => {
+					const { id, ...rest } = item;
+					transformedRes[id] = rest;
+				});
+				return transformedRes;
+			});
+		} catch (err) {
+			throw err;
+		}
 	};
 
 	toRealmQuery = (data: [RSQuery]): RSFunctionQueryData => {
 		return {
 			config: this.config,
-			searchQuery: this.query(data)
-		}
-	}
-
+			searchQuery: this.query(data),
+		};
+	};
 }

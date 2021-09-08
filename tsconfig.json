@@ -23,13 +23,13 @@
 		"experimentalDecorators": true,
 		"resolveJsonModule": true,
 		"baseUrl": ".",
-		"rootDir": "./src",
+		"plugins": [
+			{
+				"transform": "typescript-is/lib/transform-inline/transformer"
+			}
+		]
 	},
-	"exclude": [
-		"node_modules"
-	],
-	"include": [
-		"./src/**/*.ts",
-		"src/**/*.json"
-	]
+
+	"exclude": ["node_modules"],
+	"include": ["./src/**/*.ts"]
 }

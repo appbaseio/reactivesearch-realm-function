@@ -1,4 +1,6 @@
-import { RSQuery, GeoPoint, GeoInput } from 'src/types';
+import { RSQuery, GeoPoint, GeoValue } from '../types/types';
+import { validateGeoValue } from '../validators/geo';
+import { getIncludeExcludeFields, getPaginationMap } from './common';
 
 const convertToMeter = (distance: number, unit: string): number => {
 	switch (unit) {
@@ -24,6 +26,7 @@ const convertToMeter = (distance: number, unit: string): number => {
 
 const convertLocation = (location: GeoPoint | string | [number, number]) => {
 	let loc: [number, number] = [0, 0];
+
 	if (typeof location === `string`) {
 		const data = `${location}`.split(`,`);
 		if (data.length !== 2) {
@@ -58,13 +61,14 @@ const convertLocation = (location: GeoPoint | string | [number, number]) => {
 //
 // Target remains $search for geo query as well
 // ref: https://docs.atlas.mongodb.com/reference/atlas-search/geoWithin/
-export const getGeoQuery = (query: RSQuery): any => {
+export const getGeoQuery = (query: RSQuery<GeoValue>): any => {
 	try {
-		const val = <GeoInput>{ ...query.value };
+		const val = <GeoValue>{ ...query.value };
+
+		validateGeoValue(val);
+
+		let res: any = [];
 		let search: any = {};
-		if (!val.location && !val.geoBoundingBox) {
-			throw new Error(`Invalid object`);
-		}
 
 		// geo point query
 		if (val.location) {
@@ -127,13 +131,26 @@ export const getGeoQuery = (query: RSQuery): any => {
 			};
 		}
 
+		const compoundQuery: any = {
+			compound: {
+				should: [search],
+			},
+		};
+
 		if (query.index) {
-			search.index = query.index;
+			compoundQuery.index = query.index;
 		}
 
-		return {
-			$search: search,
-		};
+		res = [{ $search: compoundQuery }];
+
+		const projectTarget = getIncludeExcludeFields(query);
+		if (projectTarget) {
+			res.push(projectTarget);
+		}
+
+		res.push(getPaginationMap(query));
+
+		return res;
 	} catch (err) {
 		throw err;
 	}

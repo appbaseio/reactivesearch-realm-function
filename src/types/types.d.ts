@@ -1,7 +1,7 @@
 export type ConfigType = {
-	url?: string,
-	database: string,
-	documentCollection: string
+	client?: any;
+	database: string;
+	documentCollection: string;
 };
 
 export type MicStatusField = `INACTIVE` | `ACTIVE` | `DENIED`;
@@ -18,7 +18,15 @@ export type GeoPoint = { lat: number; long: number };
 
 export type Location = GeoPoint | string | [number, number];
 
-export type GeoInput = {
+export type SingleDataField = string | [string];
+
+export type RangeValue = {
+	start?: number | string;
+	end?: number | string;
+	boost?: number;
+};
+
+export type GeoValue = {
 	location?: Location;
 	distance?: number;
 	unit?: Unit;
@@ -65,7 +73,7 @@ export type RecentSearchOptions = {
 	customEvents?: Object;
 };
 
-export type RSQuery = {
+export type RSQuery<T> = {
 	index?: string;
 
 	enablePopularSuggestions?: boolean;
@@ -103,7 +111,7 @@ export type RSQuery = {
 
 	type?: QueryType;
 
-	react?: Object;
+	react?: { and?: string | string[]; or?: string | string[] };
 
 	queryFormat?: QueryFormat;
 
@@ -121,7 +129,7 @@ export type RSQuery = {
 
 	sortBy?: SortType;
 
-	value?: any;
+	value?: T;
 
 	aggregationField?: string;
 
@@ -143,7 +151,7 @@ export type RSQuery = {
 
 	highlightField?: string | Array<string>;
 
-	customHighlight?: Object;
+	customHighlight?: { maxCharsToExamine: number; maxNumPassages: number };
 
 	interval?: number;
 
@@ -153,19 +161,23 @@ export type RSQuery = {
 
 	showMissing?: boolean;
 
-	defaultQuery?: Object;
+	defaultQuery?: any;
 
-	customQuery?: Object;
+	customQuery?: any;
 
 	execute?: boolean;
 
 	enableSynonyms?: boolean;
+
+	synonymsField?: string;
 
 	selectAllLabel?: string;
 
 	pagination?: boolean;
 
 	queryString?: boolean;
+
+	autocompleteField?: string | Array<string | DataField>;
 };
 
 export type MIC_STATUS = {
@@ -174,8 +186,14 @@ export type MIC_STATUS = {
 	denied: `DENIED`;
 };
 
-
 export type RSFunctionQueryData = {
-	config: ConfigType
-	searchQuery: []
-}
+	config: ConfigType;
+	searchQuery: [];
+};
+export type QueryMap = Record<
+	string,
+	{
+		rsQuery: RSQuery<any>;
+		mongoQuery: any;
+	}
+>;

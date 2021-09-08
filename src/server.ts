@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { MongoClient } from 'mongodb';
 
-import { Realm } from './';
+import { ReactiveSearch } from './';
 
 require('dotenv').config();
 
@@ -18,23 +18,19 @@ async function main() {
 	app.use(cors());
 	app.use(express.json());
 
-	const realm = new Realm();
+	const ref = new ReactiveSearch({
+		client,
+		database: process.env.DB_NAME || ``,
+	});
 
 	app.post(`/:collection/_reactivesearch`, async (req, res) => {
-		const query = realm.query(req.body.query);
-		const collection = client
-			.db(process.env.DB_NAME)
-			.collection(req.params.collection);
-		const data = await collection.aggregate(query).toArray();
-		res.status(200).send({
-			data,
-		});
+		const data = await ref.query(req.body.query, req.params.collection);
+		res.status(200).send(data);
 	});
 
 	app.post(`/:collection/_reactivesearch/validate`, (req, res) => {
-		res.status(200).send({
-			aggPipeline: realm.query(req.body.query),
-		});
+		const query = ref.translate(req.body.query);
+		res.status(200).send(query);
 	});
 
 	app.listen(PORT, () => {

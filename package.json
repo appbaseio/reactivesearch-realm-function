@@ -16,16 +16,19 @@
 		"clean": "rm -rf lib",
 		"start": "rollup -w --config rollup.test.config.js",
 		"start:test": "jest --testTimeout=20000 --runInBand --watch",
+		"clear:test": "jest --clearCache",
 		"ts-types": "tsc --emitDeclarationOnly --outDir lib",
 		"build": "npm run clean && rollup --config rollup.config.js --environment INCLUDE_DEPS,BUILD:production",
-		"test": "npm run build && jest --testTimeout=20000 --runInBand --config rollup.config.js",
+		"test": "npm run build && jest  --testTimeout=20000 --runInBand --config rollup.config.js",
 		"format": "prettier --write 'src/**/*.(ts)'",
 		"prepublishOnly": "npm run build",
 		"realm-login": "realm-cli login",
 		"realm-pull": "rm -rf realm-app && realm-cli pull --local=./realm-app",
 		"realm-build": "node build",
 		"realm-push": "realm-cli push --local=./realm-app",
-		"dev": "ts-node --project tsconfig-dev.json src/server.ts"
+		"dev": "nodemon --watch './**/*.ts' --exec 'ts-node --project tsconfig-dev.json' src/server.ts",
+		"prepare": "husky install",
+		"unit-test": "yarn jest"
 	},
 	"repository": {
 		"type": "git",
@@ -43,9 +46,10 @@
 		"@rollup/plugin-typescript": "^8.2.5",
 		"@types/cors": "^2.8.12",
 		"@types/express": "^4.17.13",
-		"@types/node": "^16.6.1",
-		"husky": "^7.0.1",
-		"jest": "^27.0.6",
+		"@types/lodash.range": "^3.2.6",
+		"@types/node": "^16.7.10",
+		"husky": "^7.0.0",
+		"jest": "^27.1.0",
 		"nodemon": "^2.0.12",
 		"prettier": "^2.3.2",
 		"rollup": "^2.56.2",
@@ -61,6 +65,9 @@
 		"dotenv": "^10.0.0",
 		"express": "^4.17.1",
 		"mongodb": "^4.1.0",
-		"yargs": "^17.1.1"
+		"yargs": "^17.1.1",
+		"@types/jest": "^27.0.1",
+		"lodash.range": "^3.2.0",
+		"ts-jest": "^27.0.5"
 	}
 }
