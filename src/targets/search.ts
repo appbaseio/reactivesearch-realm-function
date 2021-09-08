@@ -2,24 +2,44 @@ import { ASCENDING, DESCENDING } from 'src/constants';
 import { DataField, RSQuery } from 'src/types/types';
 import {
 	getAutoCompleteQuery,
+	getFieldsFromDataField,
 	getIncludeExcludeFields,
 	getStringFieldsFromDataField,
 	getSynonymsQuery,
 } from './common';
 
-// TODO set return type
-export const getSearchQuery = (query: RSQuery<string>): any => {
-	let res: any = [];
-
-	if (query.value) {
-		const search: any = {
-			text: {
-				query: query.value,
-				path: query.dataField,
+export const getSearchAggregation = (query: RSQuery<string>): any => {
+	const { value, dataField } = query;
+	const fields = getFieldsFromDataField(dataField);
+	if (fields) {
+		const search = {
+			compound: {
+				must: fields.map((x) => ({
+					text: {
+						path: x.field,
+						query: value,
+						score: { boost: { value: x.weight } },
+					},
+				})),
 			},
 		};
+		return search;
+	}
+	return null;
+};
 
-		let shouldAggregation = [search];
+// TODO set return type
+export const getSearchQuery = (query: RSQuery<string>): any => {
+	let searchQuery: any = [];
+	const { value, index, size, from } = query;
+
+	if (value) {
+		const shouldAggregation = [];
+
+		const search = getSearchAggregation(query);
+		if (search) {
+			shouldAggregation.push(search);
+		}
 
 		const synonyms = getSynonymsQuery(query);
 		if (synonyms) {
@@ -37,25 +57,25 @@ export const getSearchQuery = (query: RSQuery<string>): any => {
 			},
 		};
 
-		if (query.index) {
-			compoundQuery.index = query.index;
+		if (index) {
+			compoundQuery.index = index;
 		}
 
-		res.push({ $search: compoundQuery });
+		searchQuery.push({ $search: compoundQuery });
 	}
 	const projectTarget = getIncludeExcludeFields(query);
 	if (projectTarget) {
-		res.push(projectTarget);
+		searchQuery.push(projectTarget);
 	}
 
 	if (query.sortBy) {
-		res.push(getSearchSortByQuery(query));
+		searchQuery.push(getSearchSortByQuery(query));
 	}
 
-	res.push({ $limit: query.size || 10 });
-	res.push({ $skip: query.from || 0 });
+	searchQuery.push({ $limit: size || 10 });
+	searchQuery.push({ $skip: from || 0 });
 
-	return res;
+	return searchQuery;
 };
 
 export const getSearchSortByQuery = (query: RSQuery<string>): any => {
