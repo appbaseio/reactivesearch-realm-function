@@ -1,5 +1,6 @@
 export type ConfigType = {
-	url?: string;
+	client?: any;
+	database: string;
 };
 
 export type MicStatusField = `INACTIVE` | `ACTIVE` | `DENIED`;
