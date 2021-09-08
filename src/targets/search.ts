@@ -2,8 +2,8 @@ import { ASCENDING, DESCENDING } from 'src/constants';
 import { DataField, RSQuery } from 'src/types/types';
 import {
 	getAutoCompleteQuery,
-	getFieldsFromDataField,
 	getIncludeExcludeFields,
+	getStringFieldsFromDataField,
 	getSynonymsQuery,
 } from './common';
 
@@ -136,7 +136,7 @@ export const getHighlightQuery = (query: RSQuery<string>): any => {
 				fields = highlightField as string[];
 			}
 		} else {
-			const _fields = getFieldsFromDataField(dataField);
+			const _fields = getStringFieldsFromDataField(dataField);
 			if (_fields) {
 				fields = _fields;
 			} else {

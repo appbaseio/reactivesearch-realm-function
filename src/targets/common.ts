@@ -6,9 +6,9 @@ import {
 } from '../constants';
 import { DataField, RSQuery } from 'src/types/types';
 
-export const getFieldsFromDataField = (
+export const getStringFieldsFromDataField = (
 	dataField: string | Array<string | DataField> | undefined,
-) => {
+): string[] | null => {
 	let fields = null;
 	if (dataField) {
 		if (typeof dataField === 'string') {
@@ -26,6 +26,31 @@ export const getFieldsFromDataField = (
 		}
 	}
 	return fields;
+};
+
+export const getFieldsFromDataField = (
+	fields: string | Array<string | DataField> | undefined,
+): DataField[] | null => {
+	let dataFields: DataField[] | null = null;
+	if (fields) {
+		if (typeof fields === 'string') {
+			dataFields = [{ field: fields, weight: 1 }];
+		} else {
+			// It's an array
+			if (fields.length > 0) {
+				const queryField = fields[0];
+				if (typeof queryField === 'string' || queryField instanceof String) {
+					dataFields = fields.map((field) => ({
+						field: field as string,
+						weight: 1,
+					}));
+				} else {
+					dataFields = fields as DataField[];
+				}
+			}
+		}
+	}
+	return dataFields;
 };
 
 export const getIncludeExcludeFields = (query: RSQuery<any>): any => {
@@ -136,7 +161,7 @@ export const getSynonymsQuery = (query: RSQuery<string>): any => {
 	}
 
 	if (enableSynonyms) {
-		const fields = getFieldsFromDataField(dataField);
+		const fields = getStringFieldsFromDataField(dataField);
 		if (fields) {
 			return {
 				text: {
@@ -152,27 +177,8 @@ export const getSynonymsQuery = (query: RSQuery<string>): any => {
 
 export const getAutoCompleteQuery = (query: RSQuery<string>): any => {
 	const { autocompleteField, value } = query;
-	let fields: DataField[] = [];
-	if (autocompleteField) {
-		if (typeof autocompleteField === 'string') {
-			fields = [{ field: autocompleteField, weight: 1 }];
-		} else {
-			// It's an array
-			if (autocompleteField.length > 0) {
-				const queryField = autocompleteField[0];
-				if (typeof queryField === 'string' || queryField instanceof String) {
-					fields = autocompleteField.map((field) => ({
-						field: field as string,
-						weight: 1,
-					}));
-				} else {
-					fields = autocompleteField as DataField[];
-				}
-			} else {
-				return null;
-			}
-		}
-
+	let fields: DataField[] | null = getFieldsFromDataField(autocompleteField);
+	if (fields) {
 		const fuzziness = getFuzziness(query);
 		return {
 			compound: {
