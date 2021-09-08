@@ -31,9 +31,8 @@ export class ReactiveSearch {
 						const collection = this.config.client
 							.db(this.config.database)
 							.collection(collectionName);
-						const hits = await collection
-							.aggregate(aggregationsObject[item])
-							.toArray();
+						const res = await collection.aggregate(aggregationsObject[item]);
+						const hits = await res.toArray();
 						const { rsQuery } = queryMap[item];
 						if (hits[0].aggregations) {
 							return {
@@ -78,10 +77,11 @@ export class ReactiveSearch {
 							status: 200,
 						};
 					} catch (err) {
+						console.log({ err });
 						return {
 							id: item,
 							hits: null,
-							error: err,
+							error: err.toString(),
 							status: 400,
 						};
 					}

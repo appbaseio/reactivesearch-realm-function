@@ -352,8 +352,8 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 					}
 
 					finalMongoQuery = currentSearch
-						? [...extraTargets, compoundQuery, ...mongoQuery.slice(1)]
-						: [...extraTargets, compoundQuery, ...mongoQuery];
+						? [...extraTargets, compoundQuery, ...finalMongoQuery.slice(1)]
+						: [...extraTargets, compoundQuery, ...finalMongoQuery];
 				} else {
 					if (orQuery.length) {
 						compoundQuery.$search.compound = {
@@ -367,7 +367,11 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 						};
 					}
 
-					finalMongoQuery = [...extraTargets, compoundQuery, ...mongoQuery];
+					finalMongoQuery = [
+						...extraTargets,
+						compoundQuery,
+						...finalMongoQuery,
+					];
 				}
 			}
 
