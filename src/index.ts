@@ -75,7 +75,7 @@ export class ReactiveSearch {
 								max_score: 0,
 								hits: hits.map((item: any) => ({
 									_index: rsQuery.index || `default`,
-									_type: collectionName,
+									_collection: collectionName,
 									_id: item._id,
 									// TODO add score pipeline
 									_score: 0,
