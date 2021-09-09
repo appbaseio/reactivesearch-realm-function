@@ -1,4 +1,4 @@
-import range from 'lodash.range';
+import { range } from '../utils';
 import { RangeValue, RSQuery, SingleDataField } from '../types/types';
 import { validateSingleDataField } from '../validators/common';
 import { validateRangeValue } from '../validators/range';
