@@ -1,4 +1,4 @@
-import { ConfigType, RSQuery } from './types/types';
+import { ConfigType, RSFunctionQueryData, RSQuery } from './types/types';
 import { buildQueryPipeline, getQueriesMap } from './targets/common';
 
 export class ReactiveSearch {
@@ -145,10 +145,10 @@ export class ReactiveSearch {
 		}
 	};
 
-	toRealmQuery = (data: [RSQuery]): RSFunctionQueryData => {
+	toRealmQuery = (data: [RSQuery<any>]): RSFunctionQueryData => {
 		return {
 			config: this.config,
-			searchQuery: this.query(data),
+			searchQuery: this.query(data, this.config.documentCollection),
 		};
 	};
 }
