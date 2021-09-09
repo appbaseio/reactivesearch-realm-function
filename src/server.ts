@@ -1,8 +1,7 @@
-import express from 'express';
-import cors from 'cors';
 import { MongoClient } from 'mongodb';
-
 import { ReactiveSearch } from './';
+import cors from 'cors';
+import express from 'express';
 
 require('dotenv').config();
 
@@ -21,6 +20,7 @@ async function main() {
 	const ref = new ReactiveSearch({
 		client,
 		database: process.env.DB_NAME || ``,
+		documentCollection: '',
 	});
 
 	app.post(`/:collection/_reactivesearch`, async (req, res) => {
