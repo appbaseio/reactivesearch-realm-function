@@ -32,9 +32,9 @@ export const getSearchAggregation = (query: RSQuery<string>): any => {
 // TODO set return type
 export const getSearchQuery = (query: RSQuery<string>): any => {
 	let searchQuery: any = [];
-	const { value, index } = query;
+	const { value } = query;
 
-	if (value) {
+	if (value && value.length) {
 		const shouldAggregation = [];
 
 		const search = getSearchAggregation(query);
@@ -57,10 +57,6 @@ export const getSearchQuery = (query: RSQuery<string>): any => {
 				should: shouldAggregation,
 			},
 		};
-
-		if (index) {
-			compoundQuery.index = index;
-		}
 
 		searchQuery.push({ $search: compoundQuery });
 	}

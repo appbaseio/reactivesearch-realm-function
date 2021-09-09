@@ -23,12 +23,27 @@ async function main() {
 		database: process.env.DB_NAME || ``,
 	});
 
-	app.post(`/:collection/_reactivesearch`, async (req, res) => {
-		const data = await ref.query(req.body.query, req.params.collection);
+	app.post(`/:index/_reactivesearch.v3`, async (req, res) => {
+		// let db = req.query.db;
+		// let collection = req.query.collection;
+
+		// if (!db || !collection) {
+		// 	//check if mongodb key is present in req.body
+		// 	const mongodb = req.body.mongodb;
+		// 	if (!mongodb) {
+		// 		res.status(400).send({
+		// 			error: `mongodb object is required with db and collection name as its keys`,
+		// 		});
+		// 		return;
+		// 	}
+		// 	db = mongodb.db;
+		// 	collection = mongodb.collection;
+		// }
+		const data = await ref.query(req.body.query, `listingsAndReviews`);
 		res.status(200).send(data);
 	});
 
-	app.post(`/:collection/_reactivesearch/validate`, (req, res) => {
+	app.post(`/:index/_reactivesearch.v3/validate`, (req, res) => {
 		const query = ref.translate(req.body.query);
 		res.status(200).send(query);
 	});

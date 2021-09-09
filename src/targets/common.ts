@@ -144,6 +144,11 @@ export const getQueriesMap = (queries: RSQuery<any>[]): QueryMap => {
 			mongoQuery: {},
 		};
 
+		// default item type to search
+		if (!item.type) {
+			item.type = `search`;
+		}
+
 		if (item.type === `search`) {
 			res[itemId].mongoQuery = getSearchQuery(item);
 		}
@@ -167,7 +172,19 @@ export const getQueriesMap = (queries: RSQuery<any>[]): QueryMap => {
 const generateTermRelevantQuery = (
 	relevantRSQuery: RSQuery<string | string[] | number | number[]>,
 ): any => {
-	if (relevantRSQuery.value) {
+	let isValidValue = Boolean(relevantRSQuery.value);
+	if (Array.isArray(relevantRSQuery.value) && !relevantRSQuery.value.length) {
+		isValidValue = false;
+	}
+	// allow value like 0
+	if (
+		!Array.isArray(relevantRSQuery.value) &&
+		typeof relevantRSQuery.value === 'number'
+	) {
+		isValidValue = true;
+	}
+
+	if (isValidValue) {
 		if (relevantRSQuery.queryFormat === 'and') {
 			let filter: any = {};
 			if (Array.isArray(relevantRSQuery.value)) {
@@ -239,8 +256,6 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 					}
 					return defaultKey !== `$skip` && defaultKey !== `$limit`;
 				});
-
-				console.log({ limit, skip });
 
 				mongoQuery.forEach((mongoQueryItem: any, index: number) => {
 					const key = Object.keys(mongoQueryItem)[0];
@@ -439,13 +454,23 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 						delete currentSearch.index;
 					}
 
-					if (currentSearch && index) {
-						compoundQuery.$search.index = index;
+					if (
+						compoundQuery &&
+						compoundQuery.$search &&
+						compoundQuery.$search.compound &&
+						Object.keys(compoundQuery.$search.compound).length
+					) {
+						if (rsQuery.index) {
+							compoundQuery.$search.index = rsQuery.index;
+						}
+						finalMongoQuery = currentSearch
+							? [...extraTargets, compoundQuery, ...finalMongoQuery.slice(1)]
+							: [...extraTargets, compoundQuery, ...finalMongoQuery];
+					} else {
+						finalMongoQuery = currentSearch
+							? [...extraTargets, ...finalMongoQuery.slice(1)]
+							: [...extraTargets, ...finalMongoQuery];
 					}
-
-					finalMongoQuery = currentSearch
-						? [...extraTargets, compoundQuery, ...finalMongoQuery.slice(1)]
-						: [...extraTargets, compoundQuery, ...finalMongoQuery];
 				} else {
 					if (orQuery.length) {
 						compoundQuery.$search.compound = {
@@ -459,18 +484,29 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 						};
 					}
 
-					finalMongoQuery = [
-						...extraTargets,
-						compoundQuery,
-						...finalMongoQuery,
-					];
+					if (
+						compoundQuery &&
+						compoundQuery.$search &&
+						compoundQuery.$search.compound &&
+						Object.keys(compoundQuery.$search.compound).length
+					) {
+						if (rsQuery.index) {
+							compoundQuery.$search.index = rsQuery.index;
+						}
+						finalMongoQuery = [
+							...extraTargets,
+							compoundQuery,
+							...finalMongoQuery,
+						];
+					} else {
+						finalMongoQuery = [...extraTargets, ...finalMongoQuery];
+					}
 				}
 			}
 
 			mongoPipelines[rsQuery.id || `${Date.now()}`] = finalMongoQuery;
 		}
 	});
-
 	return mongoPipelines;
 };
 

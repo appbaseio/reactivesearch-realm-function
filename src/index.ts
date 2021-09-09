@@ -54,7 +54,7 @@ export class ReactiveSearch {
 										buckets: res[0].aggregations.map(
 											(item: { _id: string; count: number }) => ({
 												key: item._id,
-												doc_count: item.count,
+												doc_count: item?.count || 0,
 											}),
 										),
 									},
@@ -67,7 +67,7 @@ export class ReactiveSearch {
 							took: 100,
 							hits: {
 								total: {
-									value: total[0].count,
+									value: total[0]?.count || 0,
 									relation: `eq`,
 								},
 								// TODO add max score
@@ -109,7 +109,7 @@ export class ReactiveSearch {
 								buckets: histogram.map(
 									(item: { _id: string | number; count: number }) => ({
 										key: item._id,
-										doc_count: item.count,
+										doc_count: item?.count || 0,
 									}),
 								),
 							};
