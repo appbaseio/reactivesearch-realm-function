@@ -1,4 +1,4 @@
-import { ConfigType, RSFunctionQueryData, RSQuery } from './types/types';
+import { ConfigType, RSQuery } from './types/types';
 import { buildQueryPipeline, getQueriesMap } from './targets/common';
 
 export class ReactiveSearch {
@@ -21,7 +21,7 @@ export class ReactiveSearch {
 		return result;
 	};
 
-	query = (data: RSQuery<any>[], collectionName: string): any => {
+	query = (data: RSQuery<any>[], collectionName?: string): any => {
 		const queryMap = getQueriesMap(data);
 
 		const aggregationsObject = buildQueryPipeline(queryMap);
@@ -33,7 +33,7 @@ export class ReactiveSearch {
 						const start = performance.now();
 						const collection = this.config.client
 							.db(this.config.database)
-							.collection(collectionName);
+							.collection(collectionName || this.config.documentCollection);
 
 						const res = await collection
 							.aggregate(aggregationsObject[item])
@@ -143,12 +143,5 @@ export class ReactiveSearch {
 		} catch (err) {
 			throw err;
 		}
-	};
-
-	toRealmQuery = (data: [RSQuery<any>]): RSFunctionQueryData => {
-		return {
-			config: this.config,
-			searchQuery: this.query(data, this.config.documentCollection),
-		};
 	};
 }
