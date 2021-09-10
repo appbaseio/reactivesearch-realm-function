@@ -23,7 +23,7 @@ async function main() {
 		database: process.env.DB_NAME || ``,
 	});
 
-	app.post(`/:index/_reactivesearch.v3`, async (req, res) => {
+	app.post(`/:index/_reactivesearch`, async (req, res) => {
 		// let db = req.query.db;
 		// let collection = req.query.collection;
 
@@ -43,7 +43,7 @@ async function main() {
 		res.status(200).send(data);
 	});
 
-	app.post(`/:index/_reactivesearch.v3/validate`, (req, res) => {
+	app.post(`/:index/_reactivesearch/validate`, (req, res) => {
 		const query = ref.translate(req.body.query);
 		res.status(200).send(query);
 	});
