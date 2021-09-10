@@ -1,5 +1,6 @@
 import { getQueriesMap, buildQueryPipeline } from './targets/common';
 import { ConfigType, RSQuery } from './types/types';
+const {performance} = require('perf_hooks');
 
 export class ReactiveSearch {
 	// for realm function client is generated via context
