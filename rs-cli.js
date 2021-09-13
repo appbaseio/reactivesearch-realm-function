@@ -6,7 +6,7 @@ const WEBHOOK_NAME = 'reactivesearch';
 
 const options = yargs
 	.usage(
-		'Usage: -private-api-key <private api key> -public-api-key <public api key> -app-id <application id>',
+		'Usage: -private-api-key <private api key> -api-key <public api key> -app-id <application id>',
 	)
 	.option('private-api-key', {
 		alias: 'api_key',
@@ -14,7 +14,7 @@ const options = yargs
 		type: 'string',
 		demandOption: true,
 	})
-	.option('public-api-key', {
+	.option('api-key', {
 		alias: 'public_api_key',
 		describe: 'Public API Key',
 		type: 'string',
@@ -41,7 +41,7 @@ console.log('\nDeploying webhook\n');
 try {
 	bar.start(5, 0);
 	execSync(
-		`./node_modules/mongodb-realm-cli/realm-cli login --api-key=${api_key} --private-api-key=${public_api_key}`,
+		`./node_modules/mongodb-realm-cli/realm-cli login --api-key=${public_api_key} --private-api-key=${api_key}`,
 	);
 	bar.update(1);
 	execSync(
