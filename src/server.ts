@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb';
-import { ReactiveSearch } from './';
+import { ReactiveSearch } from './searchFunction';
 import cors from 'cors';
 import express from 'express';
 

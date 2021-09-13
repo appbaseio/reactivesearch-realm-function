@@ -1,24 +1,26 @@
-const yargs = require("yargs");
-const Fs = require('fs')  
+const yargs = require('yargs');
+const Fs = require('fs');
 const Path = require('path');
-const { exit } = require("yargs");
+const { exit } = require('yargs');
 const { execSync } = require('child_process');
 
-
-
 const options = yargs
- .usage("Usage: -webhookname <name>")
- .option("webhookname", { alias: "name", describe: "Webhook Name", type: "string", demandOption: true })
- .argv;
+	.usage('Usage: -webhookname <name>')
+	.option('webhookname', {
+		alias: 'name',
+		describe: 'Webhook Name',
+		type: 'string',
+		demandOption: true,
+	}).argv;
 
-const webHookName = options.name
+const webHookName = options.name;
 
-// Check if file exists 
-const configPath = Path.join(__dirname, "./realm-app/realm_config.json")
+// Check if file exists
+const configPath = Path.join(__dirname, './realm-app/realm_config.json');
 
-if(!Fs.existsSync(configPath)){
-    console.log("Please pull application configuration first")
-    exit()
+if (!Fs.existsSync(configPath)) {
+	console.log('Please pull application configuration first');
+	exit();
 }
 
 const httpEndpointConfig = `
@@ -29,15 +31,19 @@ const httpEndpointConfig = `
     "version": 1
 }
 `;
-const httpEndpointDirectory = Path.join(__dirname, `./realm-app/http_endpoints/http_endpoint`)
+const httpEndpointDirectory = Path.join(
+	__dirname,
+	`./realm-app/http_endpoints/http_endpoint`,
+);
 Fs.mkdirSync(httpEndpointDirectory, { recursive: true });
 Fs.writeFileSync(`${httpEndpointDirectory}/config.json`, httpEndpointConfig);
 
-
 // Create webhook directory
-const webhookDirectory = Path.join(__dirname, `./realm-app/http_endpoints/http_endpoint/incoming_webhooks/${webHookName}`)
+const webhookDirectory = Path.join(
+	__dirname,
+	`./realm-app/http_endpoints/http_endpoint/incoming_webhooks/${webHookName}`,
+);
 Fs.mkdirSync(webhookDirectory, { recursive: true });
-
 
 const webHookConfigFileContent = `
 {
@@ -57,10 +63,12 @@ const webHookConfigFileContent = `
 }
 `;
 
-const webHookConfigFilePath =  Path.join(webhookDirectory, "config.json")
+const webHookConfigFilePath = Path.join(webhookDirectory, 'config.json');
 Fs.writeFileSync(webHookConfigFilePath, webHookConfigFileContent);
 
-const webHookSourceFilePath =  Path.join(webhookDirectory, "source.js")
-execSync(`tsc ./src/functions/searchFunction/source.ts && mv ./src/functions/searchFunction/source.js ${webHookSourceFilePath}`);
+const webHookSourceFilePath = Path.join(webhookDirectory, 'source.js');
+execSync(
+	`tsc ./src/searchFunction/source.ts && mv ./src/searchFunction/source.js ${webHookSourceFilePath}`,
+);
 
-execSync(`sed -i 's/exports\.__esModule = true;//g' ${webHookSourceFilePath}`)
+execSync(`sed -i 's/exports\.__esModule = true;//g' ${webHookSourceFilePath}`);

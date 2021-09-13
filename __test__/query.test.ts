@@ -1,6 +1,6 @@
 import { DataField, GeoValue, RSQuery, RangeValue } from '../src/types/types';
 
-import { ReactiveSearch } from '../src';
+import { ReactiveSearch } from '../src/searchFunction';
 
 // Runs integration tests
 

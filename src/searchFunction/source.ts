@@ -1,10 +1,10 @@
 // jshint ignore: start
-/// <reference path="../../types/realm.d.ts" />
+/// <reference path="../types/realm.d.ts" />
 
 'use strict';
 
-import { RSFunctionQueryData } from '../../types/types';
-import { ReactiveSearch } from '../../index';
+import { RSFunctionQueryData } from '../types/types';
+import { ReactiveSearch } from './index';
 
 // @ts-ignore
 exports = async (payload: any) => {
