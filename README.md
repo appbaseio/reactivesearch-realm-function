@@ -26,7 +26,7 @@
 
 - #### `yarn install`
   Install all the dependencies
-- #### `yarn global install typescript concat`
+- #### `yarn global add typescript concat`
   Install typescript and build utilities
 - #### `node rs-cli --private-api-key <private api key> --public-api-key <public api key> --app-id <application id>`
   Deploys webhook to your Realm app

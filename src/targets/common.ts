@@ -134,7 +134,19 @@ export const getPaginationMap = (query: RSQuery<any>) => {
 export const generateTermRelevantQuery = (
 	relevantRSQuery: RSQuery<string | string[] | number | number[]>,
 ): any => {
-	if (relevantRSQuery.value) {
+	let isValidValue = Boolean(relevantRSQuery.value);
+	if (Array.isArray(relevantRSQuery.value) && !relevantRSQuery.value.length) {
+		isValidValue = false;
+	}
+	// allow value like 0
+	if (
+		!Array.isArray(relevantRSQuery.value) &&
+		typeof relevantRSQuery.value === 'number'
+	) {
+		isValidValue = true;
+	}
+
+	if (isValidValue) {
 		if (relevantRSQuery.queryFormat === 'and') {
 			let filter: any = {};
 			if (Array.isArray(relevantRSQuery.value)) {

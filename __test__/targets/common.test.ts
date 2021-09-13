@@ -1,9 +1,15 @@
 import {
-	getIncludeExcludeFields,
-	getFuzziness,
-	getSynonymsQuery,
+	buildQueryPipeline,
+	getQueriesMap,
+} from '../../src/searchFunction/index';
+import {
 	getAutoCompleteQuery,
+	getFuzziness,
+	getIncludeExcludeFields,
+	getSynonymsQuery,
 } from '../../src/targets/common';
+
+import { RSQuery } from '../../src/types/types';
 
 test('getIncludeExcludeFields when * is in excludeFields', () => {
 	const result = getIncludeExcludeFields({
@@ -365,5 +371,433 @@ test('getAutoCompleteQuery when autocompleteField is an array of DataField and f
 		},
 	};
 	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test(`getQueriesMap should return the map of given rs query array`, () => {
+	const queries: RSQuery<any>[] = [
+		{
+			id: 'search',
+			value: 'room',
+			dataField: 'name',
+			type: 'search',
+			defaultQuery: [
+				{
+					$search: {
+						compound: {
+							should: [
+								{
+									text: {
+										query: 'Private',
+										path: 'name',
+									},
+								},
+							],
+						},
+					},
+				},
+				{
+					$limit: 30,
+				},
+			],
+		},
+		{
+			id: 'term',
+			value: 'Apartment',
+			dataField: 'property_type',
+			type: 'term',
+			size: 20,
+			react: {
+				and: ['search'],
+			},
+		},
+		{
+			execute: true,
+			react: {
+				or: ['search'],
+				and: ['term'],
+			},
+			id: 'accommodates_range',
+			dataField: ['accommodates'],
+			type: 'range',
+			value: {
+				start: 1,
+				end: 10,
+			},
+			aggregations: ['min', 'max', 'histogram'],
+			interval: 2,
+		},
+		{
+			id: 'result',
+			type: 'search',
+			size: 10,
+			includeFields: ['name'],
+			react: {
+				and: ['term', 'search'],
+			},
+		},
+	];
+	const result = getQueriesMap(queries);
+	const expected = {
+		search: {
+			rsQuery: {
+				id: 'search',
+				value: 'room',
+				dataField: 'name',
+				type: 'search',
+				defaultQuery: [
+					{
+						$search: {
+							compound: {
+								should: [{ text: { query: 'Private', path: 'name' } }],
+							},
+						},
+					},
+					{ $limit: 30 },
+				],
+			},
+			mongoQuery: [
+				{
+					$search: {
+						compound: {
+							should: [
+								{
+									compound: {
+										must: [
+											{
+												text: {
+													path: 'name',
+													query: 'room',
+													score: { boost: { value: 1 } },
+												},
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+				},
+				{ $facet: { hits: [{ $limit: 10 }], total: [{ $count: 'count' }] } },
+			],
+		},
+		term: {
+			rsQuery: {
+				id: 'term',
+				value: 'Apartment',
+				dataField: 'property_type',
+				type: 'term',
+				size: 20,
+				react: { and: ['search'] },
+			},
+			mongoQuery: [
+				{
+					$facet: {
+						aggregations: [
+							{ $unwind: '$property_type' },
+							{ $sortByCount: '$property_type' },
+						],
+					},
+				},
+			],
+		},
+		accommodates_range: {
+			rsQuery: {
+				execute: true,
+				react: { or: ['search'], and: ['term'] },
+				id: 'accommodates_range',
+				dataField: ['accommodates'],
+				type: 'range',
+				value: { start: 1, end: 10 },
+				aggregations: ['min', 'max', 'histogram'],
+				interval: 2,
+			},
+			mongoQuery: [
+				{
+					$search: {
+						compound: {
+							should: [{ range: { path: 'accommodates', gte: 1, lte: 10 } }],
+						},
+					},
+				},
+				{
+					$facet: {
+						hits: [{ $limit: 10 }],
+						total: [{ $count: 'count' }],
+						min: [{ $group: { _id: null, min: { $min: '$accommodates' } } }],
+						max: [{ $group: { _id: null, max: { $max: '$accommodates' } } }],
+						histogram: [
+							{
+								$bucket: {
+									groupBy: '$accommodates',
+									boundaries: [1, 3, 5, 7, 9],
+									default: 'other',
+								},
+							},
+						],
+					},
+				},
+			],
+		},
+		result: {
+			rsQuery: {
+				id: 'result',
+				type: 'search',
+				size: 10,
+				includeFields: ['name'],
+				react: { and: ['term', 'search'] },
+			},
+			mongoQuery: [
+				{ $project: { name: 1 } },
+				{ $facet: { hits: [{ $limit: 10 }], total: [{ $count: 'count' }] } },
+			],
+		},
+	};
+	expect(result).toStrictEqual(expected);
+});
+
+test(`buildQueryPipeline should return mongo query pipeline map`, () => {
+	const queries: RSQuery<any>[] = [
+		{
+			id: 'custom',
+			execute: false,
+			customQuery: {
+				$search: {
+					compound: {
+						should: [
+							{
+								text: {
+									query: 'Private',
+									path: 'name',
+								},
+							},
+						],
+					},
+				},
+			},
+		},
+		{
+			id: 'search',
+			value: 'room',
+			dataField: 'name',
+			type: 'search',
+			size: 20,
+			defaultQuery: [
+				{
+					$search: {
+						compound: {
+							should: [
+								{
+									text: {
+										query: 'Private',
+										path: 'name',
+									},
+								},
+							],
+						},
+					},
+				},
+				{
+					$limit: 30,
+				},
+			],
+		},
+		{
+			id: 'term',
+			value: 'Apartment',
+			dataField: 'property_type',
+			type: 'term',
+			size: 20,
+			react: {
+				and: ['search'],
+			},
+		},
+		{
+			execute: true,
+			react: {
+				or: ['search'],
+				and: ['term'],
+			},
+			id: 'accommodates_range',
+			dataField: ['accommodates'],
+			type: 'range',
+			value: {
+				start: 1,
+				end: 10,
+			},
+			aggregations: ['min', 'max', 'histogram'],
+			interval: 2,
+		},
+		{
+			id: 'result',
+			type: 'search',
+			size: 10,
+			includeFields: ['name'],
+			react: {
+				and: ['term', 'search'],
+			},
+		},
+	];
+
+	const qMap = getQueriesMap(queries);
+	const result = buildQueryPipeline(qMap);
+	const expected = {
+		search: [
+			{
+				$search: {
+					compound: { should: [{ text: { query: 'Private', path: 'name' } }] },
+				},
+			},
+			{ $facet: { hits: [{ $limit: 30 }], total: [{ $count: 'count' }] } },
+		],
+		term: [
+			{
+				$search: {
+					compound: {
+						must: [
+							{
+								compound: {
+									should: [
+										{
+											compound: {
+												must: [
+													{
+														text: {
+															path: 'name',
+															query: 'room',
+															score: { boost: { value: 1 } },
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+					},
+				},
+			},
+			{
+				$facet: {
+					aggregations: [
+						{ $unwind: '$property_type' },
+						{ $sortByCount: '$property_type' },
+					],
+				},
+			},
+		],
+		accommodates_range: [
+			{
+				$search: {
+					compound: {
+						must: [
+							{
+								compound: {
+									should: [
+										{ range: { path: 'accommodates', gte: 1, lte: 10 } },
+									],
+								},
+							},
+							{
+								compound: {
+									must: [
+										{
+											compound: {
+												filter: {
+													text: { query: ['Apartment'], path: 'property_type' },
+												},
+											},
+										},
+										{
+											compound: {
+												should: [
+													{
+														compound: {
+															should: [
+																{
+																	compound: {
+																		must: [
+																			{
+																				text: {
+																					path: 'name',
+																					query: 'room',
+																					score: { boost: { value: 1 } },
+																				},
+																			},
+																		],
+																	},
+																},
+															],
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+					},
+				},
+			},
+			{
+				$facet: {
+					hits: [{ $limit: 10 }],
+					total: [{ $count: 'count' }],
+					min: [{ $group: { _id: null, min: { $min: '$accommodates' } } }],
+					max: [{ $group: { _id: null, max: { $max: '$accommodates' } } }],
+					histogram: [
+						{
+							$bucket: {
+								groupBy: '$accommodates',
+								boundaries: [1, 3, 5, 7, 9],
+								default: 'other',
+							},
+						},
+					],
+				},
+			},
+		],
+		result: [
+			{
+				$search: {
+					compound: {
+						must: [
+							{
+								compound: {
+									filter: {
+										text: { query: ['Apartment'], path: 'property_type' },
+									},
+								},
+							},
+							{
+								compound: {
+									should: [
+										{
+											compound: {
+												must: [
+													{
+														text: {
+															path: 'name',
+															query: 'room',
+															score: { boost: { value: 1 } },
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+					},
+				},
+			},
+			{ $project: { name: 1 } },
+			{ $facet: { hits: [{ $limit: 10 }], total: [{ $count: 'count' }] } },
+		],
+	};
+
 	expect(result).toStrictEqual(expected);
 });

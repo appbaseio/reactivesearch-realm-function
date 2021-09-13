@@ -36,8 +36,6 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 					return defaultKey !== `$skip` && defaultKey !== `$limit`;
 				});
 
-				console.log({ limit, skip });
-
 				mongoQuery.forEach((mongoQueryItem: any, index: number) => {
 					const key = Object.keys(mongoQueryItem)[0];
 
@@ -235,13 +233,23 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 						delete currentSearch.index;
 					}
 
-					if (currentSearch && index) {
-						compoundQuery.$search.index = index;
+					if (
+						compoundQuery &&
+						compoundQuery.$search &&
+						compoundQuery.$search.compound &&
+						Object.keys(compoundQuery.$search.compound).length
+					) {
+						if (rsQuery.index) {
+							compoundQuery.$search.index = rsQuery.index;
+						}
+						finalMongoQuery = currentSearch
+							? [...extraTargets, compoundQuery, ...finalMongoQuery.slice(1)]
+							: [...extraTargets, compoundQuery, ...finalMongoQuery];
+					} else {
+						finalMongoQuery = currentSearch
+							? [...extraTargets, ...finalMongoQuery.slice(1)]
+							: [...extraTargets, ...finalMongoQuery];
 					}
-
-					finalMongoQuery = currentSearch
-						? [...extraTargets, compoundQuery, ...finalMongoQuery.slice(1)]
-						: [...extraTargets, compoundQuery, ...finalMongoQuery];
 				} else {
 					if (orQuery.length) {
 						compoundQuery.$search.compound = {
@@ -255,18 +263,29 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 						};
 					}
 
-					finalMongoQuery = [
-						...extraTargets,
-						compoundQuery,
-						...finalMongoQuery,
-					];
+					if (
+						compoundQuery &&
+						compoundQuery.$search &&
+						compoundQuery.$search.compound &&
+						Object.keys(compoundQuery.$search.compound).length
+					) {
+						if (rsQuery.index) {
+							compoundQuery.$search.index = rsQuery.index;
+						}
+						finalMongoQuery = [
+							...extraTargets,
+							compoundQuery,
+							...finalMongoQuery,
+						];
+					} else {
+						finalMongoQuery = [...extraTargets, ...finalMongoQuery];
+					}
 				}
 			}
 
 			mongoPipelines[rsQuery.id || `${Date.now()}`] = finalMongoQuery;
 		}
 	});
-
 	return mongoPipelines;
 };
 
@@ -278,6 +297,11 @@ export const getQueriesMap = (queries: RSQuery<any>[]): QueryMap => {
 			rsQuery: item,
 			mongoQuery: {},
 		};
+
+		// default item type to search
+		if (!item.type) {
+			item.type = `search`;
+		}
 
 		if (item.type === `search`) {
 			res[itemId].mongoQuery = getSearchQuery(item);
@@ -297,6 +321,13 @@ export const getQueriesMap = (queries: RSQuery<any>[]): QueryMap => {
 	});
 
 	return res;
+};
+
+const performance = {
+	now: (): number => {
+		const time = new Date();
+		return time.getTime();
+	},
 };
 
 export class ReactiveSearch {
@@ -319,7 +350,7 @@ export class ReactiveSearch {
 		return result;
 	};
 
-	query = (data: RSQuery<any>[], collectionName?: string): any => {
+	query = (data: RSQuery<any>[], collectionName: string): any => {
 		const queryMap = getQueriesMap(data);
 
 		const aggregationsObject = buildQueryPipeline(queryMap);
@@ -331,7 +362,7 @@ export class ReactiveSearch {
 						const start = performance.now();
 						const collection = this.config.client
 							.db(this.config.database)
-							.collection(collectionName || this.config.collection);
+							.collection(collectionName);
 
 						const res = await collection
 							.aggregate(aggregationsObject[item])
@@ -353,7 +384,7 @@ export class ReactiveSearch {
 										buckets: res[0].aggregations.map(
 											(item: { _id: string; count: number }) => ({
 												key: item._id,
-												doc_count: item.count,
+												doc_count: item?.count || 0,
 											}),
 										),
 									},
@@ -366,7 +397,7 @@ export class ReactiveSearch {
 							took: 100,
 							hits: {
 								total: {
-									value: total[0].count,
+									value: total[0]?.count || 0,
 									relation: `eq`,
 								},
 								// TODO add max score
@@ -408,7 +439,7 @@ export class ReactiveSearch {
 								buckets: histogram.map(
 									(item: { _id: string | number; count: number }) => ({
 										key: item._id,
-										doc_count: item.count,
+										doc_count: item?.count || 0,
 									}),
 								),
 							};
