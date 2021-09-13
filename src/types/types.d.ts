@@ -1,7 +1,7 @@
 export type ConfigType = {
 	client?: any;
 	database: string;
-	documentCollection: string;
+	collection: string;
 };
 
 export type MicStatusField = `INACTIVE` | `ACTIVE` | `DENIED`;

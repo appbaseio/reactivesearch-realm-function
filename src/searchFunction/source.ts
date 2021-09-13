@@ -16,7 +16,7 @@ exports = async (payload: any) => {
 	const reactiveSearch = new ReactiveSearch({
 		client,
 		database: config.database,
-		documentCollection: config.documentCollection,
+		collection: config.collection,
 	});
 
 	const results = await reactiveSearch.query(searchQuery);

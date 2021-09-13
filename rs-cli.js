@@ -69,7 +69,18 @@ if (http_endpoints) {
 	);
 	console.log(`curl \\
         -H "Content-Type: application/json" \\
-        -d '{"foo":"bar"}' \\
+        -d {
+			query: [{
+				id: 'search',
+				type: 'search', // default to search
+				dataField: '*',
+				size: 5
+			}],
+			config: {
+				database: <database>,
+				collection: <collection>
+			}
+		}'
         ${webhookEndpoint}
      `);
 } else {

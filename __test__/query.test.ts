@@ -6,7 +6,7 @@ import { ReactiveSearch } from '../src/searchFunction';
 
 const ref = new ReactiveSearch({
 	database: 'sample_airbnb',
-	documentCollection: '',
+	collection: '',
 });
 
 describe(`generates search query correctly`, () => {

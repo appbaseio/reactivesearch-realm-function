@@ -20,7 +20,7 @@ async function main() {
 	const ref = new ReactiveSearch({
 		client,
 		database: process.env.DB_NAME || ``,
-		documentCollection: '',
+		collection: '',
 	});
 
 	app.post(`/:collection/_reactivesearch`, async (req, res) => {

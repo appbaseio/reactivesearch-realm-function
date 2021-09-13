@@ -308,7 +308,7 @@ export class ReactiveSearch {
 		this.config = {
 			client: config.client,
 			database: config.database,
-			documentCollection: config.documentCollection,
+			collection: config.collection,
 		};
 	}
 
@@ -331,7 +331,7 @@ export class ReactiveSearch {
 						const start = performance.now();
 						const collection = this.config.client
 							.db(this.config.database)
-							.collection(collectionName || this.config.documentCollection);
+							.collection(collectionName || this.config.collection);
 
 						const res = await collection
 							.aggregate(aggregationsObject[item])
