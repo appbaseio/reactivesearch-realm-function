@@ -25,9 +25,15 @@ const options = yargs
 		describe: 'Application ID',
 		type: 'string',
 		demandOption: true,
+	})
+	.option('app-authentication', {
+		alias: 'app_authentication',
+		describe: 'Application Authentication',
+		type: 'string',
+		demandOption: false,
 	}).argv;
 
-const { api_key, public_api_key, app_id } = options;
+const { api_key, public_api_key, app_id, app_authentication } = options;
 const bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
 
 console.log('\nDeploying webhook\n');
@@ -40,7 +46,10 @@ execSync(
 	`rm -rf realm-app && realm-cli pull --local=./realm-app  --remote=${app_id}`,
 );
 bar.update(2);
-execSync(`node build --name=${WEBHOOK_NAME}`);
+execSync(
+	`node build --name=${WEBHOOK_NAME}` +
+		(app_authentication ? ` --app-authentication=${app_authentication}` : ''),
+);
 bar.update(3);
 execSync(`realm-cli push --local=./realm-app --yes`);
 bar.update(4);

@@ -4,6 +4,8 @@ const Path = require('path');
 const { exit } = require('yargs');
 const { execSync } = require('child_process');
 
+const { Base64 } = require('js-base64');
+
 const options = yargs
 	.usage('Usage: -webhookname <name>')
 	.option('webhookname', {
@@ -11,9 +13,16 @@ const options = yargs
 		describe: 'Webhook Name',
 		type: 'string',
 		demandOption: true,
+	})
+	.option('app-authentication', {
+		alias: 'app_authentication',
+		describe: 'Application Authentication',
+		type: 'string',
+		demandOption: false,
 	}).argv;
 
 const webHookName = options.name;
+const { app_authentication } = options;
 
 // Check if file exists
 const configPath = Path.join(__dirname, './realm-app/realm_config.json');
@@ -31,6 +40,7 @@ const httpEndpointConfig = `
     "version": 1
 }
 `;
+
 const httpEndpointDirectory = Path.join(
 	__dirname,
 	`./realm-app/http_endpoints/http_endpoint`,
@@ -84,6 +94,14 @@ Fs.writeFileSync('./dist/source.ts', result, { encoding: 'utf-8' });
 
 execSync(`sed -i 's/export const/const/g' ./dist/source.ts`);
 execSync(`sed -i 's/export type/type/g' ./dist/source.ts`);
+base64;
+if (app_authentication) {
+	execSync(
+		`sed -i 's/AUTHORIZATION_CREDENTIALS = null/AUTHORIZATION_CREDENTIALS = ${Base64.encode(
+			app_authentication,
+		)}/g' ./dist/source.ts`,
+	);
+}
 execSync(`tsc ./dist/source.ts`);
 execSync(`sed -i 's/exports\.__esModule = true;//g' ./dist/source.js`);
 execSync(`sed -i 's/exports\.ReactiveSearch.*;//g' ./dist/source.js`);

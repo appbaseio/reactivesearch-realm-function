@@ -3,11 +3,20 @@
 
 'use strict';
 
+import { AUTHORIZATION_CREDENTIALS } from '../constants';
 import { RSFunctionQueryData } from '../types/types';
 import { ReactiveSearch } from './index';
-
 // @ts-ignore
 exports = async (payload: any) => {
+	if (AUTHORIZATION_CREDENTIALS) {
+		if (payload?.headers['Authorization'] !== AUTHORIZATION_CREDENTIALS) {
+			return {
+				hits: null,
+				error: 'Invalid credentials',
+				status: 401,
+			};
+		}
+	}
 	// @ts-expect-error
 	const query: RSFunctionQueryData = EJSON.parse(payload.body.text());
 	const { config, searchQuery } = query;
@@ -19,6 +28,6 @@ exports = async (payload: any) => {
 		collection: config.collection,
 	});
 
-	const results = await reactiveSearch.query(searchQuery);
+	const results = await reactiveSearch.query(searchQuery, config.collection);
 	return results;
 };
