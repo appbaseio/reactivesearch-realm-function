@@ -9,7 +9,7 @@ import { ReactiveSearch } from './index';
 // @ts-ignore
 exports = async (payload: any) => {
 	if (AUTHORIZATION_CREDENTIALS) {
-		if (payload?.headers['Authorization'] !== AUTHORIZATION_CREDENTIALS) {
+		if (payload?.headers['Authorization']?.[0] !== AUTHORIZATION_CREDENTIALS) {
 			return {
 				hits: null,
 				error: 'Invalid credentials',

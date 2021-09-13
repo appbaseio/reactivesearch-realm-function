@@ -94,12 +94,11 @@ Fs.writeFileSync('./dist/source.ts', result, { encoding: 'utf-8' });
 
 execSync(`sed -i 's/export const/const/g' ./dist/source.ts`);
 execSync(`sed -i 's/export type/type/g' ./dist/source.ts`);
-base64;
 if (app_authentication) {
 	execSync(
-		`sed -i 's/AUTHORIZATION_CREDENTIALS = null/AUTHORIZATION_CREDENTIALS = ${Base64.encode(
+		`sed -i 's/AUTHORIZATION_CREDENTIALS = null/AUTHORIZATION_CREDENTIALS = "${Base64.encode(
 			app_authentication,
-		)}/g' ./dist/source.ts`,
+		)}"/g' ./dist/source.ts`,
 	);
 }
 execSync(`tsc ./dist/source.ts`);
