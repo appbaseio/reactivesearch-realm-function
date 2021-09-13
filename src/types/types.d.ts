@@ -188,7 +188,7 @@ export type MIC_STATUS = {
 
 export type RSFunctionQueryData = {
 	config: ConfigType;
-	searchQuery: RSQuery<any>[];
+	query: RSQuery<any>[];
 };
 
 export type QueryMap = Record<
