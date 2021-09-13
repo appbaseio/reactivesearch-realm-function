@@ -37,7 +37,7 @@ const { api_key, private_api_key, app_id, app_authentication } = options;
 const bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
 
 let webhookEndpoint;
-console.log('\nDeploying webhook\n');
+console.log('\nDeploying ReactiveSearch API as a Realm function\n');
 try {
 	bar.start(5, 0);
 	execSync(
@@ -86,21 +86,19 @@ if (webhookEndpoint) {
 	console.log(
 		`\n You can make a test request to this webhook using this curl command \n`,
 	);
-	console.log(`curl \\
+	console.log(`curl -XPOST ${webhookEndpoint} \\
         -H "Content-Type: application/json" \\
-        -d {
-			query: [{
-				id: 'search',
-				type: 'search', // default to search
-				dataField: '*',
-				size: 5
-			}],
-			config: {
-				database: <database>,
-				collection: <collection>
-			}
-		}'
-        ${webhookEndpoint}
+        -d '{
+	"query": [{
+		"id": "search",
+		"dataField": "*",
+		"size": 5
+	}],
+	"mongodb": {
+		"database": "'"$database"'",
+		"collection": "'"collection"'"
+	}
+}'
      `);
 } else {
 	console.error("\n Something went wrong. We aren't able to find endpoint");
