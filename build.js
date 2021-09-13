@@ -82,7 +82,7 @@ if (!Fs.existsSync('dist')) {
 	Fs.mkdirSync('dist');
 }
 execSync(
-	`concat -o dist/source.ts ./src/searchFunction/source.ts ./src/constants.ts ./src/utils.ts ./src/types/* ./src/validators/* ./src/targets/* ./src/searchFunction/index.ts`,
+	`./node_modules/concat/bin/concat -o dist/source.ts ./src/searchFunction/source.ts ./src/constants.ts ./src/utils.ts ./src/types/* ./src/validators/* ./src/targets/* ./src/searchFunction/index.ts`,
 );
 execSync(`cp ./src/searchFunction/realm.d.ts ./dist/realm.d.ts`);
 
@@ -101,7 +101,7 @@ if (app_authentication) {
 		)}"/g' ./dist/source.ts`,
 	);
 }
-execSync(`tsc ./dist/source.ts`);
+execSync(`./node_modules/typescript/bin/tsc ./dist/source.ts`);
 execSync(`sed -i 's/exports\.__esModule = true;//g' ./dist/source.js`);
 execSync(`sed -i 's/exports\.ReactiveSearch.*;//g' ./dist/source.js`);
 

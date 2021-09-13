@@ -26,7 +26,40 @@
 
 - #### `yarn install`
   Install all the dependencies
-- #### `yarn global add typescript concat`
-  Install typescript and build utilities
-- #### `node rs-cli --private-api-key <private api key> --public-api-key <public api key> --app-id <application id>`
+- #### `node rs-cli --private-api-key <private api key> --public-api-key <public api key> --app-id <application id> --app-authentication $user:&password`
+
   Deploys webhook to your Realm app
+
+  Output:
+
+  ```
+    Deploying webhook
+
+    ████████████████████████████████████████ 100% | ETA: 0s | 5/5
+
+    Successfully deployed webhook.
+
+    Deployed webhook endpoint : https://webhooks.mongodb-realm.com/api/client/v2.0/app/application_id/service/http_endpoint/incoming_webhook/reactivesearch
+
+    You can make a test request to this webhook using this curl command
+
+      curl \
+        -H "Content-Type: application/json" \
+        -d {
+                        query: [{
+                                id: 'search',
+                                type: 'search', // default to search
+                                dataField: '*',
+                                size: 5
+                        }],
+                        config: {
+                                database: <database>,
+                                collection: <collection>
+                        }
+                }'
+        https://webhooks.mongodb-realm.com/api/client/v2.0/app/application_id/service/http_endpoint/incoming_webhook/reactivesearch
+  ```
+
+```
+
+```
