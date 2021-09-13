@@ -33,7 +33,7 @@
   Output:
 
   ```
-    Deploying webhook
+    Deploying ReactiveSearch API as a Realm function
 
     ████████████████████████████████████████ 100% | ETA: 0s | 5/5
 
@@ -43,21 +43,19 @@
 
     You can make a test request to this webhook using this curl command
 
-      curl \
+      curl -XPOST https://us-east-1.aws.webhooks.mongodb-realm.com/api/client/v2.0/app/application-3-jrkwf/service/http_endpoint/incoming_webhook/reactivesearch \
         -H "Content-Type: application/json" \
-        -d {
-                        query: [{
-                                id: 'search',
-                                type: 'search', // default to search
-                                dataField: '*',
-                                size: 5
-                        }],
-                        config: {
-                                database: <database>,
-                                collection: <collection>
-                        }
-                }'
-        https://webhooks.mongodb-realm.com/api/client/v2.0/app/application_id/service/http_endpoint/incoming_webhook/reactivesearch
+        -d '{
+          "query": [{
+            "id": "search",
+            "dataField": "*",
+            "size": 5
+          }],
+          "mongodb": {
+            "database": "sample_airbnb",
+            "collection": "collection"
+          }
+        }'
   ```
 
 ```
