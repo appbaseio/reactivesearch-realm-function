@@ -68,6 +68,7 @@
 		"express": "^4.17.1",
 		"lodash.range": "^3.2.0",
 		"mongodb": "^4.1.0",
+		"mongodb-realm-cli": "^2.1.0",
 		"ts-jest": "^27.0.5",
 		"yargs": "^17.1.1"
 	}

@@ -39,11 +39,11 @@ const bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
 console.log('\nDeploying webhook\n');
 bar.start(5, 0);
 execSync(
-	`realm-cli login --api-key=${api_key} --private-api-key=${public_api_key}`,
+	`./node_modules/mongodb-realm-cli/realm-cli login --api-key=${api_key} --private-api-key=${public_api_key}`,
 );
 bar.update(1);
 execSync(
-	`rm -rf realm-app && realm-cli pull --local=./realm-app  --remote=${app_id}`,
+	`rm -rf realm-app && ./node_modules/mongodb-realm-cli/realm-cli pull --local=./realm-app  --remote=${app_id}`,
 );
 bar.update(2);
 execSync(
@@ -51,10 +51,14 @@ execSync(
 		(app_authentication ? ` --app-authentication=${app_authentication}` : ''),
 );
 bar.update(3);
-execSync(`realm-cli push --local=./realm-app --yes`);
+execSync(
+	`./node_modules/mongodb-realm-cli/realm-cli push --local=./realm-app --yes`,
+);
 bar.update(4);
 const appDescription = JSON.parse(
-	execSync(`realm-cli app describe --app=${app_id}`)
+	execSync(
+		`./node_modules/mongodb-realm-cli/realm-cli app describe --app=${app_id}`,
+	)
 		.toString()
 		.replace('App description', ''),
 );

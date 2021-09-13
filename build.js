@@ -90,19 +90,18 @@ const regex =
 	/import(?:["'\s]*([\w*{}\n\r\t, ]+)from\s*)?["'\s].*([@\w_-]+)["'\s].*;$/gm;
 const data = Fs.readFileSync('./dist/source.ts', { encoding: 'utf-8' });
 var result = data.replace(regex, '');
+result = result.replace(new RegExp('export const', 'g'), 'const');
+result = result.replace(new RegExp('export type', 'g'), 'type');
+result = result.replace(
+	new RegExp('AUTHORIZATION_CREDENTIALS = null', 'g'),
+	`AUTHORIZATION_CREDENTIALS = "${Base64.encode(app_authentication)}"`,
+);
 Fs.writeFileSync('./dist/source.ts', result, { encoding: 'utf-8' });
-
-execSync(`sed -i 's/export const/const/g' ./dist/source.ts`);
-execSync(`sed -i 's/export type/type/g' ./dist/source.ts`);
-if (app_authentication) {
-	execSync(
-		`sed -i 's/AUTHORIZATION_CREDENTIALS = null/AUTHORIZATION_CREDENTIALS = "${Base64.encode(
-			app_authentication,
-		)}"/g' ./dist/source.ts`,
-	);
-}
 execSync(`./node_modules/typescript/bin/tsc ./dist/source.ts`);
-execSync(`sed -i 's/exports\.__esModule = true;//g' ./dist/source.js`);
-execSync(`sed -i 's/exports\.ReactiveSearch.*;//g' ./dist/source.js`);
+
+let dataJS = Fs.readFileSync('./dist/source.js', { encoding: 'utf-8' });
+dataJS = dataJS.replace(new RegExp('exports.__esModule = true;', 'g'), '');
+dataJS = dataJS.replace(new RegExp('exports.ReactiveSearch.*;', 'g'), '');
+Fs.writeFileSync('./dist/source.js', dataJS, { encoding: 'utf-8' });
 
 execSync(`mv ./dist/source.js ${webHookSourceFilePath}`);
