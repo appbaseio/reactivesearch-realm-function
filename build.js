@@ -92,10 +92,12 @@ const data = Fs.readFileSync('./dist/source.ts', { encoding: 'utf-8' });
 var result = data.replace(regex, '');
 result = result.replace(new RegExp('export const', 'g'), 'const');
 result = result.replace(new RegExp('export type', 'g'), 'type');
-result = result.replace(
-	new RegExp('AUTHORIZATION_CREDENTIALS = null', 'g'),
-	`AUTHORIZATION_CREDENTIALS = "${Base64.encode(app_authentication)}"`,
-);
+if (app_authentication) {
+	result = result.replace(
+		new RegExp('AUTHORIZATION_CREDENTIALS = null', 'g'),
+		`AUTHORIZATION_CREDENTIALS = "${Base64.encode(app_authentication)}"`,
+	);
+}
 Fs.writeFileSync('./dist/source.ts', result, { encoding: 'utf-8' });
 execSync(`./node_modules/typescript/bin/tsc ./dist/source.ts`);
 
