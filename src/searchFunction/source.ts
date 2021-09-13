@@ -1,5 +1,5 @@
 // jshint ignore: start
-/// <reference path="../types/realm.d.ts" />
+/// <reference path="./realm.d.ts" />
 
 'use strict';
 

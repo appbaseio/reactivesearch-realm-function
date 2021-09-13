@@ -67,8 +67,25 @@ const webHookConfigFilePath = Path.join(webhookDirectory, 'config.json');
 Fs.writeFileSync(webHookConfigFilePath, webHookConfigFileContent);
 
 const webHookSourceFilePath = Path.join(webhookDirectory, 'source.js');
-execSync(
-	`tsc ./src/searchFunction/source.ts && mv ./src/searchFunction/source.js ${webHookSourceFilePath}`,
-);
 
-execSync(`sed -i 's/exports\.__esModule = true;//g' ${webHookSourceFilePath}`);
+if (!Fs.existsSync('dist')) {
+	Fs.mkdirSync('dist');
+}
+execSync(
+	`concat -o dist/source.ts ./src/searchFunction/source.ts ./src/constants.ts ./src/utils.ts ./src/types/* ./src/validators/* ./src/targets/* ./src/searchFunction/index.ts`,
+);
+execSync(`cp ./src/searchFunction/realm.d.ts ./dist/realm.d.ts`);
+
+const regex =
+	/import(?:["'\s]*([\w*{}\n\r\t, ]+)from\s*)?["'\s].*([@\w_-]+)["'\s].*;$/gm;
+const data = Fs.readFileSync('./dist/source.ts', { encoding: 'utf-8' });
+var result = data.replace(regex, '');
+Fs.writeFileSync('./dist/source.ts', result, { encoding: 'utf-8' });
+
+execSync(`sed -i 's/export const/const/g' ./dist/source.ts`);
+execSync(`sed -i 's/export type/type/g' ./dist/source.ts`);
+execSync(`tsc ./dist/source.ts`);
+execSync(`sed -i 's/exports\.__esModule = true;//g' ./dist/source.js`);
+execSync(`sed -i 's/exports\.ReactiveSearch.*;//g' ./dist/source.js`);
+
+execSync(`mv ./dist/source.js ${webHookSourceFilePath}`);
