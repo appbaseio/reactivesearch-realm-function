@@ -95,8 +95,8 @@ if (webhookEndpoint) {
 		"size": 5
 	}],
 	"mongodb": {
-		"database": "'"$database"'",
-		"collection": "'"collection"'"
+		"db": "'"$database"'",
+		"collection": "'"$collection"'"
 	}
 }'
      `);
