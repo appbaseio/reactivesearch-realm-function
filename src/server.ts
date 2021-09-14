@@ -17,33 +17,54 @@ async function main() {
 	app.use(cors());
 	app.use(express.json());
 
-	const ref = new ReactiveSearch({
-		client,
-		database: process.env.DB_NAME || ``,
-		collection: '',
-	});
+	app.post(`/_reactivesearch`, async (req, res) => {
+		let db = req.query.db;
+		let collection = req.query.collection;
 
-	app.post(`/:index/_reactivesearch`, async (req, res) => {
-		// let db = req.query.db;
-		// let collection = req.query.collection;
+		if (!db || !collection) {
+			//check if mongodb key is present in req.body
+			const config = req.body.config;
+			if (!config) {
+				res.status(400).send({
+					error: `config object is required with db and collection name as its keys`,
+				});
+				return;
+			}
+			db = config.db;
+			collection = config.collection;
+		}
 
-		// if (!db || !collection) {
-		// 	//check if mongodb key is present in req.body
-		// 	const mongodb = req.body.mongodb;
-		// 	if (!mongodb) {
-		// 		res.status(400).send({
-		// 			error: `mongodb object is required with db and collection name as its keys`,
-		// 		});
-		// 		return;
-		// 	}
-		// 	db = mongodb.db;
-		// 	collection = mongodb.collection;
-		// }
-		const data = await ref.query(req.body.query, `listingsAndReviews`);
+		const ref = new ReactiveSearch({
+			client,
+			database: <string>db,
+			collection: <string>collection,
+		});
+		const data = await ref.query(req.body.query);
 		res.status(200).send(data);
 	});
 
-	app.post(`/:index/_reactivesearch/validate`, (req, res) => {
+	app.post(`/_reactivesearch/validate`, (req, res) => {
+		let db = req.query.db;
+		let collection = req.query.collection;
+
+		if (!db || !collection) {
+			//check if mongodb key is present in req.body
+			const config = req.body.config;
+			if (!config) {
+				res.status(400).send({
+					error: `config object is required with db and collection name as its keys`,
+				});
+				return;
+			}
+			db = config.db;
+			collection = config.collection;
+		}
+
+		const ref = new ReactiveSearch({
+			client,
+			database: <string>db,
+			collection: <string>collection,
+		});
 		const query = ref.translate(req.body.query);
 		res.status(200).send(query);
 	});

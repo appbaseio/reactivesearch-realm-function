@@ -350,7 +350,7 @@ export class ReactiveSearch {
 		return result;
 	};
 
-	query = (data: RSQuery<any>[], collectionName: string): any => {
+	query = (data: RSQuery<any>[]): any => {
 		const queryMap = getQueriesMap(data);
 
 		const aggregationsObject = buildQueryPipeline(queryMap);
@@ -362,7 +362,7 @@ export class ReactiveSearch {
 						const start = performance.now();
 						const collection = this.config.client
 							.db(this.config.database)
-							.collection(collectionName);
+							.collection(this.config.collection);
 
 						const res = await collection
 							.aggregate(aggregationsObject[item])
@@ -404,7 +404,7 @@ export class ReactiveSearch {
 								max_score: 0,
 								hits: hits.map((item: any) => ({
 									_index: rsQuery.index || `default`,
-									_collection: collectionName,
+									_collection: this.config.collection,
 									_id: item._id,
 									// TODO add score pipeline
 									_score: 0,
