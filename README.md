@@ -28,7 +28,7 @@
             "dataField": "*",
             "size": 5
         }],
-        "config": {
+        "mongodb": {
             "db": "sample_airbnb",
             "collection": "listingsAndReviews"
         }
