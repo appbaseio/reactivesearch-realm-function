@@ -382,9 +382,11 @@ export class ReactiveSearch {
 								aggregations: {
 									[dataField]: {
 										buckets: res[0].aggregations.map(
-											(item: { _id: string; count: number }) => ({
+											(item: { _id: string; count: any }) => ({
 												key: item._id,
-												doc_count: item?.count || 0,
+												doc_count: item?.count?.$numberInt
+													? parseInt(item?.count?.$numberInt)
+													: item?.count || 0,
 											}),
 										),
 									},
@@ -421,13 +423,17 @@ export class ReactiveSearch {
 
 						if (min) {
 							dataToReturn.aggregations.min = {
-								value: min[0].min,
+								value: min[0].min?.$numberInt
+									? parseInt(min[0].min?.$numberInt)
+									: min[0].min || 0,
 							};
 						}
 
 						if (max) {
 							dataToReturn.aggregations.max = {
-								value: max[0].max,
+								value: max[0].max?.$numberInt
+									? parseInt(max[0].max?.$numberInt)
+									: max[0].max || 0,
 							};
 						}
 
@@ -437,9 +443,11 @@ export class ReactiveSearch {
 								: `${rsQuery.dataField}`;
 							dataToReturn.aggregations[dataField] = {
 								buckets: histogram.map(
-									(item: { _id: string | number; count: number }) => ({
+									(item: { _id: string | number; count: any }) => ({
 										key: item._id,
-										doc_count: item?.count || 0,
+										doc_count: item?.count?.$numberInt
+											? parseInt(item?.count?.$numberInt)
+											: item?.count || 0,
 									}),
 								),
 							};

@@ -31,7 +31,9 @@ export const getRangeQuery = (query: RSQuery<RangeValue>): any => {
 
 		if (query.value && query.value.boost !== undefined) {
 			search.range.score = {
-				boost: query.value.boost,
+				boost: {
+					value: query.value.boost,
+				},
 			};
 		}
 

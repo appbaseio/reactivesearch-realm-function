@@ -283,7 +283,9 @@ describe(`generates range query correctly`, () => {
 									gte: 1,
 									lte: 20,
 									score: {
-										boost: 1,
+										boost: {
+											value: 1,
+										},
 									},
 								},
 							},
@@ -321,7 +323,9 @@ describe(`generates range query correctly`, () => {
 									gte: 1,
 									lte: 20,
 									score: {
-										boost: 1,
+										boost: {
+											value: 1,
+										},
 									},
 								},
 							},
@@ -387,7 +391,7 @@ describe(`generates range query correctly`, () => {
 									gte: 1,
 									lte: 20,
 									score: {
-										boost: 1,
+										boost: { value: 1 },
 									},
 								},
 							},
