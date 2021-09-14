@@ -28,6 +28,6 @@ exports = async (payload: any) => {
 		collection: config.collection,
 	});
 
-	const results = await reactiveSearch.query(query, config.collection);
+	const results = await reactiveSearch.query(query);
 	return results;
 };
