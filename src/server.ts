@@ -3,7 +3,7 @@ import { ReactiveSearch } from './searchFunction';
 import cors from 'cors';
 import express from 'express';
 
-require('dotenv').config();
+require('dotenv').mongodb();
 
 async function main() {
 	const app = express();
@@ -23,15 +23,15 @@ async function main() {
 
 		if (!db || !collection) {
 			//check if mongodb key is present in req.body
-			const config = req.body.config;
-			if (!config) {
+			const mongodb = req.body.mongodb;
+			if (!mongodb) {
 				res.status(400).send({
-					error: `config object is required with db and collection name as its keys`,
+					error: `mongodb object is required with db and collection name as its keys`,
 				});
 				return;
 			}
-			db = config.db;
-			collection = config.collection;
+			db = mongodb.db;
+			collection = mongodb.collection;
 		}
 
 		const ref = new ReactiveSearch({
@@ -49,15 +49,15 @@ async function main() {
 
 		if (!db || !collection) {
 			//check if mongodb key is present in req.body
-			const config = req.body.config;
-			if (!config) {
+			const mongodb = req.body.mongodb;
+			if (!mongodb) {
 				res.status(400).send({
-					error: `config object is required with db and collection name as its keys`,
+					error: `mongodb object is required with db and collection name as its keys`,
 				});
 				return;
 			}
-			db = config.db;
-			collection = config.collection;
+			db = mongodb.db;
+			collection = mongodb.collection;
 		}
 
 		const ref = new ReactiveSearch({

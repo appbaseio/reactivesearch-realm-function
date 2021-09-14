@@ -19,13 +19,13 @@ exports = async (payload: any) => {
 	}
 	// @ts-expect-error
 	const data: RSFunctionQueryData = EJSON.parse(payload.body.text());
-	const { config, query } = data;
+	const { mongodb, query } = data;
 	const client = context.services.get('mongodb-atlas');
 
 	const reactiveSearch = new ReactiveSearch({
 		client,
-		database: config.database,
-		collection: config.collection,
+		database: mongodb.db,
+		collection: mongodb.collection,
 	});
 
 	const results = await reactiveSearch.query(query);

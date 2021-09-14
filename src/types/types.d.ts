@@ -187,7 +187,10 @@ export type MIC_STATUS = {
 };
 
 export type RSFunctionQueryData = {
-	config: ConfigType;
+	mongodb: {
+		db: string;
+		collection: string;
+	};
 	query: RSQuery<any>[];
 };
 
