@@ -21,3 +21,43 @@
   ```sh
   curl -XPOST localhost:8080/listingsAndReviews/_reactivesearch -H 'Content-Type: application/json' -d '{"query": [{"id": "test", "value": "room", "dataField": ["name"], "type": "search", "index": "default"}]}'
   ```
+
+## Deploying realm function
+
+- #### `yarn install`
+  Install all the dependencies
+- #### `node rs-cli --private-api-key <private api key> --public-api-key <public api key> --app-id <application id> --app-authentication $user:&password`
+
+  Deploys webhook to your Realm app
+
+  Output:
+
+  ```
+    Deploying ReactiveSearch API as a Realm function
+
+    ████████████████████████████████████████ 100% | ETA: 0s | 5/5
+
+    Successfully deployed webhook.
+
+    Deployed webhook endpoint : https://webhooks.mongodb-realm.com/api/client/v2.0/app/application_id/service/http_endpoint/incoming_webhook/reactivesearch
+
+    You can make a test request to this webhook using this curl command
+
+      curl -XPOST https://us-east-1.aws.webhooks.mongodb-realm.com/api/client/v2.0/app/application-3-jrkwf/service/http_endpoint/incoming_webhook/reactivesearch \
+        -H "Content-Type: application/json" \
+        -d '{
+          "query": [{
+            "id": "search",
+            "dataField": "*",
+            "size": 5
+          }],
+          "mongodb": {
+            "database": "sample_airbnb",
+            "collection": "collection"
+          }
+        }'
+  ```
+
+```
+
+```

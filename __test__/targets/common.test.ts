@@ -1,11 +1,14 @@
 import {
-	getIncludeExcludeFields,
-	getFuzziness,
-	getSynonymsQuery,
-	getAutoCompleteQuery,
-	getQueriesMap,
 	buildQueryPipeline,
+	getQueriesMap,
+} from '../../src/searchFunction/index';
+import {
+	getAutoCompleteQuery,
+	getFuzziness,
+	getIncludeExcludeFields,
+	getSynonymsQuery,
 } from '../../src/targets/common';
+
 import { RSQuery } from '../../src/types/types';
 
 test('getIncludeExcludeFields when * is in excludeFields', () => {

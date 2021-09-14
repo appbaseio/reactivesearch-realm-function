@@ -1,6 +1,7 @@
 export type ConfigType = {
 	client?: any;
 	database: string;
+	collection: string;
 };
 
 export type MicStatusField = `INACTIVE` | `ACTIVE` | `DENIED`;
@@ -183,6 +184,11 @@ export type MIC_STATUS = {
 	inactive: `INACTIVE`;
 	active: `ACTIVE`;
 	denied: `DENIED`;
+};
+
+export type RSFunctionQueryData = {
+	config: ConfigType;
+	query: RSQuery<any>[];
 };
 
 export type QueryMap = Record<

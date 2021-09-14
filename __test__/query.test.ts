@@ -1,10 +1,12 @@
-import { ReactiveSearch } from '../src';
-import { DataField, GeoValue, RangeValue, RSQuery } from '../src/types/types';
+import { DataField, GeoValue, RSQuery, RangeValue } from '../src/types/types';
+
+import { ReactiveSearch } from '../src/searchFunction';
 
 // Runs integration tests
 
 const ref = new ReactiveSearch({
 	database: 'sample_airbnb',
+	collection: '',
 });
 
 describe(`generates search query correctly`, () => {
