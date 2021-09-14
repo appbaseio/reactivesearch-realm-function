@@ -11,9 +11,11 @@ exports = async (payload: any) => {
 	if (AUTHORIZATION_CREDENTIALS) {
 		if (payload?.headers['Authorization']?.[0] !== AUTHORIZATION_CREDENTIALS) {
 			return {
-				hits: null,
-				error: 'Invalid credentials',
-				status: 401,
+				error: {
+					code: 401,
+					message: 'invalid username or password',
+					status: 'Unauthorized',
+				},
 			};
 		}
 	}
