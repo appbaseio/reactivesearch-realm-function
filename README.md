@@ -19,7 +19,20 @@
 - Make `curl` / `rest` request
 
   ```sh
-  curl -XPOST localhost:8080/listingsAndReviews/_reactivesearch -H 'Content-Type: application/json' -d '{"query": [{"id": "test", "value": "room", "dataField": ["name"], "type": "search", "index": "default"}]}'
+  curl --location --request POST 'http://localhost:8080/_reactivesearch' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+        "query": [{
+            "id": "search",
+            "type": "search",
+            "dataField": "*",
+            "size": 5
+        }],
+        "config": {
+            "db": "sample_airbnb",
+            "collection": "listingsAndReviews"
+        }
+    }'
   ```
 
 ## Deploying realm function
