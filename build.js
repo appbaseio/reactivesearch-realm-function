@@ -95,7 +95,7 @@ result = result.replace(new RegExp('export type', 'g'), 'type');
 if (app_authentication) {
 	result = result.replace(
 		new RegExp('AUTHORIZATION_CREDENTIALS = null', 'g'),
-		`AUTHORIZATION_CREDENTIALS = "${Base64.encode(app_authentication)}"`,
+		`AUTHORIZATION_CREDENTIALS = "Basic ${Base64.encode(app_authentication)}"`,
 	);
 }
 Fs.writeFileSync('./dist/source.ts', result, { encoding: 'utf-8' });
