@@ -1,6 +1,7 @@
 const yargs = require('yargs');
 const { execSync } = require('child_process');
 const cliProgress = require('cli-progress');
+const { exit } = require('process');
 
 const WEBHOOK_NAME = 'reactivesearch';
 
@@ -32,10 +33,27 @@ const options = yargs
 		type: 'string',
 		demandOption: false,
 	})
-	.option('-v', {
+	.option('v', {
 		alias: 'verbose',
 		describe: 'Verbose',
 		demandOption: false,
+	})
+	.check((argv, options) => {
+		const { app_authentication } = argv;
+		if (app_authentication) {
+			const appAuthentication = app_authentication.split(':');
+			console.log(app_authentication);
+			if (
+				appAuthentication.length < 2 ||
+				appAuthentication[0].length < 1 ||
+				appAuthentication[1].length < 1
+			) {
+				throw new Error(
+					'Invalid app authentication credential format : --app-authentication format should $user:$password, $user and $password should contain at least one character',
+				);
+			}
+		}
+		return true;
 	}).argv;
 
 const { api_key, private_api_key, app_id, app_authentication, verbose } =
@@ -117,6 +135,7 @@ try {
 
 	console.error('\n Failed to deploy webhook');
 	bar.stop();
+	exit();
 }
 
 if (webhookEndpoint) {
