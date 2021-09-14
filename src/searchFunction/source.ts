@@ -7,16 +7,20 @@ import { AUTHORIZATION_CREDENTIALS } from '../constants';
 import { RSFunctionQueryData } from '../types/types';
 import { ReactiveSearch } from './index';
 // @ts-ignore
-exports = async (payload: any) => {
+exports = async (payload: any, response: any) => {
 	if (AUTHORIZATION_CREDENTIALS) {
 		if (payload?.headers['Authorization']?.[0] !== AUTHORIZATION_CREDENTIALS) {
-			return {
+			const result = {
 				error: {
 					code: 401,
 					message: 'invalid username or password',
 					status: 'Unauthorized',
 				},
 			};
+			response.setStatusCode(401);
+			response.setHeader('Content-Type', 'application/json');
+			response.setBody(JSON.stringify(result));
+			return;
 		}
 	}
 	// @ts-expect-error
@@ -31,5 +35,7 @@ exports = async (payload: any) => {
 	});
 
 	const results = await reactiveSearch.query(query);
-	return results;
+	response.setStatusCode(200);
+	response.setHeader('Content-Type', 'application/json');
+	response.setBody(JSON.stringify(results));
 };
