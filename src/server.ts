@@ -3,7 +3,7 @@ import { ReactiveSearch } from './searchFunction';
 import cors from 'cors';
 import express from 'express';
 
-require('dotenv').mongodb();
+require('dotenv').config();
 
 async function main() {
 	const app = express();
