@@ -705,7 +705,10 @@ test(`buildQueryPipeline should return mongo query pipeline map`, () => {
 										{
 											compound: {
 												filter: {
-													text: { query: ['Apartment'], path: 'property_type' },
+													phrase: {
+														query: ['Apartment'],
+														path: 'property_type',
+													},
 												},
 											},
 										},
@@ -767,7 +770,7 @@ test(`buildQueryPipeline should return mongo query pipeline map`, () => {
 							{
 								compound: {
 									filter: {
-										text: { query: ['Apartment'], path: 'property_type' },
+										phrase: { query: ['Apartment'], path: 'property_type' },
 									},
 								},
 							},

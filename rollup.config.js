@@ -2,7 +2,7 @@ const typescript = require('@rollup/plugin-typescript');
 const filesize = require('rollup-plugin-filesize');
 const { terser } = require('rollup-plugin-terser');
 
-const input = `src/index.ts`;
+const input = `src/searchFunction/index.ts`;
 
 module.exports = [
 	{
