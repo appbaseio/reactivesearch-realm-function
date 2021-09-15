@@ -396,7 +396,7 @@ export class ReactiveSearch {
 						const { hits, total, min, max, histogram } = res[0];
 						const dataToReturn: any = {
 							id: item,
-							took: 100,
+							took: Number((end - start).toFixed(2)),
 							hits: {
 								total: {
 									value: total[0]?.count || 0,
@@ -410,6 +410,7 @@ export class ReactiveSearch {
 										: hits.map((item: any) => ({
 												_index: rsQuery.index || `default`,
 												_collection: this.config.collection,
+												_db: this.config.database,
 												_id: item._id,
 												// TODO add score pipeline
 												_score: 0,
@@ -462,7 +463,7 @@ export class ReactiveSearch {
 							id: item,
 							hits: null,
 							error: err.toString(),
-							status: 400,
+							status: 500,
 						};
 					}
 				}),
