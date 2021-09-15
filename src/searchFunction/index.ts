@@ -386,7 +386,6 @@ export class ReactiveSearch {
 					try {
 						const { rsQuery } = queryMap[item];
 						const { error } = aggregationsObject[item];
-						const end = performance.now();
 
 						if (error) {
 							return {
@@ -404,6 +403,7 @@ export class ReactiveSearch {
 						const res = await collection
 							.aggregate(aggregationsObject[item])
 							.toArray();
+						const end = performance.now();
 						const took = Math.abs(end - start) || 1;
 						if (rsQuery) {
 							if (res[0].aggregations) {
