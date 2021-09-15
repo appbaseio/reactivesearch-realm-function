@@ -403,10 +403,20 @@ export class ReactiveSearch {
 						const res = await collection
 							.aggregate(aggregationsObject[item])
 							.toArray();
+						let raw: any = undefined;
+						if (rsQuery && rsQuery.defaultQuery) {
+							raw = await collection.aggregate(rsQuery.defaultQuery).toArray();
+						}
 						const end = performance.now();
 						const took = Math.abs(end - start) || 1;
+
 						if (rsQuery) {
-							if (res[0].aggregations) {
+							// user can re-shape response incase of default query
+							// hence we will be returning raw key in that case
+
+							// prepare response for term aggregations
+							// should be of following shape {..., aggregations: {[dataField]: {buckets: [{key:'', doc_count: 0}]}}}
+							if (rsQuery.type === 'term') {
 								const dataField = Array.isArray(rsQuery.dataField)
 									? `${rsQuery.dataField[0]}`
 									: `${rsQuery.dataField}`;
@@ -414,10 +424,11 @@ export class ReactiveSearch {
 									id: item,
 									took: took,
 									hits: {},
+									raw,
 									status: 200,
 									aggregations: {
 										[dataField]: {
-											buckets: res[0].aggregations.map(
+											buckets: res[0]?.aggregations.map(
 												(item: { _id: string; count: any }) => ({
 													key: item._id,
 													doc_count: item?.count?.$numberInt
@@ -429,10 +440,14 @@ export class ReactiveSearch {
 									},
 								};
 							}
+
+							// if not term aggregations return search results
+							// for range query it can have min, max and histogram values
 							const { hits, total, min, max, histogram } = res[0];
 							const dataToReturn: any = {
 								id: item,
 								took: took,
+								raw,
 								hits: {
 									total: {
 										value: total[0]?.count || 0,
