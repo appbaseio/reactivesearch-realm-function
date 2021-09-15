@@ -66,7 +66,7 @@ let step = -1;
 try {
 	bar.start(5, ++step);
 	execSync(
-		`./node_modules/mongodb-realm-cli/realm-cli login --api-key=${api_key} --private-api-key=${private_api_key}`,
+		`./node_modules/mongodb-realm-cli/realm-cli login --api-key=${api_key} --private-api-key=${private_api_key} -y`,
 	);
 	bar.update(++step);
 	execSync(
@@ -143,7 +143,9 @@ if (webhookEndpoint) {
 	console.log(
 		`\n You can make a test request to this webhook using this curl command \n`,
 	);
-	console.log(`curl -XPOST ${webhookEndpoint} \\
+	console.log(`curl -XPOST ${webhookEndpoint} ${
+		app_authentication ? `-u ${app_authentication}` : ``
+	} \\
         -H "Content-Type: application/json" \\
         -d '{
 	"query": [{

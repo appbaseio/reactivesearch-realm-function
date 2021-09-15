@@ -59,8 +59,10 @@ export const getSearchQuery = (query: RSQuery<string>): any => {
 				},
 			};
 
-			searchQuery.push({ $search: compoundQuery });
+			const highlightQuery = getHighlightQuery(query);
+			searchQuery.push({ $search: { ...compoundQuery, ...highlightQuery } });
 		}
+
 		const projectTarget = getIncludeExcludeFields(query);
 		if (projectTarget) {
 			searchQuery.push(projectTarget);
@@ -141,11 +143,11 @@ export const getHighlightQuery = (query: RSQuery<string>): any => {
 	const {
 		highlight = false,
 		highlightField,
-		customHighlight,
+		highlightConfig,
 		dataField,
 	} = query;
 	const { maxCharsToExamine = 500000, maxNumPassages = 5 } =
-		customHighlight || {};
+		highlightConfig || {};
 
 	if (highlight) {
 		let fields: string[] = [];

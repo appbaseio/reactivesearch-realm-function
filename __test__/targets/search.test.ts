@@ -399,13 +399,13 @@ test('getHighlightQuery when highlight is true and highlightField is an array', 
 	expect(result).toStrictEqual(expected);
 });
 
-test('getHighlightQuery when highlight is true and customHighlight is passed', () => {
+test('getHighlightQuery when highlight is true and highlightConfig is passed', () => {
 	const result = getHighlightQuery({
 		dataField: 'data',
 		sortBy: `desc`,
 		highlight: true,
 		highlightField: ['field1', 'field2'],
-		customHighlight: {
+		highlightConfig: {
 			maxCharsToExamine: 250000,
 			maxNumPassages: 10,
 		},
