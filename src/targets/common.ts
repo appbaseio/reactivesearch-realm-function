@@ -151,7 +151,7 @@ export const generateTermRelevantQuery = (
 			let filter: any = {};
 			if (Array.isArray(relevantRSQuery.value)) {
 				filter = relevantRSQuery.value.map((v) => ({
-					text: {
+					phrase: {
 						query: [v],
 						path: relevantRSQuery.dataField,
 					},
@@ -159,7 +159,7 @@ export const generateTermRelevantQuery = (
 			} else {
 				filter = [
 					{
-						text: {
+						phrase: {
 							query: [relevantRSQuery.value],
 							path: relevantRSQuery.dataField,
 						},
@@ -176,7 +176,7 @@ export const generateTermRelevantQuery = (
 		return {
 			compound: {
 				filter: {
-					text: {
+					phrase: {
 						query: Array.isArray(relevantRSQuery.value)
 							? relevantRSQuery.value
 							: [relevantRSQuery.value],
