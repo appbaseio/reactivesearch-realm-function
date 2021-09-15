@@ -7,9 +7,9 @@ import { AUTHORIZATION_CREDENTIALS } from '../constants';
 import { RSFunctionQueryData } from '../types/types';
 import { ReactiveSearch } from './index';
 // @ts-ignore
-exports = async (payload: any, response: any) => {
+exports = async (request: any, response: any) => {
 	if (AUTHORIZATION_CREDENTIALS) {
-		if (payload?.headers['Authorization']?.[0] !== AUTHORIZATION_CREDENTIALS) {
+		if (request?.headers['Authorization']?.[0] !== AUTHORIZATION_CREDENTIALS) {
 			const result = {
 				error: {
 					code: 401,
@@ -24,7 +24,7 @@ exports = async (payload: any, response: any) => {
 		}
 	}
 	// @ts-expect-error
-	const data: RSFunctionQueryData = EJSON.parse(payload.body.text());
+	const data: RSFunctionQueryData = EJSON.parse(request.body.text());
 	const { mongodb, query } = data;
 	const client = context.services.get('mongodb-atlas');
 
@@ -34,7 +34,7 @@ exports = async (payload: any, response: any) => {
 		collection: mongodb.collection,
 	});
 
-	const { validate } = payload.query;
+	const { validate } = request.query;
 
 	const results = validate
 		? await reactiveSearch.translate(query)
