@@ -404,14 +404,16 @@ export class ReactiveSearch {
 								},
 								// TODO add max score
 								max_score: 0,
-								hits: hits.map((item: any) => ({
-									_index: rsQuery.index || `default`,
-									_collection: this.config.collection,
-									_id: item._id,
-									// TODO add score pipeline
-									_score: 0,
-									_source: item,
-								})),
+								hits: rsQuery.size
+									? hits.map((item: any) => ({
+											_index: rsQuery.index || `default`,
+											_collection: this.config.collection,
+											_id: item._id,
+											// TODO add score pipeline
+											_score: 0,
+											_source: item,
+									  }))
+									: [],
 							},
 							error: null,
 							status: 200,
