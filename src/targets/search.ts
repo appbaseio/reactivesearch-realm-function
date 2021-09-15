@@ -138,11 +138,11 @@ export const getHighlightQuery = (query: RSQuery<string>): any => {
 	const {
 		highlight = false,
 		highlightField,
-		customHighlight,
+		highlightConfig,
 		dataField,
 	} = query;
 	const { maxCharsToExamine = 500000, maxNumPassages = 5 } =
-		customHighlight || {};
+		highlightConfig || {};
 
 	if (highlight) {
 		let fields: string[] = [];
