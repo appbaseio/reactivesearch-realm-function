@@ -58,7 +58,8 @@ export const getSearchQuery = (query: RSQuery<string>): any => {
 			},
 		};
 
-		searchQuery.push({ $search: compoundQuery });
+		const highlightQuery = getHighlightQuery(query);
+		searchQuery.push({ $search: { ...compoundQuery, ...highlightQuery } });
 	}
 	const projectTarget = getIncludeExcludeFields(query);
 	if (projectTarget) {

@@ -34,7 +34,11 @@ exports = async (payload: any, response: any) => {
 		collection: mongodb.collection,
 	});
 
-	const results = await reactiveSearch.query(query);
+	const { validate } = payload.query;
+
+	const results = validate
+		? await reactiveSearch.translate(query)
+		: await reactiveSearch.query(query);
 	response.setStatusCode(200);
 	response.setHeader('Content-Type', 'application/json');
 	response.setBody(JSON.stringify(results));

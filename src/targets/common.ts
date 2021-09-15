@@ -54,9 +54,13 @@ export const getFieldsFromDataField = (
 };
 
 export const getIncludeExcludeFields = (query: RSQuery<any>): any => {
-	let { includeFields = [], excludeFields = [] } = query;
+	let { includeFields = [], excludeFields = [], highlight } = query;
 
-	if (includeFields.length === 0 && excludeFields.length === 0) {
+	if (
+		includeFields.length === 0 &&
+		excludeFields.length === 0 &&
+		highlight !== true
+	) {
 		return null;
 	}
 
@@ -98,7 +102,7 @@ export const getIncludeExcludeFields = (query: RSQuery<any>): any => {
 		$project: { ...excludeAggregation, ...includeAggregation },
 	};
 
-	if (query.highlight) {
+	if (highlight) {
 		res.$project = {
 			...res.$project,
 			highlights: { $meta: 'searchHighlights' },
