@@ -1,6 +1,6 @@
 const typescript = require('@rollup/plugin-typescript');
 
-const input = `src/index.ts`;
+const input = `src/searchFunction/index.ts`;
 
 export default [
 	// cjs
