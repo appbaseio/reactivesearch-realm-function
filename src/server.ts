@@ -1,7 +1,7 @@
 import { MongoClient } from 'mongodb';
 import { ReactiveSearch } from './searchFunction';
 import cors from 'cors';
-import express from 'express';
+import express, { Request } from 'express';
 
 require('dotenv').config();
 
@@ -17,56 +17,99 @@ async function main() {
 	app.use(cors());
 	app.use(express.json());
 
-	app.post(`/_reactivesearch`, async (req, res) => {
-		let db = req.query.db;
-		let collection = req.query.collection;
+	const validateRequest = (
+		req: Request,
+	): {
+		db: string;
+		collection: string;
+		query: any;
+	} => {
+		try {
+			let db = req.query.db;
+			let collection = req.query.collection;
 
-		if (!db || !collection) {
-			//check if mongodb key is present in req.body
-			const mongodb = req.body.mongodb;
-			if (!mongodb) {
-				res.status(400).send({
-					error: `mongodb object is required with db and collection name as its keys`,
-				});
-				return;
+			if (!db || !collection) {
+				//check if mongodb key is present in req.body
+				const mongodb = req.body.mongodb;
+				if (
+					!mongodb ||
+					!mongodb.db ||
+					!mongodb.db.trim() ||
+					!mongodb.collection ||
+					!mongodb.collection.trim()
+				) {
+					throw new Error(
+						`mongodb object is required with db and collection name as its keys`,
+					);
+				}
+				db = mongodb.db;
+				collection = mongodb.collection;
 			}
-			db = mongodb.db;
-			collection = mongodb.collection;
-		}
+			if (!req.body.query) {
+				throw new Error(`query is required`);
+			}
 
-		const ref = new ReactiveSearch({
-			client,
-			database: <string>db,
-			collection: <string>collection,
-		});
-		const data = await ref.query(req.body.query);
-		res.status(200).send(data);
+			return {
+				db: <string>db,
+				collection: <string>collection,
+				query: req.body.query,
+			};
+		} catch (err) {
+			throw err;
+		}
+	};
+
+	app.post(`/_reactivesearch`, async (req, res) => {
+		try {
+			const { db, collection, query } = validateRequest(req);
+			const ref = new ReactiveSearch({
+				client,
+				database: <string>db,
+				collection: <string>collection,
+			});
+
+			try {
+				const data = await ref.query(query);
+				res.status(200).send(data);
+			} catch (err) {
+				res.status(500).send({
+					error: {
+						status: `Internal server error`,
+						code: 500,
+						message: err.message,
+					},
+				});
+			}
+		} catch (error) {
+			res.status(400).send({
+				error: {
+					message: error.message,
+					code: 400,
+					status: `Bad Request`,
+				},
+			});
+		}
 	});
 
 	app.post(`/_reactivesearch/validate`, (req, res) => {
-		let db = req.query.db;
-		let collection = req.query.collection;
-
-		if (!db || !collection) {
-			//check if mongodb key is present in req.body
-			const mongodb = req.body.mongodb;
-			if (!mongodb) {
-				res.status(400).send({
-					error: `mongodb object is required with db and collection name as its keys`,
-				});
-				return;
-			}
-			db = mongodb.db;
-			collection = mongodb.collection;
+		try {
+			const { db, collection, query } = validateRequest(req);
+			const ref = new ReactiveSearch({
+				client,
+				database: <string>db,
+				collection: <string>collection,
+			});
+			const data = ref.translate(query);
+			res.status(200).send(data);
+		} catch (error) {
+			res.status(400).send({
+				error: {
+					message: error.message,
+					code: 400,
+					status: `Bad Request`,
+				},
+			});
 		}
-
-		const ref = new ReactiveSearch({
-			client,
-			database: <string>db,
-			collection: <string>collection,
-		});
-		const query = ref.translate(req.body.query);
-		res.status(200).send(query);
 	});
 
 	app.listen(PORT, () => {
