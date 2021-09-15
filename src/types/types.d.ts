@@ -197,7 +197,12 @@ export type RSFunctionQueryData = {
 export type QueryMap = Record<
 	string,
 	{
-		rsQuery: RSQuery<any>;
-		mongoQuery: any;
+		error?: {
+			status: string;
+			code: number;
+			message: string;
+		};
+		rsQuery?: RSQuery<any>;
+		mongoQuery?: any;
 	}
 >;

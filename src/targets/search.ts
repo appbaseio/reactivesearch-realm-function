@@ -31,47 +31,51 @@ export const getSearchAggregation = (query: RSQuery<string>): any => {
 
 // TODO set return type
 export const getSearchQuery = (query: RSQuery<string>): any => {
-	let searchQuery: any = [];
-	const { value } = query;
+	try {
+		let searchQuery: any = [];
+		const { value } = query;
 
-	if (value && value.length) {
-		const shouldAggregation = [];
+		if (value && value.length) {
+			const shouldAggregation = [];
 
-		const search = getSearchAggregation(query);
-		if (search) {
-			shouldAggregation.push(search);
+			const search = getSearchAggregation(query);
+			if (search) {
+				shouldAggregation.push(search);
+			}
+
+			const synonyms = getSynonymsQuery(query);
+			if (synonyms) {
+				shouldAggregation.push(synonyms);
+			}
+
+			const autocomplete = getAutoCompleteQuery(query);
+			if (autocomplete) {
+				shouldAggregation.push(autocomplete);
+			}
+
+			const compoundQuery: any = {
+				compound: {
+					should: shouldAggregation,
+				},
+			};
+
+			searchQuery.push({ $search: compoundQuery });
+		}
+		const projectTarget = getIncludeExcludeFields(query);
+		if (projectTarget) {
+			searchQuery.push(projectTarget);
 		}
 
-		const synonyms = getSynonymsQuery(query);
-		if (synonyms) {
-			shouldAggregation.push(synonyms);
+		if (query.sortBy) {
+			searchQuery.push(getSearchSortByQuery(query));
 		}
 
-		const autocomplete = getAutoCompleteQuery(query);
-		if (autocomplete) {
-			shouldAggregation.push(autocomplete);
-		}
+		searchQuery.push(getPaginationMap(query));
 
-		const compoundQuery: any = {
-			compound: {
-				should: shouldAggregation,
-			},
-		};
-
-		searchQuery.push({ $search: compoundQuery });
+		return searchQuery;
+	} catch (err) {
+		throw err;
 	}
-	const projectTarget = getIncludeExcludeFields(query);
-	if (projectTarget) {
-		searchQuery.push(projectTarget);
-	}
-
-	if (query.sortBy) {
-		searchQuery.push(getSearchSortByQuery(query));
-	}
-
-	searchQuery.push(getPaginationMap(query));
-
-	return searchQuery;
 };
 
 export const getSearchSortByQuery = (query: RSQuery<string>): any => {

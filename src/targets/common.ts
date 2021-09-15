@@ -114,8 +114,22 @@ export const getIncludeExcludeFields = (query: RSQuery<any>): any => {
 
 export const getPaginationMap = (query: RSQuery<any>) => {
 	const hits: any = [];
+	let size = query.size;
+
 	if (query.from) {
 		hits.push({ $skip: query.from });
+	}
+
+	if (size && size < 0) {
+		throw new Error(`Invalid size. Size should be >= 0`);
+	}
+
+	if (size === undefined) {
+		size = 10;
+	}
+
+	if (size === 0) {
+		size = 1;
 	}
 
 	hits.push({ $limit: query.size || 10 });
