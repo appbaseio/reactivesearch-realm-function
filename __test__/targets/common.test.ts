@@ -21,7 +21,7 @@ test('getIncludeExcludeFields when * is in excludeFields', () => {
 			_0923biu3g4h: 1,
 		},
 	};
-	// Snapshot demo
+
 	expect(result).toStrictEqual(expected);
 });
 
@@ -31,7 +31,7 @@ test('getIncludeExcludeFields when * is in includeFields and excludeFields is em
 		includeFields: ['*'],
 	});
 	const expected = null;
-	// Snapshot demo
+
 	expect(result).toStrictEqual(expected);
 });
 
@@ -45,7 +45,7 @@ test('getIncludeExcludeFields when * is in includeFields and excludeFields conta
 			test: 0,
 		},
 	};
-	// Snapshot demo
+
 	expect(result).toStrictEqual(expected);
 });
 
@@ -59,7 +59,7 @@ test('getIncludeExcludeFields when * is in excludeFields and includeFields conta
 			_0923biu3g4h: 1,
 		},
 	};
-	// Snapshot demo
+
 	expect(result).toStrictEqual(expected);
 });
 
@@ -75,7 +75,7 @@ test('getIncludeExcludeFields when includeFields and excludeFields contains some
 			test2: 1,
 		},
 	};
-	// Snapshot demo
+
 	expect(result).toStrictEqual(expected);
 });
 
@@ -174,13 +174,15 @@ test('getFuzziness when both fuzziness and synonym is enabled', () => {
 		dataField: 'data1',
 		fuzziness: 'AUTO',
 	});
-	const expected = {};
-	// Snapshot demo
+	const expected = {
+		fuzzy: {
+			maxEdits: 2,
+		},
+	};
 	expect(result).toStrictEqual(expected);
 });
 
 test('getFuzziness when fuzziness is greater than 2', () => {
-	// Snapshot demo
 	expect(() => {
 		getFuzziness({
 			value: '12',
@@ -203,7 +205,7 @@ test('getIncludeExcludeFields when includeFields, excludeFields contains some co
 			highlights: { $meta: 'searchHighlights' },
 		},
 	};
-	// Snapshot demo
+
 	expect(result).toStrictEqual(expected);
 });
 
@@ -222,7 +224,7 @@ test('getSynonymsQuery when both fuzziness and synonym is enabled', () => {
 			synonyms: 'mySynonyms',
 		},
 	};
-	// Snapshot demo
+
 	expect(result).toStrictEqual(expected);
 });
 
@@ -233,7 +235,7 @@ test('getSynonymsQuery when synonym is enabled but synonymsField is missing', ()
 		dataField: 'data1',
 	});
 	const expected = null;
-	// Snapshot demo
+
 	expect(result).toStrictEqual(expected);
 });
 
@@ -251,7 +253,7 @@ test('getSynonymsQuery when synonym is enabled', () => {
 			synonyms: 'mySynonyms',
 		},
 	};
-	// Snapshot demo
+
 	expect(result).toStrictEqual(expected);
 });
 
@@ -262,7 +264,7 @@ test('getAutoCompleteQuery when autocompleteField is missing', () => {
 		dataField: 'data1',
 	});
 	const expected = null;
-	// Snapshot demo
+
 	expect(result).toStrictEqual(expected);
 });
 
@@ -285,7 +287,7 @@ test('getAutoCompleteQuery when autocompleteField is a string', () => {
 			],
 		},
 	};
-	// Snapshot demo
+
 	expect(result).toStrictEqual(expected);
 });
 
@@ -312,7 +314,7 @@ test('getAutoCompleteQuery when autocompleteField is a string and fuzziness is p
 			],
 		},
 	};
-	// Snapshot demo
+
 	expect(result).toStrictEqual(expected);
 });
 
@@ -349,7 +351,7 @@ test('getAutoCompleteQuery when autocompleteField is an array of string and fuzz
 			],
 		},
 	};
-	// Snapshot demo
+
 	expect(result).toStrictEqual(expected);
 });
 
@@ -400,7 +402,7 @@ test('getAutoCompleteQuery when autocompleteField is an array of DataField and f
 			],
 		},
 	};
-	// Snapshot demo
+
 	expect(result).toStrictEqual(expected);
 });
 
