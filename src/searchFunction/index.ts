@@ -124,7 +124,11 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 										}
 									} else {
 										if (relevantMongoQuery[0]?.$search) {
-											andQuery.push(relevantMongoQuery[0].$search);
+											const queryCopy = { ...relevantMongoQuery[0].$search };
+											if (queryCopy.index) {
+												delete queryCopy.index;
+											}
+											andQuery.push(queryCopy);
 										}
 									}
 
@@ -163,7 +167,11 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 										}
 									} else {
 										if (relevantMongoQuery[0]?.$search) {
-											orQuery.push(relevantMongoQuery[0].$search);
+											const queryCopy = { ...relevantMongoQuery[0].$search };
+											if (queryCopy.index) {
+												delete queryCopy.index;
+											}
+											orQuery.push(queryCopy);
 										}
 									}
 
