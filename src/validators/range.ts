@@ -3,7 +3,7 @@ import { RangeValue } from '../types/types';
 export const validateRangeValue = (value?: RangeValue) => {
 	if (value) {
 		if (value.start === undefined && value.end === undefined) {
-			throw new Error(`invalid data`);
+			throw new Error(`invalid range value`);
 		}
 
 		if (typeof value.start !== 'string' && typeof value.start !== 'number') {
