@@ -207,6 +207,17 @@ test('getSynonymsQuery when both fuzziness and synonyms are enabled', () => {
 	}).toThrowError();
 });
 
+test('getSynonymsQuery when synonym is enabled bu synonymsField is missing', () => {
+	const result = getSynonymsQuery({
+		enableSynonyms: true,
+		value: 'valueField',
+		dataField: 'data1',
+	});
+	const expected = null;
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
 test('getSynonymsQuery when synonym is enabled', () => {
 	const result = getSynonymsQuery({
 		enableSynonyms: true,

@@ -256,7 +256,7 @@ export const getSynonymsQuery = (query: RSQuery<string>): any => {
 		throw new Error("Fuzziness and Synonyms can't be used together");
 	}
 
-	if (enableSynonyms) {
+	if (enableSynonyms && synonymsField) {
 		const fields = getStringFieldsFromDataField(dataField);
 		if (fields) {
 			return {
