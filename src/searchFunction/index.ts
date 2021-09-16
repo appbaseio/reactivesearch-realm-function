@@ -129,11 +129,11 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 									}
 
 									if (relevantRSQuery.customQuery) {
-										if (Array.isArray(relevantRSQuery.customQuery)) {
-											extraTargets.push(...relevantRSQuery.customQuery);
-										} else {
-											extraTargets.push(relevantRSQuery.customQuery);
-										}
+										andQuery.push(
+											relevantRSQuery.customQuery.$search
+												? relevantRSQuery.customQuery.$search
+												: relevantRSQuery.customQuery,
+										);
 									}
 								}
 							}
@@ -168,11 +168,11 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 									}
 
 									if (relevantRSQuery.customQuery) {
-										if (Array.isArray(relevantRSQuery.customQuery)) {
-											extraTargets.push(...relevantRSQuery.customQuery);
-										} else {
-											extraTargets.push(relevantRSQuery.customQuery);
-										}
+										orQuery.push(
+											relevantRSQuery.customQuery.$search
+												? relevantRSQuery.customQuery.$search
+												: relevantRSQuery.customQuery,
+										);
 									}
 								}
 							}
