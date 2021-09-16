@@ -248,6 +248,7 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 							compoundQuery.$search.compound &&
 							Object.keys(compoundQuery.$search.compound).length
 						) {
+							// add index to final compound query
 							if (rsQuery.index) {
 								compoundQuery.$search.index = rsQuery.index;
 							}
@@ -278,6 +279,7 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 							compoundQuery.$search.compound &&
 							Object.keys(compoundQuery.$search.compound).length
 						) {
+							// add index to final compound query
 							if (rsQuery.index) {
 								compoundQuery.$search.index = rsQuery.index;
 							}
@@ -387,6 +389,8 @@ export class ReactiveSearch {
 						const { rsQuery } = queryMap[item];
 						const { error } = aggregationsObject[item];
 
+						// return if item has error before execution,
+						// this would ideally be 400 error
 						if (error) {
 							return {
 								id: item,
