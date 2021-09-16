@@ -3,6 +3,7 @@ import { DataField, RSQuery } from '../types/types';
 import {
 	getAutoCompleteQuery,
 	getFieldsFromDataField,
+	getFuzziness,
 	getIncludeExcludeFields,
 	getPaginationMap,
 	getStringFieldsFromDataField,
@@ -13,6 +14,7 @@ export const getSearchAggregation = (query: RSQuery<string>): any => {
 	const { value, dataField } = query;
 	const fields = getFieldsFromDataField(dataField);
 	if (fields) {
+		const fuzziness = getFuzziness(query);
 		const search = {
 			compound: {
 				must: fields.map((x) => ({
@@ -20,6 +22,7 @@ export const getSearchAggregation = (query: RSQuery<string>): any => {
 						path: x.field,
 						query: value,
 						score: { boost: { value: x.weight } },
+						...fuzziness,
 					},
 				})),
 			},

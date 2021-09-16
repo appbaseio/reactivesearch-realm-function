@@ -219,9 +219,8 @@ export const getFuzziness = (
 	| {} => {
 	const queryLength = query?.value?.length || 0;
 	let fuzziness: string | number | undefined = query.fuzziness;
-	const { enableSynonyms, synonymsField } = query;
 
-	if (fuzziness === undefined || (enableSynonyms && synonymsField)) {
+	if (fuzziness === undefined) {
 		return {};
 	}
 
