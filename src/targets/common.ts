@@ -234,12 +234,10 @@ export const getFuzziness = (
 				fuzziness = 0;
 			}
 		} else {
-			const parsedValue = parseInt(fuzziness);
-			console.log(parsedValue);
-			if (Number.isNaN(parsedValue)) {
+			if (isNaN(Number(fuzziness))) {
 				return {};
 			}
-			fuzziness = parsedValue;
+			fuzziness = parseInt(fuzziness);
 		}
 	}
 	if (fuzziness > 2) {
