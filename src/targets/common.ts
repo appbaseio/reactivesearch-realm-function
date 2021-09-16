@@ -219,8 +219,9 @@ export const getFuzziness = (
 	| {} => {
 	const queryLength = query?.value?.length || 0;
 	let fuzziness: string | number | undefined = query.fuzziness;
+	const { enableSynonyms, synonymsField } = query;
 
-	if (fuzziness === undefined) {
+	if (fuzziness === undefined || (enableSynonyms && synonymsField)) {
 		return {};
 	}
 
@@ -251,10 +252,7 @@ export const getFuzziness = (
 };
 
 export const getSynonymsQuery = (query: RSQuery<string>): any => {
-	const { fuzziness, enableSynonyms, synonymsField, value, dataField } = query;
-	if (fuzziness && enableSynonyms) {
-		throw new Error("Fuzziness and Synonyms can't be used together");
-	}
+	const { enableSynonyms, synonymsField, value, dataField } = query;
 
 	if (enableSynonyms && synonymsField) {
 		const fields = getStringFieldsFromDataField(dataField);
