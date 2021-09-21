@@ -82,9 +82,10 @@ if (!Fs.existsSync('dist')) {
 	Fs.mkdirSync('dist');
 }
 execSync(
-	`./node_modules/concat/bin/concat -o dist/source.ts ./src/searchFunction/source.ts ./src/constants.ts ./src/utils.ts ./src/types/* ./src/validators/* ./src/targets/* ./src/searchFunction/index.ts`,
+	`./node_modules/concat/bin/concat -o dist/source.ts ./src/searchFunction/source.ts ./src/constants.ts ./src/utils.ts ./src/types/* ./src/validators/* ./src/targets/* ./src/searchFunction/schema.ts ./src/searchFunction/index.ts`,
 );
 execSync(`cp ./src/searchFunction/realm.d.ts ./dist/realm.d.ts`);
+execSync(`cp ./src/searchFunction/schema.ts ./dist/schema.ts`);
 
 const regex =
 	/import(?:["'\s]*([\w*{}\n\r\t, ]+)from\s*)?["'\s].*([@\w_-]+)["'\s].*;$/gm;
@@ -101,9 +102,14 @@ if (app_authentication) {
 Fs.writeFileSync('./dist/source.ts', result, { encoding: 'utf-8' });
 execSync(`./node_modules/typescript/bin/tsc ./dist/source.ts`);
 
+execSync(
+	`./node_modules/concat/bin/concat -o dist/source.js dist/source.js ./src/libs/validate/*`,
+);
+
 let dataJS = Fs.readFileSync('./dist/source.js', { encoding: 'utf-8' });
 dataJS = dataJS.replace(new RegExp('exports.__esModule = true;', 'g'), '');
 dataJS = dataJS.replace(new RegExp('exports.ReactiveSearch.*;', 'g'), '');
+dataJS = dataJS.replace(new RegExp('export default.*', 'g'), '');
 Fs.writeFileSync('./dist/source.js', dataJS, { encoding: 'utf-8' });
 
 execSync(`mv ./dist/source.js ${webHookSourceFilePath}`);

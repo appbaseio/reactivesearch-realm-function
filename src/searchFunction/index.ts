@@ -1,7 +1,9 @@
+/// <reference path="./schema.ts" />
+
 import { ConfigType, RSQuery } from '../types/types';
 
 import { QueryMap } from '../types/types';
-import RSQuerySchema from '../types/schema';
+import RSQuerySchema from './schema';
 import { generateTermRelevantQuery } from '../targets/common';
 import { getGeoQuery } from '../targets/geo';
 import { getRangeQuery } from '../targets/range';

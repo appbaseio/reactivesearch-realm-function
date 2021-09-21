@@ -1,5 +1,6 @@
 import Schema from '../libs/validate/schema.js';
 
+// @ts-ignore
 const RSQuerySchema = new Schema({
 	index: { type: String },
 
