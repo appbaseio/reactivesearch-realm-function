@@ -30,14 +30,25 @@ const Validators = {
 	 * @return {Boolean}
 	 */
 
-	type(value, ctx, name) {
-		if (value == null) return true;
-
+	_type(value, ctx, name) {
 		if (typeof name == 'function') {
 			return value.constructor === name;
 		}
 
 		return typeOf(value) === name;
+	},
+
+	type(value, ctx, name) {
+		if (value == null) return true;
+
+		if (Array.isArray(name)) {
+			let result = false;
+			for (const x of name) {
+				result = result || Validators._type(value, ctx, x);
+			}
+			return result;
+		}
+		return Validators._type(value, ctx, name);
 	},
 
 	/**

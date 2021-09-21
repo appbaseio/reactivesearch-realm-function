@@ -15,11 +15,11 @@ const RSQuerySchema = new Schema({
 
 	type: { type: String, enum: [`search`, `term`, `geo`, `range`] },
 
-	//react?: { and?: string | string[]; or?: string | string[] };
+	react: { and: { type: [String, Array] }, or: { type: [String, Array] } },
 
 	queryFormat: { type: String, enum: [`or`, `and`] },
 
-	//dataField?: string | Array<string | DataField>;
+	dataField: { type: [String, Array] },
 
 	categoryField: { type: String },
 
@@ -27,13 +27,13 @@ const RSQuerySchema = new Schema({
 
 	nestedField: { type: String },
 
-	from: { type: Number },
+	from: { type: [Number] },
 
 	size: { type: Number },
 
 	sortBy: { type: String, enum: [`asc`, `desc`, `count`] },
 
-	//value?: T;
+	value: { type: [String, Number] },
 
 	aggregationField: { type: String },
 
@@ -47,13 +47,13 @@ const RSQuerySchema = new Schema({
 
 	excludeFields: { type: Array, each: { type: String } },
 
-	//fuzziness?: string | number;
+	fuzziness: { type: [String, Number] },
 
 	searchOperators: { type: Boolean },
 
 	highlight: { type: Boolean },
 
-	//highlightField?: string | Array<string>;
+	highlightField: { type: [String, Number] },
 
 	highlightConfig: {
 		maxCharsToExamine: { type: Number },
@@ -83,7 +83,7 @@ const RSQuerySchema = new Schema({
 
 	queryString: { type: Boolean },
 
-	//autocompleteField?: string | Array<string | DataField>;
+	autocompleteField: { type: [String, Array] },
 });
 
 export default RSQuerySchema;

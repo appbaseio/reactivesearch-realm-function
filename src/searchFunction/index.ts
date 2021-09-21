@@ -381,6 +381,16 @@ export class ReactiveSearch {
 
 	// TODO define type for mongo query
 	translate = (data: RSQuery<any>[]): Record<string, any> => {
+		const error = this.verify(data);
+		if (error) {
+			return {
+				error: {
+					error,
+					code: 400,
+					status: `Bad Request`,
+				},
+			};
+		}
 		const queryMap = getQueriesMap(data);
 		const result = buildQueryPipeline(queryMap);
 		return result;
@@ -390,17 +400,30 @@ export class ReactiveSearch {
 		const errors = [];
 		for (const x of data) {
 			const error = RSQuerySchema.validate(x);
-			console.log(error);
-			if (error) {
-				errors.push(error);
+			if (error.length > 0) {
+				errors.push(error.toString());
+			} else {
+				errors.push(null);
 			}
 		}
-		return errors;
+		if (errors.filter((x) => x).length === 0) {
+			return null;
+		} else {
+			return errors;
+		}
 	};
 
 	query = (data: RSQuery<any>[]): any => {
-		return this.verify(data);
-
+		const error = this.verify(data);
+		if (error) {
+			return {
+				error: {
+					error,
+					code: 400,
+					status: `Bad Request`,
+				},
+			};
+		}
 		const queryMap = getQueriesMap(data);
 
 		const aggregationsObject = buildQueryPipeline(queryMap);

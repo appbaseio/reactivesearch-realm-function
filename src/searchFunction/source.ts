@@ -83,7 +83,11 @@ exports = async (request: any, response: any) => {
 		const results = validate
 			? await reactiveSearch.translate(query)
 			: await reactiveSearch.query(query);
-		response.setStatusCode(200);
+		if (results.error) {
+			response.setStatusCode(400);
+		} else {
+			response.setStatusCode(200);
+		}
 		response.setHeader('Content-Type', 'application/json');
 		response.setBody(JSON.stringify(results));
 	} catch (err) {
