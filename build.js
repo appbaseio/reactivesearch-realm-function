@@ -87,10 +87,10 @@ execSync(
 execSync(`cp ./src/searchFunction/realm.d.ts ./dist/realm.d.ts`);
 execSync(`cp ./src/searchFunction/schema.ts ./dist/schema.ts`);
 
-const regex =
+const importRegex =
 	/import(?:["'\s]*([\w*{}\n\r\t, ]+)from\s*)?["'\s].*([@\w_-]+)["'\s].*;$/gm;
 const data = Fs.readFileSync('./dist/source.ts', { encoding: 'utf-8' });
-var result = data.replace(regex, '');
+var result = data.replace(importRegex, '');
 result = result.replace(new RegExp('export const', 'g'), 'const');
 result = result.replace(new RegExp('export type', 'g'), 'type');
 if (app_authentication) {
@@ -110,6 +110,8 @@ let dataJS = Fs.readFileSync('./dist/source.js', { encoding: 'utf-8' });
 dataJS = dataJS.replace(new RegExp('exports.__esModule = true;', 'g'), '');
 dataJS = dataJS.replace(new RegExp('exports.ReactiveSearch.*;', 'g'), '');
 dataJS = dataJS.replace(new RegExp('export default.*', 'g'), '');
+dataJS = dataJS.replace(new RegExp('export function', 'g'), 'function');
+dataJS = dataJS.replace(importRegex, '');
 Fs.writeFileSync('./dist/source.js', dataJS, { encoding: 'utf-8' });
 
 execSync(`mv ./dist/source.js ${webHookSourceFilePath}`);
