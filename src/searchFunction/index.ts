@@ -1,6 +1,7 @@
 import { ConfigType, RSQuery } from '../types/types';
 
 import { QueryMap } from '../types/types';
+import RSQuerySchema from '../types/schema';
 import { generateTermRelevantQuery } from '../targets/common';
 import { getGeoQuery } from '../targets/geo';
 import { getRangeQuery } from '../targets/range';
@@ -385,12 +386,27 @@ export class ReactiveSearch {
 		return result;
 	};
 
+	verify = (data: RSQuery<any>[]): any => {
+		const errors = [];
+		for (const x of data) {
+			const error = RSQuerySchema.validate(x);
+			console.log(error);
+			if (error) {
+				errors.push(error);
+			}
+		}
+		return errors;
+	};
+
 	query = (data: RSQuery<any>[]): any => {
+		return this.verify(data);
+
 		const queryMap = getQueriesMap(data);
 
 		const aggregationsObject = buildQueryPipeline(queryMap);
 		try {
 			const totalStart = performance.now();
+
 			return Promise.all(
 				Object.keys(aggregationsObject).map(async (item: any) => {
 					try {

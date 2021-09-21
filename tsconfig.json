@@ -23,6 +23,7 @@
 		"experimentalDecorators": true,
 		"resolveJsonModule": true,
 		"baseUrl": ".",
+		"allowJs": true,
 		"plugins": [
 			{
 				"transform": "typescript-is/lib/transform-inline/transformer"
