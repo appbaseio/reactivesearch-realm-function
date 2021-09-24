@@ -9,5 +9,4 @@ module.exports = {
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 	collectCoverage: true,
 	modulePaths: ['<rootDir>'],
-	allowJs: true,
 };
