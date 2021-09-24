@@ -1,6 +1,8 @@
 import { ConfigType, RSQuery } from '../types/types';
 
 import { QueryMap } from '../types/types';
+import { RSQuerySchema } from './schema';
+import Schema from '../validate/schema.js';
 import { generateTermRelevantQuery } from '../targets/common';
 import { getGeoQuery } from '../targets/geo';
 import { getRangeQuery } from '../targets/range';
@@ -369,6 +371,8 @@ export class ReactiveSearch {
 	// for realm function client is generated via context
 	// fot test env client is generated via npm mongodb package
 	config: ConfigType;
+	// @ts-ignore
+	schema: Schema;
 
 	constructor(config: ConfigType) {
 		this.config = {
@@ -376,16 +380,57 @@ export class ReactiveSearch {
 			database: config.database,
 			collection: config.collection,
 		};
+		// @ts-ignore
+		this.schema = new Schema(RSQuerySchema);
 	}
+
+	verify = (data: RSQuery<any>[]): any => {
+		const errors = [];
+		for (const x of data) {
+			const error = this.schema.validate(x);
+			if (error.length > 0) {
+				errors.push(error.toString());
+			} else {
+				errors.push(null);
+			}
+		}
+		if (errors.filter((x) => x).length === 0) {
+			return null;
+		} else {
+			return errors;
+		}
+	};
 
 	// TODO define type for mongo query
 	translate = (data: RSQuery<any>[]): Record<string, any> => {
+		const error = this.verify(data);
+		if (error) {
+			return {
+				error: {
+					error,
+					code: 400,
+					status: `Bad Request`,
+				},
+			};
+		}
+
 		const queryMap = getQueriesMap(data);
 		const result = buildQueryPipeline(queryMap);
 		return result;
 	};
 
 	query = (data: RSQuery<any>[]): any => {
+		const error = this.verify(data);
+		if (error) {
+			return {
+				error: {
+					error,
+					code: 400,
+					status: `Bad Request`,
+				},
+			};
+		}
+
 		const queryMap = getQueriesMap(data);
 
 		const aggregationsObject = buildQueryPipeline(queryMap);

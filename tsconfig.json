@@ -27,7 +27,8 @@
 			{
 				"transform": "typescript-is/lib/transform-inline/transformer"
 			}
-		]
+		],
+		"allowJs": true
 	},
 
 	"exclude": ["node_modules"],
