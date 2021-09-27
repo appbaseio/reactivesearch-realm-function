@@ -381,7 +381,7 @@ export class ReactiveSearch {
 			collection: config.collection,
 		};
 		// @ts-ignore
-		this.schema = new Schema(RSQuerySchema);
+		this.schema = new Schema(RSQuerySchema, { strip: false });
 	}
 
 	verify = (data: RSQuery<any>[]): any => {
