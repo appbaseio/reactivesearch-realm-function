@@ -19,3 +19,9 @@ Replace the default `index`, `url` and `mongodb.db`, `mongodb.collection` keys t
       collection: "listingsAndReviews"
     }}
 ```
+
+API reference for the components is present over here:
+
+- [Searchbox](https://docs.appbase.io/docs/reactivesearch/react-searchbox/quickstart/)
+- [Searchbase](https://docs.appbase.io/docs/reactivesearch/react-searchbox/searchbase/)
+- [SearchComponent](https://docs.appbase.io/docs/reactivesearch/react-searchbox/searchcomponent/)

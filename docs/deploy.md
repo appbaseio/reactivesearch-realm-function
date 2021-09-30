@@ -110,4 +110,6 @@ Deploy ReactiveSearch API as a MongoDB Realm app function with a single command.
 
 ### Next steps
 
-Continue with testing the UI over [here](test-with-ui.md).
+Go over different search examples that can be run directly with the Realm deployed function over [here](REST.md).
+
+Or jump to with testing the Realm function with a React UI over [here](test-with-ui.md).
