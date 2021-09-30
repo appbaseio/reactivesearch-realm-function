@@ -1,5 +1,7 @@
-# reactivesearch-realm-function
+# ReactiveSearch Realm Function
 
+
+The ReactiveSearch Realm project deploys the ReactiveSearch API as a transpiled JS code into a Realm function. The goal of this project is to enable Atlas Search users to be able to build search UIs using [Searchbox](https://opensource.appbase.io/searchbox) and [ReactiveSearch](https://opensource.appbase.io/reactivesearch) UI libraries.
 ## Setup
 
 - Clone repo: `git clone https://github.com/appbaseio-confidential/reactivesearch-realm-function.git`

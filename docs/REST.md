@@ -10,6 +10,8 @@ For this documentation, we are making use of a publicly deployed Realm endpoint.
 Endpoint: https://us-east-1.aws.webhooks.mongodb-realm.com/api/client/v2.0/app/public-demo-skxjb/service/http_endpoint/incoming_webhook/reactivesearch
 ```
 
+> **Note:** Some of the examples make use of specific data types such as geopoint or autocomplete. These are already preset in the indexes they're queried against in these examples, but if you're replacing the Realm function endpoint, these data types need to be set prior to running the queries.
+
 ### Use Cases
 
 
@@ -60,21 +62,15 @@ A Range UI is typically represented as a range selector, range input/slider, or 
 
 1. Get the results within the given range of a field value
 
-<iframe src="https://play.reactivesearch.io/embed/TyxUhuJ77y1DQ8hKL5l2" style="width:100%; height: 500px; border:0;  overflow:hidden;"
-   title=rs-playground-DmIAKMrUXLpwn2zRAaRB
- ></iframe>
+<iframe src="https://play.reactivesearch.io/embed/TyxUhuJ77y1DQ8hKL5l2" style="width:100%; height: 500px; border:0;  overflow:hidden;" title=rs-playground-DmIAKMrUXLpwn2zRAaRB></iframe>
 
 2. Get results within a given range as well as return min, max and histogram aggregations
 
-<iframe src="https://play.reactivesearch.io/embed/yUrnvc9Kt7nt3gg0fNuZ" style="width:100%; height: 500px; border:0;  overflow:hidden;"
-   title=rs-playground-DmIAKMrUXLpwn2zRAaRB
- ></iframe>
+<iframe src="https://play.reactivesearch.io/embed/yUrnvc9Kt7nt3gg0fNuZ" style="width:100%; height: 500px; border:0;  overflow:hidden;" title=rs-playground-DmIAKMrUXLpwn2zRAaRB></iframe>
 
 3. Return documents with null values in the path (aka field) for a given range selection
 
-<iframe src="https://play.reactivesearch.io/embed/18KIx3mC4CK3EEnldAur" style="width:100%; height: 500px; border:0;  overflow:hidden;"
-   title=rs-playground-DmIAKMrUXLpwn2zRAaRB
- ></iframe>
+<iframe src="https://play.reactivesearch.io/embed/18KIx3mC4CK3EEnldAur" style="width:100%; height: 500px; border:0;  overflow:hidden;" title=rs-playground-DmIAKMrUXLpwn2zRAaRB></iframe>
 
 #### Building Geo UIs
 
@@ -82,15 +78,11 @@ A map (Google Maps, OpenStreetMaps) is typically used for building geo UIs. It p
 
 1. Searching within a circle
 
-<iframe src="https://play.reactivesearch.io/embed/bANFzLidlDl547khEEmF" style="width:100%; height: 500px; border:0;  overflow:hidden;"
-   title=rs-playground-DmIAKMrUXLpwn2zRAaRB
- ></iframe>
+<iframe src="https://play.reactivesearch.io/embed/bANFzLidlDl547khEEmF" style="width:100%; height: 500px; border:0;  overflow:hidden;" title=rs-playground-DmIAKMrUXLpwn2zRAaRB></iframe>
 
 2. Searching within a bounding box
 
-<iframe src="https://play.reactivesearch.io/embed/Cza0tApO2Bp2TVMxgJ3m" style="width:100%; height: 500px; border:0;  overflow:hidden;"
-   title=rs-playground-DmIAKMrUXLpwn2zRAaRB
- ></iframe>
+<iframe src="https://play.reactivesearch.io/embed/Cza0tApO2Bp2TVMxgJ3m" style="width:100%; height: 500px; border:0;  overflow:hidden;" title=rs-playground-DmIAKMrUXLpwn2zRAaRB></iframe>
 
 #### Building Search UIs
 
@@ -98,24 +90,16 @@ A searchbox is typically used for building an autosuggestions or a highlighting 
 
 1. Searching on specific fields with weights
 
-<iframe src="https://play.reactivesearch.io/embed/YmxZ7oDhEjlcPz8WAqtk" style="width:100%; height: 500px; border:0;  overflow:hidden;"
-   title=rs-playground-DmIAKMrUXLpwn2zRAaRB
- ></iframe>
+<iframe src="https://play.reactivesearch.io/embed/YmxZ7oDhEjlcPz8WAqtk" style="width:100%; height: 500px; border:0;  overflow:hidden;" title=rs-playground-DmIAKMrUXLpwn2zRAaRB></iframe>
 
 2. Searching with highlighting enabled
 
-<iframe src="https://play.reactivesearch.io/embed/yBaLhQKu6A4IayJ65POf" style="width:100%; height: 500px; border:0;  overflow:hidden;"
-   title=rs-playground-DmIAKMrUXLpwn2zRAaRB
- ></iframe>
+<iframe src="https://play.reactivesearch.io/embed/yBaLhQKu6A4IayJ65POf" style="width:100%; height: 500px; border:0;  overflow:hidden;" title=rs-playground-DmIAKMrUXLpwn2zRAaRB></iframe>
 
 3. Searching with fuzziness set to 1
 
-<iframe src="https://play.reactivesearch.io/embed/O1r3NUkrzhLqAvrjcBag" style="width:100%; height: 500px; border:0;  overflow:hidden;"
-   title=rs-playground-DmIAKMrUXLpwn2zRAaRB
- ></iframe>
+<iframe src="https://play.reactivesearch.io/embed/O1r3NUkrzhLqAvrjcBag" style="width:100%; height: 500px; border:0;  overflow:hidden;" title=rs-playground-DmIAKMrUXLpwn2zRAaRB></iframe>
 
 4. Searching with autocomplete type
 
-<iframe src="https://play.reactivesearch.io/embed/bWmkZxQ8KSv7pGHcOFp9" style="width:100%; height: 500px; border:0;  overflow:hidden;"
-   title=rs-playground-DmIAKMrUXLpwn2zRAaRB
- ></iframe>
+<iframe src="https://play.reactivesearch.io/embed/bWmkZxQ8KSv7pGHcOFp9" style="width:100%; height: 500px; border:0;  overflow:hidden;" title=rs-playground-DmIAKMrUXLpwn2zRAaRB></iframe>
