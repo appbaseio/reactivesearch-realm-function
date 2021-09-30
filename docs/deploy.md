@@ -2,10 +2,12 @@
 
 Deploy ReactiveSearch API as a MongoDB Realm app function with a single command.
 
-### **Pre-requisites**
+### Prerequisites
 
 1. You need to have a Cloud Atlas MongoDB cluster, as Atlas Search only works in this mode.
-2. You need to create an API key.
+2. Set up an Atlas Search index.
+
+3. You need to create an API key.
     
     There are two options for creating an API key in Atlas Cloud. You can either start with an Organization level API key and add that to your project or directly create a project level API key.
     
@@ -104,3 +106,8 @@ Deploy ReactiveSearch API as a MongoDB Realm app function with a single command.
     ```
     
     - `--app-authentication` flag expects username password in a $user:$password format.
+
+
+### Next steps
+
+Continue with testing the UI over [here](test-with-ui.md).
