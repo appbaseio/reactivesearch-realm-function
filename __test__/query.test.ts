@@ -120,7 +120,7 @@ describe(`generate geo query correctly`, () => {
 			id: `geoQuery`,
 			value: {
 				distance: 5,
-				location: '50, 40',
+				location: '40, 50',
 				unit: 'mi',
 			},
 			dataField: [`location`],

@@ -33,8 +33,8 @@ const convertLocation = (location: GeoPoint | string | [number, number]) => {
 			throw new Error(`Invalid location`);
 		}
 
-		loc[0] = parseFloat(data[0]);
-		loc[1] = parseFloat(data[1]);
+		loc[0] = parseFloat(data[1]);
+		loc[1] = parseFloat(data[0]);
 	} else if (Array.isArray(location)) {
 		if (location.length !== 2) {
 			throw new Error(`Invalid location`);
