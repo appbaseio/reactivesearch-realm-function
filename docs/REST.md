@@ -22,38 +22,32 @@ A single/multi select facet UI is typically represented with a term query. Here,
 1. Getting the top buckets
 
 <iframe src="https://play.reactivesearch.io/embed/gBOY9B3F41P3o8DZNl4o" style="width:100%; height: 500px; border:0;  overflow:hidden;"
-   title=rs-playground-DmIAKMrUXLpwn2zRAaRB
- ></iframe>
+   title=rs-playground-DmIAKMrUXLpwn2zRAaRB></iframe>
 
 2. Sort buckets by `asc` order
 
 <iframe src="https://play.reactivesearch.io/embed/LCSl4bQV8NzX3HNTkNtg" style="width:100%; height: 500px; border:0;  overflow:hidden;"
-   title=rs-playground-DmIAKMrUXLpwn2zRAaRB
- ></iframe>
+   title=rs-playground-DmIAKMrUXLpwn2zRAaRB></iframe>
 
 3. Finding any of the facet items: A multi-select filtering use-case
 
 <iframe src="https://play.reactivesearch.io/embed/moPGn2vjlApQJUPClyCG" style="width:100%; height: 500px; border:0;  overflow:hidden;"
-   title=rs-playground-DmIAKMrUXLpwn2zRAaRB
- ></iframe>
+   title=rs-playground-DmIAKMrUXLpwn2zRAaRB></iframe>
 
 4. Finding all of the facet items: A multi-select filtering use-case
 
 <iframe src="https://play.reactivesearch.io/embed/PEVFz2Jnus7uhKG7dTb0" style="width:100%; height: 500px; border:0;  overflow:hidden;"
-   title=rs-playground-DmIAKMrUXLpwn2zRAaRB
- ></iframe>
+   title=rs-playground-DmIAKMrUXLpwn2zRAaRB></iframe>
 
 5. Passing MongoDB aggregation stages directly to override the default query of the term component
 
 <iframe src="https://play.reactivesearch.io/embed/7hYC8U1cG33cE6wkgUEi" style="width:100%; height: 500px; border:0;  overflow:hidden;"
-   title=rs-playground-DmIAKMrUXLpwn2zRAaRB
- ></iframe>
+   title=rs-playground-DmIAKMrUXLpwn2zRAaRB></iframe>
 
 6. Passing MongoDB aggregation stages directly to override the default query of the result component
 
 <iframe src="https://play.reactivesearch.io/embed/TsOlt9CpxgufdDX0LI4N" style="width:100%; height: 500px; border:0;  overflow:hidden;"
-   title=rs-playground-DmIAKMrUXLpwn2zRAaRB
- ></iframe>
+   title=rs-playground-DmIAKMrUXLpwn2zRAaRB></iframe>
 
 
 #### Building Range UIs
