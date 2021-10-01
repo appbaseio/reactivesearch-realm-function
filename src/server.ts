@@ -11,6 +11,8 @@ async function main() {
 	const client = new MongoClient(
 		process.env.DB_URL || `mongodb://localhost:27017`,
 	);
+
+	console.log(client);
 	await client.connect();
 	console.log(`✅ [db]: Connected successfully`);
 

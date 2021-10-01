@@ -14,7 +14,7 @@ module.exports = [
 			format: 'umd',
 			name: 'reactivesearch', // this is the name of the global object
 			esModule: false,
-			sourcemap: true,
+			sourcemap: false,
 		},
 	},
 	// ESM
