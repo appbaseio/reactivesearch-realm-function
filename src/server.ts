@@ -112,6 +112,27 @@ async function main() {
 		}
 	});
 
+	app.post(`/_reactivesearch/validateCollection`, async (req, res) => {
+		try {
+			const { db, collection } = req.body.mongodb;
+			const ref = new ReactiveSearch({
+				client,
+				database: <string>db,
+				collection: <string>collection,
+			});
+			const result = await ref.validateCollection();
+			res.status(result.code).send(result);
+		} catch (error) {
+			res.status(400).send({
+				error: {
+					message: error.message,
+					code: 400,
+					status: `Bad Request`,
+				},
+			});
+		}
+	});
+
 	app.listen(PORT, () => {
 		console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
 	});

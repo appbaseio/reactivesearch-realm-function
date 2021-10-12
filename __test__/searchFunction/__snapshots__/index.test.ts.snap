@@ -1,0 +1,2384 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Reactive Search integration test Aggregation Size query 1`] = `
+Object {
+  "settings": Object {},
+  "termQuery": Object {
+    "aggregations": Object {
+      "property_type": Object {
+        "buckets": Array [
+          Object {
+            "doc_count": 3626,
+            "key": "Apartment",
+          },
+          Object {
+            "doc_count": 606,
+            "key": "House",
+          },
+          Object {
+            "doc_count": 399,
+            "key": "Condominium",
+          },
+          Object {
+            "doc_count": 185,
+            "key": "Serviced apartment",
+          },
+          Object {
+            "doc_count": 142,
+            "key": "Loft",
+          },
+        ],
+      },
+    },
+    "hits": Object {},
+    "raw": undefined,
+    "status": 200,
+  },
+}
+`;
+
+exports[`Reactive Search integration test Bounding box Geo Query 1`] = `
+Object {
+  "geoQuery": Object {
+    "error": null,
+    "hits": Object {
+      "hits": Array [
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10021707",
+          "_index": "custom",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10021707",
+            "listing_url": "https://www.airbnb.com/rooms/10021707",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10166986",
+          "_index": "custom",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10166986",
+            "listing_url": "https://www.airbnb.com/rooms/10166986",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "103161",
+          "_index": "custom",
+          "_score": 0,
+          "_source": Object {
+            "_id": "103161",
+            "listing_url": "https://www.airbnb.com/rooms/103161",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10545815",
+          "_index": "custom",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10545815",
+            "listing_url": "https://www.airbnb.com/rooms/10545815",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10857454",
+          "_index": "custom",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10857454",
+            "listing_url": "https://www.airbnb.com/rooms/10857454",
+          },
+        },
+      ],
+      "max_score": 0,
+      "total": Object {
+        "relation": "eq",
+        "value": 341,
+      },
+    },
+    "raw": undefined,
+    "status": 200,
+  },
+  "settings": Object {},
+}
+`;
+
+exports[`Reactive Search integration test Find any item, and query 1`] = `
+Object {
+  "result": Object {
+    "error": null,
+    "hits": Object {
+      "hits": Array [
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10057447",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10057447",
+            "name": "Modern Spacious 1 Bedroom Loft",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10057826",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10057826",
+            "name": "Deluxe Loft Suite",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10059244",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10059244",
+            "name": "Ligne verte - à 15 min de métro du centre ville.",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10141950",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10141950",
+            "name": "Big, Bright & Convenient Sheung Wan",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10138784",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10138784",
+            "name": "Room Close to LGA and 35 mins to Times Square",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10209136",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10209136",
+            "name": "Friendly Apartment, 10m from Manly",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10213499",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10213499",
+            "name": "Great studio opp. Narrabeen Lake",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10228731",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10228731",
+            "name": "Quarto inteiro na Tijuca",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10233856",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10233856",
+            "name": "Twin Bed room+MTR Mongkok shopping&My",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10267144",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10267144",
+            "name": "IPANEMA LUXURY PENTHOUSE with MAID",
+            "property_type": "Apartment",
+          },
+        },
+      ],
+      "max_score": 0,
+      "total": Object {
+        "relation": "eq",
+        "value": 3811,
+      },
+    },
+    "raw": undefined,
+    "status": 200,
+  },
+  "settings": Object {},
+  "term": Object {
+    "aggregations": Object {
+      "property_type": Object {
+        "buckets": Array [
+          Object {
+            "doc_count": 23,
+            "key": "Aparthotel",
+          },
+          Object {
+            "doc_count": 3626,
+            "key": "Apartment",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Barn",
+          },
+          Object {
+            "doc_count": 69,
+            "key": "Bed and breakfast",
+          },
+          Object {
+            "doc_count": 2,
+            "key": "Boat",
+          },
+          Object {
+            "doc_count": 53,
+            "key": "Boutique hotel",
+          },
+          Object {
+            "doc_count": 14,
+            "key": "Bungalow",
+          },
+          Object {
+            "doc_count": 15,
+            "key": "Cabin",
+          },
+          Object {
+            "doc_count": 2,
+            "key": "Camper/RV",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Campsite",
+          },
+          Object {
+            "doc_count": 9,
+            "key": "Casa particular (Cuba)",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Castle",
+          },
+          Object {
+            "doc_count": 2,
+            "key": "Chalet",
+          },
+          Object {
+            "doc_count": 399,
+            "key": "Condominium",
+          },
+          Object {
+            "doc_count": 20,
+            "key": "Cottage",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Earth house",
+          },
+          Object {
+            "doc_count": 9,
+            "key": "Farm stay",
+          },
+          Object {
+            "doc_count": 81,
+            "key": "Guest suite",
+          },
+          Object {
+            "doc_count": 50,
+            "key": "Guesthouse",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Heritage hotel (India)",
+          },
+          Object {
+            "doc_count": 34,
+            "key": "Hostel",
+          },
+          Object {
+            "doc_count": 26,
+            "key": "Hotel",
+          },
+          Object {
+            "doc_count": 606,
+            "key": "House",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Houseboat",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Hut",
+          },
+          Object {
+            "doc_count": 142,
+            "key": "Loft",
+          },
+          Object {
+            "doc_count": 2,
+            "key": "Nature lodge",
+          },
+          Object {
+            "doc_count": 18,
+            "key": "Other",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Pension (South Korea)",
+          },
+          Object {
+            "doc_count": 11,
+            "key": "Resort",
+          },
+          Object {
+            "doc_count": 185,
+            "key": "Serviced apartment",
+          },
+          Object {
+            "doc_count": 7,
+            "key": "Tiny house",
+          },
+          Object {
+            "doc_count": 108,
+            "key": "Townhouse",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Train",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Treehouse",
+          },
+          Object {
+            "doc_count": 32,
+            "key": "Villa",
+          },
+        ],
+      },
+    },
+    "hits": Object {},
+    "raw": undefined,
+    "status": 200,
+  },
+}
+`;
+
+exports[`Reactive Search integration test Find any item, or query 1`] = `
+Object {
+  "result": Object {
+    "error": null,
+    "hits": Object {
+      "hits": Array [
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10057447",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10057447",
+            "name": "Modern Spacious 1 Bedroom Loft",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10057826",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10057826",
+            "name": "Deluxe Loft Suite",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10059244",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10059244",
+            "name": "Ligne verte - à 15 min de métro du centre ville.",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10141950",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10141950",
+            "name": "Big, Bright & Convenient Sheung Wan",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10138784",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10138784",
+            "name": "Room Close to LGA and 35 mins to Times Square",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10209136",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10209136",
+            "name": "Friendly Apartment, 10m from Manly",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10213499",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10213499",
+            "name": "Great studio opp. Narrabeen Lake",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10228731",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10228731",
+            "name": "Quarto inteiro na Tijuca",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10233856",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10233856",
+            "name": "Twin Bed room+MTR Mongkok shopping&My",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10267144",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10267144",
+            "name": "IPANEMA LUXURY PENTHOUSE with MAID",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "102995",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "102995",
+            "name": "UWS Brownstone Near Central Park",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10354347",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10354347",
+            "name": "Room For Erasmus",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10373872",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10373872",
+            "name": "Apartamento Mobiliado - Lgo do Machado",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "1036027",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "1036027",
+            "name": "BBC OPORTO 4X2",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10411341",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10411341",
+            "name": "Beautiful flat with services",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10431455",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10431455",
+            "name": "Sala e quarto em copacabana com cozinha americana",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10448594",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10448594",
+            "name": "Where Castles and Art meet the Sea",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10471178",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10471178",
+            "name": "Rented Room",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10527212",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10527212",
+            "name": "位於深水埗地鐵站的溫馨公寓",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10545815",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10545815",
+            "name": "Whole Apt. in East Williamsburg",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10612199",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10612199",
+            "name": "Serene luxury in Harlem",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10624493",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10624493",
+            "name": "Cozy apartment 3 mins TAIWAI Subway",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10628126",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10628126",
+            "name": "Ribeira Smart Flat",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10812136",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10812136",
+            "name": "well lit East Williamsburg apt.",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10819035",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10819035",
+            "name": "Comfort Room in Istanbul",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "1079887",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "1079887",
+            "name": "Trendy apartment in BCN centre",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10839973",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10839973",
+            "name": "傳統香港房间 - 干净整洁交通便利的二人房间",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10887852",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10887852",
+            "name": "Cozy Hell's Kitchen Apt",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "1098211",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "1098211",
+            "name": "Super location - Walk to the City!",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11005300",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11005300",
+            "name": "East Village Sanctuary",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11095139",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11095139",
+            "name": "Room 3 near Jardan mtr station 1min",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "1111410",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "1111410",
+            "name": "MONTJUIC FOUNTAINS APARTMENT",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11115528",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11115528",
+            "name": "DOUBLE ROOM IN THE HEART OF BCN",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11136898",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11136898",
+            "name": "1 or 2 rooms with private terrace in shared flat",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11153910",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11153910",
+            "name": "SPACIOUS RAMBLA CATALUÑA",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11157167",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11157167",
+            "name": "Cozy Chinatown studio apartment",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11364106",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11364106",
+            "name": "cozy house and garden in the heart of Montréal",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11378656",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11378656",
+            "name": "HAPPY TO HELP YOU",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11447743",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11447743",
+            "name": "Apartamento São Bento da Vitória 2 - Amazing view",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11480835",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11480835",
+            "name": "Brooklyn Bushwhick Private Room",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11488558",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11488558",
+            "name": "Cosy flat,walking distance tocenter",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11510109",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11510109",
+            "name": "LightHouse with Sea View",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "1148978",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "1148978",
+            "name": "1 BR 1/2 block to A/B/C/D trains",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11552866",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11552866",
+            "name": "6 min. walk to metro & metrobus",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11553357",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11553357",
+            "name": "Brick House: Unique Garden Apartment! King Bed!",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11568230",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11568230",
+            "name": "Apartamento en casco antiguo",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11602050",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11602050",
+            "name": "Museum Mile 1 BR - Madison Ave",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "1163119",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "1163119",
+            "name": "Charming apartment with balcony",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11667313",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11667313",
+            "name": "Brand new apartment next to HKU",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11679012",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11679012",
+            "name": "Apartamento com 2 quartos Leblon",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11688660",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11688660",
+            "name": "Studio Apartment w/ Private Rooftop",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "117425",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "117425",
+            "name": "Conveniently Located, Sunny Brooklyn Heights!",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11778475",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11778475",
+            "name": "☼☼ Lovely Colorful Studio ☼☼ Tsim Sha Tsui",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11860047",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11860047",
+            "name": "O charme de estar em frente à praia",
+            "property_type": "Serviced apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "11860692",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "11860692",
+            "name": "Colourful apt in Plateau/Mile End",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12004365",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12004365",
+            "name": "3 Quartos Ipanema c/Piscina",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12007662",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12007662",
+            "name": "Very nice location, cozy home!",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12008712",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12008712",
+            "name": "Barra da Tijuca: 2 suites overlooking the ocean and lagoon",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12068078",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12068078",
+            "name": "3 quartos Península Barra da Tijuca",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "1201871",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "1201871",
+            "name": "Penthouse. Terrace.",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "121861",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "121861",
+            "name": "Park Slope Apt:, Spacious 2 bedroom",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12211157",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12211157",
+            "name": "Westin Kaanapali KORVS 2BR",
+            "property_type": "Serviced apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12215468",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12215468",
+            "name": "2+1 flat for rent",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12216115",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12216115",
+            "name": "Peaceful Apartment near Casa da Música",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12223067",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12223067",
+            "name": "Westin Kaanapali KORVN 2BR",
+            "property_type": "Serviced apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12234922",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12234922",
+            "name": "Room in apartment with beautiful view, in Botafogo",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12253386",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12253386",
+            "name": "Studio on main entertainment street",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12270044",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12270044",
+            "name": "IPANEMA VILLE RESIDENCE",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12259367",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12259367",
+            "name": "STUDIO APARTMENT + WIFI!!!!",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "1229797",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "1229797",
+            "name": "Affordable and close to the city!",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "1229847",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "1229847",
+            "name": "Charming StanleyBeachFlat w/rooftop",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12378302",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12378302",
+            "name": "Luminous for 6 apt @ Rnda Sant Pau ¦",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12452082",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12452082",
+            "name": "Stunning Apartmet for Rio 2016",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12462076",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12462076",
+            "name": "Deluxe Suites Family room in taksim",
+            "property_type": "Serviced apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12473031",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12473031",
+            "name": "Private Room on Bondi Beach",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12479743",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12479743",
+            "name": "Domus Porto Perfeito II",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12486648",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12486648",
+            "name": "Downtown Exposed Brick Studio",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12552675",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12552675",
+            "name": "The Porto Concierge - White Martin",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12607396",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12607396",
+            "name": "OportoBatalha  (by The HOST)",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12651199",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12651199",
+            "name": "Private apartment, small and comfortable.",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12758910",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12758910",
+            "name": "Lovely twin room in central flat",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12788675",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12788675",
+            "name": "Calm room Barcelona",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12814401",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12814401",
+            "name": "Clean, comfortable and convenient",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12857841",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12857841",
+            "name": "Blue Mosque Special Apartment!",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12857887",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12857887",
+            "name": "小屋",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12872819",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12872819",
+            "name": "Sunny condo, downtown/Village",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12887643",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12887643",
+            "name": "Large well-lit & quiet room in the Plateau",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12902610",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12902610",
+            "name": "Artsy 4BR in Plateau by Sonder",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12923454",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12923454",
+            "name": "Flatshare in heart of Soho",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12924287",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12924287",
+            "name": "New and cozy flat @lemebeach",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "12973335",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "12973335",
+            "name": "Cosy rooms close to the metro and the River",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "13016251",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "13016251",
+            "name": "F1 weekend appartement à louer",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "13043773",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "13043773",
+            "name": "Room for June Mile End/Little Italy",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "13045223",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "13045223",
+            "name": "Sunny, private room on St. Denis",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "13045429",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "13045429",
+            "name": "Aloha Adventure, Family Friendly Tropical Vacation",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "13068933",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "13068933",
+            "name": "Ático exclusivo Barcelona",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "13069562",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "13069562",
+            "name": "Cozy apartment with cat at Ferikoy",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "1310308",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "1310308",
+            "name": "Mosman Apartment",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "13161668",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "13161668",
+            "name": "Eliseos Luxury Apartment HUTB-001281",
+            "property_type": "Apartment",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "13176532",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "13176532",
+            "name": "Fully Furnished in Causeway bay",
+            "property_type": "Apartment",
+          },
+        },
+      ],
+      "max_score": 0,
+      "total": Object {
+        "relation": "eq",
+        "value": 3811,
+      },
+    },
+    "raw": undefined,
+    "status": 200,
+  },
+  "settings": Object {},
+  "term": Object {
+    "aggregations": Object {
+      "property_type": Object {
+        "buckets": Array [
+          Object {
+            "doc_count": 23,
+            "key": "Aparthotel",
+          },
+          Object {
+            "doc_count": 3626,
+            "key": "Apartment",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Barn",
+          },
+          Object {
+            "doc_count": 69,
+            "key": "Bed and breakfast",
+          },
+          Object {
+            "doc_count": 2,
+            "key": "Boat",
+          },
+          Object {
+            "doc_count": 53,
+            "key": "Boutique hotel",
+          },
+          Object {
+            "doc_count": 14,
+            "key": "Bungalow",
+          },
+          Object {
+            "doc_count": 15,
+            "key": "Cabin",
+          },
+          Object {
+            "doc_count": 2,
+            "key": "Camper/RV",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Campsite",
+          },
+          Object {
+            "doc_count": 9,
+            "key": "Casa particular (Cuba)",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Castle",
+          },
+          Object {
+            "doc_count": 2,
+            "key": "Chalet",
+          },
+          Object {
+            "doc_count": 399,
+            "key": "Condominium",
+          },
+          Object {
+            "doc_count": 20,
+            "key": "Cottage",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Earth house",
+          },
+          Object {
+            "doc_count": 9,
+            "key": "Farm stay",
+          },
+          Object {
+            "doc_count": 81,
+            "key": "Guest suite",
+          },
+          Object {
+            "doc_count": 50,
+            "key": "Guesthouse",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Heritage hotel (India)",
+          },
+          Object {
+            "doc_count": 34,
+            "key": "Hostel",
+          },
+          Object {
+            "doc_count": 26,
+            "key": "Hotel",
+          },
+          Object {
+            "doc_count": 606,
+            "key": "House",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Houseboat",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Hut",
+          },
+          Object {
+            "doc_count": 142,
+            "key": "Loft",
+          },
+          Object {
+            "doc_count": 2,
+            "key": "Nature lodge",
+          },
+          Object {
+            "doc_count": 18,
+            "key": "Other",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Pension (South Korea)",
+          },
+          Object {
+            "doc_count": 11,
+            "key": "Resort",
+          },
+          Object {
+            "doc_count": 185,
+            "key": "Serviced apartment",
+          },
+          Object {
+            "doc_count": 7,
+            "key": "Tiny house",
+          },
+          Object {
+            "doc_count": 108,
+            "key": "Townhouse",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Train",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Treehouse",
+          },
+          Object {
+            "doc_count": 32,
+            "key": "Villa",
+          },
+        ],
+      },
+    },
+    "hits": Object {},
+    "raw": undefined,
+    "status": 200,
+  },
+}
+`;
+
+exports[`Reactive Search integration test Highlight Query 1`] = `
+Object {
+  "result": Object {
+    "error": null,
+    "hits": Object {
+      "hits": Array [
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "1310308",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "1310308",
+            "highlights": null,
+          },
+          "highlight": Array [
+            Object {
+              "name": "Mosman  <b>Apartment</b>",
+            },
+          ],
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "15003496",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "15003496",
+            "highlights": null,
+          },
+          "highlight": Array [
+            Object {
+              "name": "Quarry  <b>Apartment</b>",
+            },
+          ],
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "1560753",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "1560753",
+            "highlights": null,
+          },
+          "highlight": Array [
+            Object {
+              "name": "ECONOMIC  <b>APARTMENT</b>",
+            },
+          ],
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "21982406",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "21982406",
+            "highlights": null,
+          },
+          "highlight": Array [
+            Object {
+              "name": "White  <b>Apartment</b>",
+            },
+          ],
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "223930",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "223930",
+            "highlights": null,
+          },
+          "highlight": Array [
+            Object {
+              "name": "Lovely  <b>Apartment</b>",
+            },
+          ],
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "22978545",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "22978545",
+            "highlights": null,
+          },
+          "highlight": Array [
+            Object {
+              "name": "<b>Apartment</b>  Eduardo",
+            },
+          ],
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "26105391",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "26105391",
+            "highlights": null,
+          },
+          "highlight": Array [
+            Object {
+              "name": "Vintage  <b>apartment</b>",
+            },
+          ],
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "26805391",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "26805391",
+            "highlights": null,
+          },
+          "highlight": Array [
+            Object {
+              "name": "Quelhas  <b>Apartment</b>",
+            },
+          ],
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "3155979",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "3155979",
+            "highlights": null,
+          },
+          "highlight": Array [
+            Object {
+              "name": "Center -  <b>Apartment</b>",
+            },
+          ],
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "26209883",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "26209883",
+            "highlights": null,
+          },
+          "highlight": Array [
+            Object {
+              "name": "Devesas  <b>Apartment</b>",
+            },
+          ],
+        },
+      ],
+      "max_score": 0,
+      "total": Object {
+        "relation": "eq",
+        "value": 707,
+      },
+    },
+    "raw": undefined,
+    "status": 200,
+  },
+  "settings": Object {},
+}
+`;
+
+exports[`Reactive Search integration test Radius Geo Query 1`] = `
+Object {
+  "geoQuery": Object {
+    "error": null,
+    "hits": Object {
+      "hits": Array [
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10084023",
+          "_index": "custom",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10084023",
+            "listing_url": "https://www.airbnb.com/rooms/10084023",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10527212",
+          "_index": "custom",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10527212",
+            "listing_url": "https://www.airbnb.com/rooms/10527212",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10624493",
+          "_index": "custom",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10624493",
+            "listing_url": "https://www.airbnb.com/rooms/10624493",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10839973",
+          "_index": "custom",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10839973",
+            "listing_url": "https://www.airbnb.com/rooms/10839973",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10839801",
+          "_index": "custom",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10839801",
+            "listing_url": "https://www.airbnb.com/rooms/10839801",
+          },
+        },
+      ],
+      "max_score": 0,
+      "total": Object {
+        "relation": "eq",
+        "value": 619,
+      },
+    },
+    "raw": undefined,
+    "status": 200,
+  },
+  "settings": Object {},
+}
+`;
+
+exports[`Reactive Search integration test Range query 1`] = `
+Object {
+  "range": Object {
+    "error": null,
+    "hits": Object {
+      "hits": Array [
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10006546",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10006546",
+            "accommodates": 8,
+            "name": "Ribeira Charming Duplex",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10047964",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10047964",
+            "accommodates": 6,
+            "name": "Charming Flat in Downtown Moda",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10051164",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10051164",
+            "accommodates": 8,
+            "name": "Catete's Colonial Big Hause Room B",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10057447",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10057447",
+            "accommodates": 4,
+            "name": "Modern Spacious 1 Bedroom Loft",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10057826",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10057826",
+            "accommodates": 4,
+            "name": "Deluxe Loft Suite",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10059244",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10059244",
+            "accommodates": 2,
+            "name": "Ligne verte - à 15 min de métro du centre ville.",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10083468",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10083468",
+            "accommodates": 2,
+            "name": "Be Happy in Porto",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10141950",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10141950",
+            "accommodates": 2,
+            "name": "Big, Bright & Convenient Sheung Wan",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10138784",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10138784",
+            "accommodates": 2,
+            "name": "Room Close to LGA and 35 mins to Times Square",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10209136",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10209136",
+            "accommodates": 2,
+            "name": "Friendly Apartment, 10m from Manly",
+          },
+        },
+      ],
+      "max_score": 0,
+      "total": Object {
+        "relation": "eq",
+        "value": 5474,
+      },
+    },
+    "raw": undefined,
+    "status": 200,
+  },
+  "settings": Object {},
+}
+`;
+
+exports[`Reactive Search integration test Range query min, max and histogram 1`] = `
+Object {
+  "range": Object {
+    "aggregations": Object {
+      "accommodates": Object {
+        "buckets": Array [
+          Object {
+            "doc_count": 2613,
+            "key": 1,
+          },
+          Object {
+            "doc_count": 1721,
+            "key": 3,
+          },
+          Object {
+            "doc_count": 769,
+            "key": 5,
+          },
+          Object {
+            "doc_count": 274,
+            "key": 7,
+          },
+          Object {
+            "doc_count": 97,
+            "key": "other",
+          },
+        ],
+      },
+      "max": Object {
+        "value": 10,
+      },
+      "min": Object {
+        "value": 1,
+      },
+    },
+    "error": null,
+    "hits": Object {
+      "hits": Array [
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10006546",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10006546",
+            "accommodates": 8,
+            "name": "Ribeira Charming Duplex",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10047964",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10047964",
+            "accommodates": 6,
+            "name": "Charming Flat in Downtown Moda",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10051164",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10051164",
+            "accommodates": 8,
+            "name": "Catete's Colonial Big Hause Room B",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10057447",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10057447",
+            "accommodates": 4,
+            "name": "Modern Spacious 1 Bedroom Loft",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10057826",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10057826",
+            "accommodates": 4,
+            "name": "Deluxe Loft Suite",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10059244",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10059244",
+            "accommodates": 2,
+            "name": "Ligne verte - à 15 min de métro du centre ville.",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10083468",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10083468",
+            "accommodates": 2,
+            "name": "Be Happy in Porto",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10141950",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10141950",
+            "accommodates": 2,
+            "name": "Big, Bright & Convenient Sheung Wan",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10138784",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10138784",
+            "accommodates": 2,
+            "name": "Room Close to LGA and 35 mins to Times Square",
+          },
+        },
+        Object {
+          "_collection": "listingsAndReviews",
+          "_id": "10209136",
+          "_index": "default",
+          "_score": 0,
+          "_source": Object {
+            "_id": "10209136",
+            "accommodates": 2,
+            "name": "Friendly Apartment, 10m from Manly",
+          },
+        },
+      ],
+      "max_score": 0,
+      "total": Object {
+        "relation": "eq",
+        "value": 5474,
+      },
+    },
+    "raw": undefined,
+    "status": 200,
+  },
+  "settings": Object {},
+}
+`;
+
+exports[`Reactive Search integration test Sorting query 1`] = `
+Object {
+  "settings": Object {},
+  "termQuery": Object {
+    "aggregations": Object {
+      "property_type": Object {
+        "buckets": Array [
+          Object {
+            "doc_count": 23,
+            "key": "Aparthotel",
+          },
+          Object {
+            "doc_count": 3626,
+            "key": "Apartment",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Barn",
+          },
+          Object {
+            "doc_count": 69,
+            "key": "Bed and breakfast",
+          },
+          Object {
+            "doc_count": 2,
+            "key": "Boat",
+          },
+          Object {
+            "doc_count": 53,
+            "key": "Boutique hotel",
+          },
+          Object {
+            "doc_count": 14,
+            "key": "Bungalow",
+          },
+          Object {
+            "doc_count": 15,
+            "key": "Cabin",
+          },
+          Object {
+            "doc_count": 2,
+            "key": "Camper/RV",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Campsite",
+          },
+          Object {
+            "doc_count": 9,
+            "key": "Casa particular (Cuba)",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Castle",
+          },
+          Object {
+            "doc_count": 2,
+            "key": "Chalet",
+          },
+          Object {
+            "doc_count": 399,
+            "key": "Condominium",
+          },
+          Object {
+            "doc_count": 20,
+            "key": "Cottage",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Earth house",
+          },
+          Object {
+            "doc_count": 9,
+            "key": "Farm stay",
+          },
+          Object {
+            "doc_count": 81,
+            "key": "Guest suite",
+          },
+          Object {
+            "doc_count": 50,
+            "key": "Guesthouse",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Heritage hotel (India)",
+          },
+          Object {
+            "doc_count": 34,
+            "key": "Hostel",
+          },
+          Object {
+            "doc_count": 26,
+            "key": "Hotel",
+          },
+          Object {
+            "doc_count": 606,
+            "key": "House",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Houseboat",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Hut",
+          },
+          Object {
+            "doc_count": 142,
+            "key": "Loft",
+          },
+          Object {
+            "doc_count": 2,
+            "key": "Nature lodge",
+          },
+          Object {
+            "doc_count": 18,
+            "key": "Other",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Pension (South Korea)",
+          },
+          Object {
+            "doc_count": 11,
+            "key": "Resort",
+          },
+          Object {
+            "doc_count": 185,
+            "key": "Serviced apartment",
+          },
+          Object {
+            "doc_count": 7,
+            "key": "Tiny house",
+          },
+          Object {
+            "doc_count": 108,
+            "key": "Townhouse",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Train",
+          },
+          Object {
+            "doc_count": 1,
+            "key": "Treehouse",
+          },
+          Object {
+            "doc_count": 32,
+            "key": "Villa",
+          },
+        ],
+      },
+    },
+    "hits": Object {},
+    "raw": undefined,
+    "status": 200,
+  },
+}
+`;
+
+exports[`Reactive Search integration test Validate database and collection 1`] = `
+Object {
+  "code": 200,
+  "message": "Database and collection exists",
+}
+`;
+
+exports[`Reactive Search integration test Validate database and collection. when collection is incorrect 1`] = `
+Object {
+  "code": 400,
+  "error": "Collection does not exists",
+  "message": "Collection does not exists",
+}
+`;
+
+exports[`Reactive Search integration test Validate database and collection. when database is incorrect 1`] = `
+Object {
+  "code": 400,
+  "error": "Database does not exists",
+  "message": "Database does not exists",
+}
+`;

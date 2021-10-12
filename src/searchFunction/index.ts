@@ -618,4 +618,37 @@ export class ReactiveSearch {
 			throw err;
 		}
 	};
+
+	validateCollection = async () => {
+		const admin = this.config.client.db().admin();
+
+		let databases = await admin.listDatabases({
+			nameOnly: true,
+		});
+		databases = databases.databases.map((x: { name: string }) => x.name);
+		if (!databases.includes(this.config.database)) {
+			return {
+				code: 400,
+				error: 'Database does not exists',
+				message: 'Database does not exists',
+			};
+		}
+
+		let collections = await this.config.client
+			.db(this.config.database)
+			.listCollections()
+			.toArray();
+		collections = collections.map((x: { name: string }) => x.name);
+		if (!collections.includes(this.config.collection)) {
+			return {
+				code: 400,
+				error: 'Collection does not exists',
+				message: 'Collection does not exists',
+			};
+		}
+		return {
+			code: 200,
+			message: 'Database and collection exists',
+		};
+	};
 }

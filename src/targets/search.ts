@@ -19,7 +19,7 @@ export const getSearchAggregation = (query: RSQuery<string>): any => {
 			compound: {
 				must: fields.map((x) => ({
 					text: {
-						path: x.field,
+						path: x.field === '*' ? { wildcard: '*' } : x.field,
 						query: value,
 						score: { boost: { value: x.weight } },
 						...fuzziness,
