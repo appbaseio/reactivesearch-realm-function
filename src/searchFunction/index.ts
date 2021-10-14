@@ -46,7 +46,7 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 						const key = Object.keys(mongoQueryItem)[0];
 
 						// check if defaultQuery has that value then use defaultQuery target,
-						// eg. $limit exists in both then use the one passed in defaultQuery
+						// eg. $limit exist in both then use the one passed in defaultQuery
 						defaultQueryTargets.forEach((defaultQueryItem) => {
 							const defaultKey = Object.keys(defaultQueryItem)[0];
 							if (defaultKey === key) {
@@ -629,8 +629,8 @@ export class ReactiveSearch {
 		if (!databases.includes(this.config.database)) {
 			return {
 				code: 400,
-				error: 'Database does not exists',
-				message: 'Database does not exists',
+				error: 'Database does not exist',
+				message: 'Database does not exist',
 			};
 		}
 
@@ -642,13 +642,13 @@ export class ReactiveSearch {
 		if (!collections.includes(this.config.collection)) {
 			return {
 				code: 400,
-				error: 'Collection does not exists',
-				message: 'Collection does not exists',
+				error: 'Collection does not exist',
+				message: 'Collection does not exist',
 			};
 		}
 		return {
 			code: 200,
-			message: 'Database and collection exists',
+			message: 'Database and collection exist',
 		};
 	};
 }
