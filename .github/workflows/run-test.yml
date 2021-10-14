@@ -9,3 +9,7 @@ jobs:
         run: yarn
       - name: Run unit tests
         run: yarn unit-test
+      - name: Run integration tests
+        run: yarn integration-test
+      - name: Run all tests
+        run: yarn test
