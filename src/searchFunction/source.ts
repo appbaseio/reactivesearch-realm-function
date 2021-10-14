@@ -23,7 +23,7 @@ exports = async (request: any, response: any) => {
 			return;
 		}
 	}
-	const { validate, db, collection, rawQuery } = request.query;
+	const { validate, db, collection, validateConnection } = request.query;
 
 	let dbName = db;
 	let collectionName = collection;
@@ -80,7 +80,7 @@ exports = async (request: any, response: any) => {
 	});
 
 	try {
-		if (validate) {
+		if (validateConnection) {
 			const result = await reactiveSearch.validateCollection();
 			if (result.error) {
 				response.setStatusCode(500);
@@ -94,7 +94,7 @@ exports = async (request: any, response: any) => {
 				);
 			}
 		}
-		const results = rawQuery
+		const results = validate
 			? await reactiveSearch.translate(query)
 			: await reactiveSearch.query(query);
 		response.setStatusCode(200);

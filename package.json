@@ -19,7 +19,7 @@
 		"clear:test": "jest --clearCache",
 		"ts-types": "tsc --emitDeclarationOnly --outDir lib",
 		"build": "npm run clean && rollup --config rollup.config.js --environment INCLUDE_DEPS,BUILD:production",
-		"test": "npm run build && jest  --testTimeout=20000 --runInBand --config rollup.config.js",
+		"test-build": "npm run build && jest  --testTimeout=20000 --runInBand --config rollup.config.js",
 		"format": "prettier --write 'src/**/*.(ts)'",
 		"prepublishOnly": "npm run build",
 		"realm-login": "realm-cli login",
@@ -28,7 +28,9 @@
 		"realm-push": "realm-cli push --local=./realm-app",
 		"dev": "nodemon --watch './**/*.ts' --exec 'ts-node --project tsconfig-dev.json' src/server.ts",
 		"prepare": "husky install",
-		"unit-test": "yarn jest"
+		"test": "yarn jest",
+		"unit-test": "yarn jest --config jest-unit.config.js",
+		"integration-test": "yarn jest --config jest-integration.config.js"
 	},
 	"repository": {
 		"type": "git",
