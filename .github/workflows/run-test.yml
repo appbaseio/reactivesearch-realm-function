@@ -1,4 +1,6 @@
 name: Test
+env:
+  DB_URL: ${{ secrets.DB_URL }}
 on: [push]
 jobs:
   build:
