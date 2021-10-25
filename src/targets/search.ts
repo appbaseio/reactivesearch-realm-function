@@ -183,7 +183,9 @@ export const getHighlightQuery = (query: RSQuery<string>): any => {
 			if (_fields) {
 				fields = _fields;
 			} else {
-				return {};
+				fields = {
+					wildcard: '*',
+				};
 			}
 		}
 		return {
