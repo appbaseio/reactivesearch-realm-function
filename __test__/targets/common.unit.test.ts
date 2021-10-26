@@ -575,6 +575,7 @@ test(`getQueriesMap should return the map of given rs query array`, () => {
 			rsQuery: {
 				id: 'result',
 				type: 'search',
+				dataField: '*',
 				size: 10,
 				includeFields: ['name'],
 				react: { and: ['term', 'search'] },

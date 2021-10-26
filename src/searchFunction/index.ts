@@ -319,7 +319,7 @@ export const getQueriesMap = (queries: RSQuery<any>[]): QueryMap => {
 	const res: QueryMap = {};
 	queries.forEach((item) => {
 		// Default value of dataField is *
-		if (item.dataField === undefined) {
+		if (item.type === 'search' && item.dataField === undefined) {
 			item.dataField = '*';
 		}
 
