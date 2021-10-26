@@ -318,6 +318,11 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 export const getQueriesMap = (queries: RSQuery<any>[]): QueryMap => {
 	const res: QueryMap = {};
 	queries.forEach((item) => {
+		// Default value of dataField is *
+		if (item.dataField === undefined) {
+			item.dataField = '*';
+		}
+
 		let itemId: string = item.id || `${Date.now()}`;
 		try {
 			res[itemId] = {

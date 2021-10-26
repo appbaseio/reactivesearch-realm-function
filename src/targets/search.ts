@@ -14,7 +14,7 @@ export const getSearchAggregation = (
 	query: RSQuery<string>,
 	isWildCardHighlightSearch: boolean = false,
 ): any => {
-	const { value, dataField, highlightField } = query;
+	const { value, dataField, highlightField = '*' } = query;
 	const fields = getFieldsFromDataField(dataField);
 	if (fields) {
 		const fuzziness = getFuzziness(query);
@@ -65,11 +65,14 @@ export const getSearchQuery = (query: RSQuery<string>): any => {
 				shouldAggregation.push(autocomplete);
 			}
 
-			const compoundQuery: any = {
-				compound: {
-					should: shouldAggregation,
-				},
-			};
+			const compoundQuery: any =
+				shouldAggregation.length > 0
+					? {
+							compound: {
+								should: shouldAggregation,
+							},
+					  }
+					: {};
 
 			const q = { $search: { ...compoundQuery, ...highlightQuery } };
 			if (query.index) {
@@ -179,9 +182,16 @@ export const getHighlightQuery = (query: RSQuery<string>): any => {
 				fields = highlightField as string[];
 			}
 		} else {
-			const _fields = getStringFieldsFromDataField(dataField);
+			let _fields = getStringFieldsFromDataField(dataField);
 			if (_fields) {
 				fields = _fields;
+				for (const x of _fields as []) {
+					if ((x as string).indexOf('*') > -1) {
+						fields = {
+							wildcard: x,
+						};
+					}
+				}
 			} else {
 				fields = {
 					wildcard: '*',

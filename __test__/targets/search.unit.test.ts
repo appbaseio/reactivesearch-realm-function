@@ -422,6 +422,27 @@ test('getHighlightQuery when highlight is true and highlightConfig is passed', (
 	expect(result).toStrictEqual(expected);
 });
 
+test('getHighlightQuery when highlight is true, dataField is a wildcard and highlight fields are missing', () => {
+	const result = getHighlightQuery({
+		dataField: '*',
+		sortBy: `desc`,
+		highlight: true,
+		highlightConfig: {
+			maxCharsToExamine: 250000,
+			maxNumPassages: 10,
+		},
+	});
+	const expected = {
+		highlight: {
+			path: { wildcard: '*' },
+			maxCharsToExamine: 250000,
+			maxNumPassages: 10,
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
 test('getSearchQuery when highlight is true', () => {
 	const result = getSearchQuery({
 		value: 'Apart',
