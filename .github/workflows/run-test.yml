@@ -1,4 +1,4 @@
-name: Test
+name: Test Suite
 env:
   DB_URL: ${{ secrets.DB_URL }}
 on: [push]
