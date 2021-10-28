@@ -837,3 +837,89 @@ test(`buildQueryPipeline should return mongo query pipeline map`, () => {
 
 	expect(result).toStrictEqual(expected);
 });
+
+test(`getQueriesMap should return the correct map of given rs query where type and dataField is missing, highlight is true`, () => {
+	const queries: RSQuery<any>[] = [
+		{
+			id: 'search',
+			index: 'default',
+			highlight: true,
+			includeFields: ['name'],
+			value: 'apartment',
+		},
+	];
+	const result = getQueriesMap(queries);
+	const expected = {
+		search: {
+			rsQuery: {
+				id: 'search',
+				index: 'default',
+				highlight: true,
+				includeFields: ['name'],
+				value: 'apartment',
+				dataField: '*',
+				type: 'search',
+			},
+			mongoQuery: [
+				{
+					$search: {
+						compound: {
+							should: [
+								{
+									compound: {
+										must: [
+											{
+												text: {
+													path: {
+														wildcard: '*',
+													},
+													query: 'apartment',
+													score: {
+														boost: {
+															value: 1,
+														},
+													},
+												},
+											},
+										],
+									},
+								},
+							],
+						},
+						highlight: {
+							path: {
+								wildcard: '*',
+							},
+							maxCharsToExamine: 500000,
+							maxNumPassages: 5,
+						},
+						index: 'default',
+					},
+				},
+				{
+					$project: {
+						name: 1,
+						highlights: {
+							$meta: 'searchHighlights',
+						},
+					},
+				},
+				{
+					$facet: {
+						hits: [
+							{
+								$limit: 10,
+							},
+						],
+						total: [
+							{
+								$count: 'count',
+							},
+						],
+					},
+				},
+			],
+		},
+	};
+	expect(result).toStrictEqual(expected);
+});
