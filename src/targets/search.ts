@@ -10,8 +10,11 @@ import {
 	getSynonymsQuery,
 } from './common';
 
-export const getSearchAggregation = (query: RSQuery<string>): any => {
-	const { value, dataField } = query;
+export const getSearchAggregation = (
+	query: RSQuery<string>,
+	isWildCardHighlightSearch: boolean = false,
+): any => {
+	const { value, dataField, highlightField = '*' } = query;
 	const fields = getFieldsFromDataField(dataField);
 	if (fields) {
 		const fuzziness = getFuzziness(query);
@@ -19,7 +22,10 @@ export const getSearchAggregation = (query: RSQuery<string>): any => {
 			compound: {
 				must: fields.map((x) => ({
 					text: {
-						path: x.field,
+						path:
+							x.field === '*' || isWildCardHighlightSearch
+								? { wildcard: isWildCardHighlightSearch ? highlightField : '*' }
+								: x.field,
 						query: value,
 						score: { boost: { value: x.weight } },
 						...fuzziness,
@@ -40,8 +46,11 @@ export const getSearchQuery = (query: RSQuery<string>): any => {
 
 		if (value && value.length) {
 			const shouldAggregation = [];
+			const highlightQuery = getHighlightQuery(query);
+			const isWildCardHighlightSearch =
+				highlightQuery?.highlight?.path?.wildcard !== undefined;
 
-			const search = getSearchAggregation(query);
+			const search = getSearchAggregation(query, isWildCardHighlightSearch);
 			if (search) {
 				shouldAggregation.push(search);
 			}
@@ -56,13 +65,15 @@ export const getSearchQuery = (query: RSQuery<string>): any => {
 				shouldAggregation.push(autocomplete);
 			}
 
-			const compoundQuery: any = {
-				compound: {
-					should: shouldAggregation,
-				},
-			};
+			const compoundQuery: any =
+				shouldAggregation.length > 0
+					? {
+							compound: {
+								should: shouldAggregation,
+							},
+					  }
+					: {};
 
-			const highlightQuery = getHighlightQuery(query);
 			const q = { $search: { ...compoundQuery, ...highlightQuery } };
 			if (query.index) {
 				q.$search.index = query.index;
@@ -157,19 +168,34 @@ export const getHighlightQuery = (query: RSQuery<string>): any => {
 		highlightConfig || {};
 
 	if (highlight) {
-		let fields: string[] = [];
+		let fields: string[] | Object = [];
 		if (highlightField) {
 			if (typeof highlightField === 'string') {
-				fields = [highlightField as string];
+				if (highlightField.indexOf('*') > -1) {
+					fields = {
+						wildcard: highlightField,
+					};
+				} else {
+					fields = [highlightField as string];
+				}
 			} else {
 				fields = highlightField as string[];
 			}
 		} else {
-			const _fields = getStringFieldsFromDataField(dataField);
+			let _fields = getStringFieldsFromDataField(dataField);
 			if (_fields) {
 				fields = _fields;
+				for (const x of _fields as []) {
+					if ((x as string).indexOf('*') > -1) {
+						fields = {
+							wildcard: x,
+						};
+					}
+				}
 			} else {
-				return {};
+				fields = {
+					wildcard: '*',
+				};
 			}
 		}
 		return {

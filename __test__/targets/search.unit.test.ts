@@ -2,6 +2,7 @@ import {
 	getHighlightQuery,
 	getQueryStringQuery,
 	getSearchAggregation,
+	getSearchQuery,
 	getSearchSortByQuery,
 } from '../../src/targets/search';
 
@@ -417,6 +418,125 @@ test('getHighlightQuery when highlight is true and highlightConfig is passed', (
 			maxNumPassages: 10,
 		},
 	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getHighlightQuery when highlight is true, dataField is a wildcard and highlight fields are missing', () => {
+	const result = getHighlightQuery({
+		dataField: '*',
+		sortBy: `desc`,
+		highlight: true,
+		highlightConfig: {
+			maxCharsToExamine: 250000,
+			maxNumPassages: 10,
+		},
+	});
+	const expected = {
+		highlight: {
+			path: { wildcard: '*' },
+			maxCharsToExamine: 250000,
+			maxNumPassages: 10,
+		},
+	};
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getSearchQuery when highlight is true', () => {
+	const result = getSearchQuery({
+		value: 'Apart',
+		dataField: 'data',
+		sortBy: `desc`,
+		highlight: true,
+		highlightField: ['field1', 'field2'],
+		highlightConfig: {
+			maxCharsToExamine: 250000,
+			maxNumPassages: 10,
+		},
+	});
+	const expected = [
+		{
+			$search: {
+				compound: {
+					should: [
+						{
+							compound: {
+								must: [
+									{
+										text: {
+											path: 'data',
+											query: 'Apart',
+											score: { boost: { value: 1 } },
+										},
+									},
+								],
+							},
+						},
+					],
+				},
+				highlight: {
+					maxCharsToExamine: 250000,
+					maxNumPassages: 10,
+					path: ['field1', 'field2'],
+				},
+			},
+		},
+		{ $project: { highlights: { $meta: 'searchHighlights' } } },
+		{ $sort: { data: -1 } },
+		{ $facet: { hits: [{ $limit: 10 }], total: [{ $count: 'count' }] } },
+	];
+	// Snapshot demo
+	expect(result).toStrictEqual(expected);
+});
+
+test('getSearchQuery when highlight is true and performing wildcard highlight', () => {
+	const result = getSearchQuery({
+		value: 'Apart',
+		dataField: 'data',
+		sortBy: `desc`,
+		highlight: true,
+		highlightField: 'field*',
+		highlightConfig: {
+			maxCharsToExamine: 250000,
+			maxNumPassages: 10,
+		},
+	});
+	const expected = [
+		{
+			$search: {
+				compound: {
+					should: [
+						{
+							compound: {
+								must: [
+									{
+										text: {
+											path: {
+												wildcard: 'field*',
+											},
+											query: 'Apart',
+											score: { boost: { value: 1 } },
+										},
+									},
+								],
+							},
+						},
+					],
+				},
+				highlight: {
+					maxCharsToExamine: 250000,
+					maxNumPassages: 10,
+					path: {
+						wildcard: 'field*',
+					},
+				},
+			},
+		},
+		{ $project: { highlights: { $meta: 'searchHighlights' } } },
+		{ $sort: { data: -1 } },
+		{ $facet: { hits: [{ $limit: 10 }], total: [{ $count: 'count' }] } },
+	];
 	// Snapshot demo
 	expect(result).toStrictEqual(expected);
 });

@@ -46,7 +46,7 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 						const key = Object.keys(mongoQueryItem)[0];
 
 						// check if defaultQuery has that value then use defaultQuery target,
-						// eg. $limit exists in both then use the one passed in defaultQuery
+						// eg. $limit exist in both then use the one passed in defaultQuery
 						defaultQueryTargets.forEach((defaultQueryItem) => {
 							const defaultKey = Object.keys(defaultQueryItem)[0];
 							if (defaultKey === key) {
@@ -318,6 +318,14 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 export const getQueriesMap = (queries: RSQuery<any>[]): QueryMap => {
 	const res: QueryMap = {};
 	queries.forEach((item) => {
+		// Default value of dataField is *
+		if (
+			(item.type === 'search' || item.type === undefined) &&
+			item.dataField === undefined
+		) {
+			item.dataField = '*';
+		}
+
 		let itemId: string = item.id || `${Date.now()}`;
 		try {
 			res[itemId] = {
@@ -617,5 +625,38 @@ export class ReactiveSearch {
 		} catch (err) {
 			throw err;
 		}
+	};
+
+	validateCollection = async () => {
+		const admin = this.config.client.db().admin();
+
+		let databases = await admin.listDatabases({
+			nameOnly: true,
+		});
+		databases = databases.databases.map((x: { name: string }) => x.name);
+		if (!databases.includes(this.config.database)) {
+			return {
+				code: 400,
+				error: 'Database does not exist',
+				message: 'Database does not exist',
+			};
+		}
+
+		let collections = await this.config.client
+			.db(this.config.database)
+			.listCollections()
+			.toArray();
+		collections = collections.map((x: { name: string }) => x.name);
+		if (!collections.includes(this.config.collection)) {
+			return {
+				code: 400,
+				error: 'Collection does not exist',
+				message: 'Collection does not exist',
+			};
+		}
+		return {
+			code: 200,
+			message: 'Database and collection exist',
+		};
 	};
 }

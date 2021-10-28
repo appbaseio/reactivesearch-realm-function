@@ -9,4 +9,9 @@ module.exports = {
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 	collectCoverage: true,
 	modulePaths: ['<rootDir>'],
+	collectCoverageFrom: [
+		'src/**/*.ts',
+		'!src/server.ts',
+		'!src/searchFunction/source.ts',
+	],
 };
