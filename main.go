@@ -10,19 +10,66 @@ import (
 )
 
 func main() {
-	content, err := ioutil.ReadFile("./lib/reactivesearch-realm.min.js") // the file is inside the local directory
+	iso, err := v8.NewIsolate()
+	realmScript, err := ioutil.ReadFile("./lib/reactivesearch-realm.min.js") // the file is inside the local directory
 	if err != nil {
-		fmt.Println("Err")
+		fmt.Println("Err", err)
 	}
 
-	v8Ctx, err := v8.NewContext()
+	realmCtx, err := v8.NewContext(iso)
 	if err != nil {
-		fmt.Println("Err")
+		fmt.Println("Err initializing realm ctx", err)
 	}
-	v8Ctx.RunScript(string(content), "reactivesearch.js")
+
+	tessaractCtx, err := v8.NewContext(iso)
+	if err != nil {
+		fmt.Println("Err initializing tessaract ctx", err)
+	}
 
 	r := gin.Default()
+
+	ocrScript, err := ioutil.ReadFile("./js/tesseract.js")
+	if err != nil {
+		fmt.Println("Err loading tessaract js", err)
+	}
+
+	r.POST("/_ocr", func(c *gin.Context) {
+		t, err := tessaractCtx.RunScript(string(ocrScript), "tesseract.js")
+		fmt.Println(t, err)
+		script := `
+			console.log("hello world")
+			console.log(Tessarct)
+			console.log(Tessarct.recognize)
+			var res = Tesseract.recognize(
+				'https://tesseract.projectnaptha.com/img/eng_bw.png',
+				'eng'
+			).then(function(data) {
+				return data;
+			})
+
+			console.log(res);
+		`
+
+		r, err := tessaractCtx.RunScript(script, "script.js")
+		fmt.Println("=> r:", r, err)
+
+		promiseValue, err := tessaractCtx.RunScript("res", "value.js")
+		fmt.Println(promiseValue, err)
+		// p, err := promiseValue.AsPromise()
+		// if err != nil {
+		// 	fmt.Println("=> error executing as promise:", err)
+		// }
+		// value := p.Result()
+		// fmt.Println("=> promise", value)
+
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
+
 	r.POST("/_reactivesearch/validate", func(c *gin.Context) {
+		realmCtx.RunScript(string(realmScript), "reactivesearch.js")
+
 		jsonData, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
 			panic(err)
@@ -49,13 +96,14 @@ func main() {
 			var data = ref.translate(%s);
 			var res = JSON.stringify(data);`, mongodb["db"], mongodb["collection"], string(queryBytes))
 
-		v8Ctx.RunScript(script, "main.js")
-		val, _ := v8Ctx.RunScript("res", "value.js")
+		realmCtx.RunScript(script, "main.js")
+		val, _ := realmCtx.RunScript("res", "value.js")
 		obj := val.String()
 
 		var resBody map[string]interface{}
 		json.Unmarshal([]byte(obj), &resBody)
 		c.JSON(200, resBody)
 	})
+
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
