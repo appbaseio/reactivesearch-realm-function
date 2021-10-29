@@ -10,7 +10,9 @@ import (
 )
 
 func main() {
-	iso, err := v8.NewIsolate()
+	r := gin.Default()
+	iso, _ := v8.NewIsolate()
+
 	realmScript, err := ioutil.ReadFile("./lib/reactivesearch-realm.min.js") // the file is inside the local directory
 	if err != nil {
 		fmt.Println("Err", err)
@@ -21,20 +23,27 @@ func main() {
 		fmt.Println("Err initializing realm ctx", err)
 	}
 
-	tessaractCtx, err := v8.NewContext(iso)
-	if err != nil {
-		fmt.Println("Err initializing tessaract ctx", err)
-	}
-
-	r := gin.Default()
-
 	ocrScript, err := ioutil.ReadFile("./js/tesseract.js")
 	if err != nil {
 		fmt.Println("Err loading tessaract js", err)
 	}
+	ocrCtx, err := v8.NewContext(iso)
+	if err != nil {
+		fmt.Println("Err initializing tessaract ctx", err)
+	}
+
+	nlpScript, err := ioutil.ReadFile("./js/compromise.js")
+	if err != nil {
+		fmt.Println("Err loading tessaract js", err)
+	}
+
+	nlpCtx, err := v8.NewContext(iso)
+	if err != nil {
+		fmt.Println("Err initializing compromise ctx", err)
+	}
 
 	r.POST("/_ocr", func(c *gin.Context) {
-		t, err := tessaractCtx.RunScript(string(ocrScript), "tesseract.js")
+		t, err := ocrCtx.RunScript(string(ocrScript), "tesseract.js")
 		fmt.Println(t, err)
 		script := `
 			console.log("hello world")
@@ -50,10 +59,10 @@ func main() {
 			console.log(res);
 		`
 
-		r, err := tessaractCtx.RunScript(script, "script.js")
+		r, err := ocrCtx.RunScript(script, "script.js")
 		fmt.Println("=> r:", r, err)
 
-		promiseValue, err := tessaractCtx.RunScript("res", "value.js")
+		promiseValue, err := ocrCtx.RunScript("res", "value.js")
 		fmt.Println(promiseValue, err)
 		// p, err := promiseValue.AsPromise()
 		// if err != nil {
@@ -64,6 +73,39 @@ func main() {
 
 		c.JSON(200, gin.H{
 			"message": "pong",
+		})
+	})
+
+	r.POST("/_nlp", func(c *gin.Context) {
+		t, err := nlpCtx.RunScript(string(nlpScript), "nlp.js")
+		fmt.Println(t, err)
+
+		jsonData, err := ioutil.ReadAll(c.Request.Body)
+		if err != nil {
+			panic(err)
+		}
+
+		var reqBody map[string]interface{}
+		err = json.Unmarshal(jsonData, &reqBody)
+		if err != nil {
+			panic(err)
+		}
+
+		text := reqBody["text"]
+
+		script := fmt.Sprintf(`
+			let doc = nlp('%v')
+			doc.verbs().toPastTense()
+			const res = doc.text()
+		`, text)
+
+		nlpCtx.RunScript(script, "main.js")
+		value, err := nlpCtx.RunScript("res", "value.js")
+		if err != nil {
+			fmt.Println("err")
+		}
+		c.JSON(200, gin.H{
+			"message": value,
 		})
 	})
 
