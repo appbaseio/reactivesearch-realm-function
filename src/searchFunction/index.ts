@@ -126,10 +126,20 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 										}
 									} else {
 										if (relevantMongoQuery[0]?.$search) {
-											const queryCopy = { ...relevantMongoQuery[0].$search };
+											let queryCopy = { ...relevantMongoQuery[0].$search };
 											if (queryCopy.index) {
 												delete queryCopy.index;
 											}
+
+											// remove highlight from relevant query
+											queryCopy = JSON.parse(
+												JSON.stringify(queryCopy, function (k, v) {
+													if (k === 'highlight') {
+														return undefined;
+													}
+													return v;
+												}),
+											);
 											andQuery.push(queryCopy);
 										}
 									}
@@ -169,10 +179,20 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 										}
 									} else {
 										if (relevantMongoQuery[0]?.$search) {
-											const queryCopy = { ...relevantMongoQuery[0].$search };
+											let queryCopy = { ...relevantMongoQuery[0].$search };
 											if (queryCopy.index) {
 												delete queryCopy.index;
 											}
+
+											// remove highlight from relevant query
+											queryCopy = JSON.parse(
+												JSON.stringify(queryCopy, function (k, v) {
+													if (k === 'highlight') {
+														return undefined;
+													}
+													return v;
+												}),
+											);
 											orQuery.push(queryCopy);
 										}
 									}
