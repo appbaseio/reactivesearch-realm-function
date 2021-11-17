@@ -32,7 +32,7 @@ export const RSQuerySchema = {
 	sortBy: { type: String, enum: [`asc`, `desc`, `count`] },
 
 	// @ts-ignore
-	value: { type: [String, Number, Object] },
+	value: { type: [String, Number, Object, Array] },
 
 	aggregationField: { type: String },
 
