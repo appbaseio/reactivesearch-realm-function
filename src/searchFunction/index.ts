@@ -373,7 +373,14 @@ export const getQueriesMap = (
 			}
 
 			if (item.type === `geo`) {
-				res[itemId].mongoQuery = getGeoQuery(item, config);
+				// in case if value is not set, treat it as match_all query / search query
+				// this helps in loading all the data on map initially
+				if (!item.value) {
+					item.type = 'search';
+					res[itemId].mongoQuery = getSearchQuery(item, config);
+				} else {
+					res[itemId].mongoQuery = getGeoQuery(item, config);
+				}
 			}
 
 			if (item.type == `term`) {
