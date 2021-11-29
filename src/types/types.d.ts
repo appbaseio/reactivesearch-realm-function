@@ -2,6 +2,7 @@ export type ConfigType = {
 	client?: any;
 	database: string;
 	collection: string;
+	index?: string;
 };
 
 export type MicStatusField = `INACTIVE` | `ACTIVE` | `DENIED`;
@@ -190,6 +191,7 @@ export type RSFunctionQueryData = {
 	mongodb: {
 		db: string;
 		collection: string;
+		index?: string;
 	};
 	query: RSQuery<any>[];
 };

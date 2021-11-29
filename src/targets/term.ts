@@ -1,17 +1,18 @@
-import { RSQuery, SingleDataField } from '../types/types';
+import { ConfigType, RSQuery, SingleDataField } from '../types/types';
 import { validateSingleDataField } from '../validators/common';
 
 // TODO set return type
 export const getTermQuery = (
 	query: RSQuery<string | string[] | number | number[]>,
+	config: ConfigType,
 ): any => {
 	try {
 		validateSingleDataField(<SingleDataField>query.dataField);
 		const search: any = {};
 		const res = [];
 
-		if (query.index) {
-			search.index = query.index;
+		if (query.index || config.index) {
+			search.index = query.index || config.index;
 		}
 
 		// const isArrayVal = Array.isArray(query.value);

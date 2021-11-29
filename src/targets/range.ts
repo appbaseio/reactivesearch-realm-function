@@ -1,11 +1,19 @@
 import { range } from '../utils';
-import { RangeValue, RSQuery, SingleDataField } from '../types/types';
+import {
+	ConfigType,
+	RangeValue,
+	RSQuery,
+	SingleDataField,
+} from '../types/types';
 import { validateSingleDataField } from '../validators/common';
 import { validateRangeValue } from '../validators/range';
 import { getIncludeExcludeFields, getPaginationMap } from './common';
 
 // TODO set return type
-export const getRangeQuery = (query: RSQuery<RangeValue>): any => {
+export const getRangeQuery = (
+	query: RSQuery<RangeValue>,
+	config: ConfigType,
+): any => {
 	try {
 		validateSingleDataField(<SingleDataField>query.dataField);
 		validateRangeValue(query.value);
@@ -43,8 +51,8 @@ export const getRangeQuery = (query: RSQuery<RangeValue>): any => {
 			},
 		};
 
-		if (query.index) {
-			compoundQuery.index = query.index;
+		if (query.index || config.index) {
+			compoundQuery.index = query.index || config.index;
 		}
 
 		if (query.includeNullValues) {

@@ -9,7 +9,12 @@ import {
 	getSynonymsQuery,
 } from '../../src/targets/common';
 
-import { RSQuery } from '../../src/types/types';
+import { ConfigType, RSQuery } from '../../src/types/types';
+
+const config: ConfigType = {
+	database: 'sample_airbnb',
+	collection: 'listingsAndReviews',
+};
 
 test('getIncludeExcludeFields when * is in excludeFields', () => {
 	const result = getIncludeExcludeFields({
@@ -469,7 +474,7 @@ test(`getQueriesMap should return the map of given rs query array`, () => {
 			},
 		},
 	];
-	const result = getQueriesMap(queries);
+	const result = getQueriesMap(queries, config);
 	const expected = {
 		search: {
 			rsQuery: {
@@ -672,8 +677,8 @@ test(`buildQueryPipeline should return mongo query pipeline map`, () => {
 		},
 	];
 
-	const qMap = getQueriesMap(queries);
-	const result = buildQueryPipeline(qMap);
+	const qMap = getQueriesMap(queries, config);
+	const result = buildQueryPipeline(qMap, config);
 	const expected = {
 		search: [
 			{
@@ -848,7 +853,7 @@ test(`getQueriesMap should return the correct map of given rs query where type a
 			value: 'apartment',
 		},
 	];
-	const result = getQueriesMap(queries);
+	const result = getQueriesMap(queries, config);
 	const expected = {
 		search: {
 			rsQuery: {

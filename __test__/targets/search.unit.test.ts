@@ -5,6 +5,12 @@ import {
 	getSearchQuery,
 	getSearchSortByQuery,
 } from '../../src/targets/search';
+import { ConfigType } from '../../src/types/types';
+
+const config: ConfigType = {
+	database: 'sample_airbnb',
+	collection: 'listingsAndReviews',
+};
 
 test('getSearchAggregation when dataField is a string', () => {
 	const result = getSearchAggregation({
@@ -444,17 +450,20 @@ test('getHighlightQuery when highlight is true, dataField is a wildcard and high
 });
 
 test('getSearchQuery when highlight is true', () => {
-	const result = getSearchQuery({
-		value: 'Apart',
-		dataField: 'data',
-		sortBy: `desc`,
-		highlight: true,
-		highlightField: ['field1', 'field2'],
-		highlightConfig: {
-			maxCharsToExamine: 250000,
-			maxNumPassages: 10,
+	const result = getSearchQuery(
+		{
+			value: 'Apart',
+			dataField: 'data',
+			sortBy: `desc`,
+			highlight: true,
+			highlightField: ['field1', 'field2'],
+			highlightConfig: {
+				maxCharsToExamine: 250000,
+				maxNumPassages: 10,
+			},
 		},
-	});
+		config,
+	);
 	const expected = [
 		{
 			$search: {
@@ -491,17 +500,20 @@ test('getSearchQuery when highlight is true', () => {
 });
 
 test('getSearchQuery when highlight is true and performing wildcard highlight', () => {
-	const result = getSearchQuery({
-		value: 'Apart',
-		dataField: 'data',
-		sortBy: `desc`,
-		highlight: true,
-		highlightField: 'field*',
-		highlightConfig: {
-			maxCharsToExamine: 250000,
-			maxNumPassages: 10,
+	const result = getSearchQuery(
+		{
+			value: 'Apart',
+			dataField: 'data',
+			sortBy: `desc`,
+			highlight: true,
+			highlightField: 'field*',
+			highlightConfig: {
+				maxCharsToExamine: 250000,
+				maxNumPassages: 10,
+			},
 		},
-	});
+		config,
+	);
 	const expected = [
 		{
 			$search: {
