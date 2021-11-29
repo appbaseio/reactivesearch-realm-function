@@ -9,7 +9,10 @@ import { getRangeQuery } from '../targets/range';
 import { getSearchQuery } from '../targets/search';
 import { getTermQuery } from '../targets/term';
 
-export const buildQueryPipeline = (queryMap: QueryMap): any => {
+export const buildQueryPipeline = (
+	queryMap: QueryMap,
+	config: ConfigType,
+): any => {
 	const mongoPipelines: Record<string, any> = {};
 	// other pipelines added because of default or custom query
 	const extraTargets: any[] = [];
@@ -281,9 +284,10 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 							Object.keys(compoundQuery.$search.compound).length
 						) {
 							// add index to final compound query
-							if (rsQuery.index) {
-								compoundQuery.$search.index = rsQuery.index;
+							if (rsQuery.index || config.index) {
+								compoundQuery.$search.index = rsQuery.index || config.index;
 							}
+
 							finalMongoQuery = currentSearch
 								? [...extraTargets, compoundQuery, ...finalMongoQuery.slice(1)]
 								: [...extraTargets, compoundQuery, ...finalMongoQuery];
@@ -312,9 +316,10 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 							Object.keys(compoundQuery.$search.compound).length
 						) {
 							// add index to final compound query
-							if (rsQuery.index) {
-								compoundQuery.$search.index = rsQuery.index;
+							if (rsQuery.index || config.index) {
+								compoundQuery.$search.index = rsQuery.index || config.index;
 							}
+
 							finalMongoQuery = [
 								...extraTargets,
 								compoundQuery,
@@ -337,7 +342,10 @@ export const buildQueryPipeline = (queryMap: QueryMap): any => {
 	return mongoPipelines;
 };
 
-export const getQueriesMap = (queries: RSQuery<any>[]): QueryMap => {
+export const getQueriesMap = (
+	queries: RSQuery<any>[],
+	config: ConfigType,
+): QueryMap => {
 	const res: QueryMap = {};
 	queries.forEach((item) => {
 		// Default value of dataField is *
@@ -361,19 +369,26 @@ export const getQueriesMap = (queries: RSQuery<any>[]): QueryMap => {
 			}
 
 			if (item.type === `search`) {
-				res[itemId].mongoQuery = getSearchQuery(item);
+				res[itemId].mongoQuery = getSearchQuery(item, config);
 			}
 
 			if (item.type === `geo`) {
-				res[itemId].mongoQuery = getGeoQuery(item);
+				// in case if value is not set, treat it as match_all query / search query
+				// this helps in loading all the data on map initially
+				if (!item.value) {
+					item.type = 'search';
+					res[itemId].mongoQuery = getSearchQuery(item, config);
+				} else {
+					res[itemId].mongoQuery = getGeoQuery(item, config);
+				}
 			}
 
 			if (item.type == `term`) {
-				res[itemId].mongoQuery = getTermQuery(item);
+				res[itemId].mongoQuery = getTermQuery(item, config);
 			}
 
 			if (item.type == `range`) {
-				res[itemId].mongoQuery = getRangeQuery(item);
+				res[itemId].mongoQuery = getRangeQuery(item, config);
 			}
 		} catch (err) {
 			res[itemId] = {
@@ -409,6 +424,7 @@ export class ReactiveSearch {
 			client: config.client,
 			database: config.database,
 			collection: config.collection,
+			index: config.index,
 		};
 		// @ts-ignore
 		this.schema = new Schema(RSQuerySchema, { strip: false });
@@ -444,8 +460,8 @@ export class ReactiveSearch {
 			};
 		}
 
-		const queryMap = getQueriesMap(data);
-		const result = buildQueryPipeline(queryMap);
+		const queryMap = getQueriesMap(data, this.config);
+		const result = buildQueryPipeline(queryMap, this.config);
 		return result;
 	};
 
@@ -461,9 +477,9 @@ export class ReactiveSearch {
 			};
 		}
 
-		const queryMap = getQueriesMap(data);
+		const queryMap = getQueriesMap(data, this.config);
 
-		const aggregationsObject = buildQueryPipeline(queryMap);
+		const aggregationsObject = buildQueryPipeline(queryMap, this.config);
 		try {
 			const totalStart = performance.now();
 			return Promise.all(
@@ -548,7 +564,10 @@ export class ReactiveSearch {
 											: hits.map((item: any) =>
 													item.highlights
 														? {
-																_index: rsQuery.index || `default`,
+																_index:
+																	rsQuery.index ||
+																	this.config.index ||
+																	`default`,
 																_collection: this.config.collection,
 																_id: item._id,
 																// TODO add score pipeline
@@ -570,7 +589,10 @@ export class ReactiveSearch {
 																),
 														  }
 														: {
-																_index: rsQuery.index || `default`,
+																_index:
+																	rsQuery.index ||
+																	this.config.index ||
+																	`default`,
 																_collection: this.config.collection,
 																_id: item._id,
 																// TODO add score pipeline

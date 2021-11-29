@@ -23,10 +23,11 @@ exports = async (request: any, response: any) => {
 			return;
 		}
 	}
-	const { validate, db, collection, validateConnection } = request.query;
+	const { validate, db, collection, validateConnection, index } = request.query;
 
 	let dbName = db;
 	let collectionName = collection;
+	let indexName = index || '';
 
 	// @ts-expect-error
 	const data: RSFunctionQueryData = EJSON.parse(request.body.text());
@@ -56,6 +57,10 @@ exports = async (request: any, response: any) => {
 		}
 		dbName = mongodb.db;
 		collectionName = mongodb.collection;
+
+		if (mongodb.index && mongodb.index.trim()) {
+			indexName = mongodb.index;
+		}
 	}
 
 	if (!query) {
@@ -77,6 +82,7 @@ exports = async (request: any, response: any) => {
 		client,
 		database: dbName,
 		collection: collectionName,
+		index: indexName,
 	});
 
 	try {

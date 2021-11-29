@@ -1,4 +1,4 @@
-import { RSQuery, GeoPoint, GeoValue } from '../types/types';
+import { RSQuery, GeoPoint, GeoValue, ConfigType } from '../types/types';
 import { validateGeoValue } from '../validators/geo';
 import { getIncludeExcludeFields, getPaginationMap } from './common';
 
@@ -61,7 +61,10 @@ const convertLocation = (location: GeoPoint | string | [number, number]) => {
 //
 // Target remains $search for geo query as well
 // ref: https://docs.atlas.mongodb.com/reference/atlas-search/geoWithin/
-export const getGeoQuery = (query: RSQuery<GeoValue>): any => {
+export const getGeoQuery = (
+	query: RSQuery<GeoValue>,
+	config: ConfigType,
+): any => {
 	try {
 		const val = <GeoValue>{ ...query.value };
 
@@ -137,8 +140,8 @@ export const getGeoQuery = (query: RSQuery<GeoValue>): any => {
 			},
 		};
 
-		if (query.index) {
-			compoundQuery.index = query.index;
+		if (query.index || config.index) {
+			compoundQuery.index = query.index || config.index;
 		}
 
 		res = [{ $search: compoundQuery }];

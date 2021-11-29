@@ -23,10 +23,12 @@ async function main() {
 		db: string;
 		collection: string;
 		query: any;
+		index?: string;
 	} => {
 		try {
 			let db = req.query.db;
 			let collection = req.query.collection;
+			let index = req.query.index || '';
 
 			if (!db || !collection) {
 				//check if mongodb key is present in req.body
@@ -44,7 +46,12 @@ async function main() {
 				}
 				db = mongodb.db;
 				collection = mongodb.collection;
+
+				if (mongodb.index && mongodb.index.trim()) {
+					index = mongodb.index;
+				}
 			}
+
 			if (!req.body.query) {
 				throw new Error(`query is required`);
 			}
@@ -52,6 +59,7 @@ async function main() {
 			return {
 				db: <string>db,
 				collection: <string>collection,
+				index: <string>index,
 				query: req.body.query,
 			};
 		} catch (err) {
@@ -61,11 +69,12 @@ async function main() {
 
 	app.post(`/_reactivesearch`, async (req, res) => {
 		try {
-			const { db, collection, query } = validateRequest(req);
+			const { db, collection, index, query } = validateRequest(req);
 			const ref = new ReactiveSearch({
 				client,
 				database: <string>db,
 				collection: <string>collection,
+				index: <string>index || '',
 			});
 
 			try {
@@ -93,11 +102,12 @@ async function main() {
 
 	app.post(`/_reactivesearch/validate`, (req, res) => {
 		try {
-			const { db, collection, query } = validateRequest(req);
+			const { db, collection, index, query } = validateRequest(req);
 			const ref = new ReactiveSearch({
 				client,
 				database: <string>db,
 				collection: <string>collection,
+				index: <string>index || '',
 			});
 			const data = ref.translate(query);
 			res.status(200).send(data);
@@ -114,11 +124,12 @@ async function main() {
 
 	app.post(`/_reactivesearch/validateCollection`, async (req, res) => {
 		try {
-			const { db, collection } = req.body.mongodb;
+			const { db, collection, index } = req.body.mongodb;
 			const ref = new ReactiveSearch({
 				client,
 				database: <string>db,
 				collection: <string>collection,
+				index: <string>index || '',
 			});
 			const result = await ref.validateCollection();
 			res.status(result.code).send(result);
