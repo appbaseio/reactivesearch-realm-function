@@ -42,6 +42,9 @@ func main() {
 		fmt.Println("Err initializing compromise ctx", err)
 	}
 
+	t, err := nlpCtx.RunScript(string(nlpScript), "nlp.js")
+	fmt.Println(t, err)
+
 	r.POST("/_ocr", func(c *gin.Context) {
 		t, err := ocrCtx.RunScript(string(ocrScript), "tesseract.js")
 		fmt.Println(t, err)
@@ -77,8 +80,7 @@ func main() {
 	})
 
 	r.POST("/_nlp", func(c *gin.Context) {
-		t, err := nlpCtx.RunScript(string(nlpScript), "nlp.js")
-		fmt.Println(t, err)
+		// a := time.Now()
 
 		jsonData, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
@@ -104,6 +106,8 @@ func main() {
 		if err != nil {
 			fmt.Println("err")
 		}
+
+		// log.Println("=> Time taken:", int(time.Since(a).Milliseconds()))
 		c.JSON(200, gin.H{
 			"message": value,
 		})
