@@ -21,8 +21,8 @@ export const range = (
 };
 
 export const transformResponse = (
-	totalTimeTaken: number,
 	config: ConfigType,
+	totalTimeTaken: number,
 	data: ResponseObject[],
 ): any => {
 	const transformedRes: any = [];

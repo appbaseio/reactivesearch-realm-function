@@ -538,8 +538,8 @@ export class ReactiveSearch {
 				const totalEnd = performance.now();
 				const totalTimeTaken = Math.abs(totalEnd - totalStart) || 1;
 				const transformedRes = transformResponse(
-					totalTimeTaken,
 					this.config,
+					totalTimeTaken,
 					<ResponseObject[]>res,
 				);
 
