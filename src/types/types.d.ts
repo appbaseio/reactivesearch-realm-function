@@ -208,3 +208,15 @@ export type QueryMap = Record<
 		mongoQuery?: any;
 	}
 >;
+
+export type ResponseObject = {
+	rsQuery: RSQuery<any>;
+	response?: any;
+	error?: {
+		status: string;
+		code: number;
+		message: string;
+	};
+	raw?: any;
+	took: number;
+};

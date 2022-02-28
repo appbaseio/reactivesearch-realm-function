@@ -1,4 +1,4 @@
-import { ConfigType, RSQuery } from '../types/types';
+import { ConfigType, RSQuery, ResponseObject } from '../types/types';
 
 import { QueryMap } from '../types/types';
 import { RSQuerySchema } from './schema';
@@ -8,6 +8,7 @@ import { getGeoQuery } from '../targets/geo';
 import { getRangeQuery } from '../targets/range';
 import { getSearchQuery } from '../targets/search';
 import { getTermQuery } from '../targets/term';
+import { transformResponse } from '../utils';
 
 export const buildQueryPipeline = (
 	queryMap: QueryMap,
@@ -484,26 +485,30 @@ export class ReactiveSearch {
 			const totalStart = performance.now();
 			return Promise.all(
 				Object.keys(aggregationsObject).map(async (item: any) => {
+					const { rsQuery } = queryMap[item];
+					const start = performance.now();
 					try {
-						const { rsQuery } = queryMap[item];
 						const { error } = aggregationsObject[item];
 
 						// return if item has error before execution,
 						// this would ideally be 400 error
 						if (error) {
 							return {
-								id: item,
-								hits: null,
-								error: error,
-								status: error?.code,
+								rsQuery,
+								error: {
+									id: item,
+									hits: null,
+									error: error,
+									status: error?.code,
+								},
+								took: 0,
 							};
 						}
-						const start = performance.now();
 						const collection = this.config.client
 							.db(this.config.database)
 							.collection(this.config.collection);
 
-						const res = await collection
+						const response = await collection
 							.aggregate(aggregationsObject[item])
 							.toArray();
 						let raw: any = undefined;
@@ -513,157 +518,31 @@ export class ReactiveSearch {
 						const end = performance.now();
 						const took = Math.abs(end - start) || 1;
 
-						if (rsQuery) {
-							// user can re-shape response incase of default query
-							// hence we will be returning raw key in that case
-
-							// prepare response for term aggregations
-							// should be of following shape {..., aggregations: {[dataField]: {buckets: [{key:'', doc_count: 0}]}}}
-							if (rsQuery.type === 'term') {
-								const dataField = Array.isArray(rsQuery.dataField)
-									? `${rsQuery.dataField[0]}`
-									: `${rsQuery.dataField}`;
-								return {
-									id: item,
-									took: took,
-									hits: {},
-									raw,
-									status: 200,
-									aggregations: {
-										[dataField]: {
-											buckets: res[0]?.aggregations.map(
-												(item: { _id: string; count: any }) => ({
-													key: item._id,
-													doc_count: item?.count?.$numberInt
-														? parseInt(item?.count?.$numberInt)
-														: item?.count || 0,
-												}),
-											),
-										},
-									},
-								};
-							}
-
-							// if not term aggregations return search results
-							// for range query it can have min, max and histogram values
-							const { hits, total, min, max, histogram } = res[0];
-							const dataToReturn: any = {
-								id: item,
-								took: took,
-								raw,
-								hits: {
-									total: {
-										value: total[0]?.count || 0,
-										relation: `eq`,
-									},
-									// TODO add max score
-									max_score: 0,
-									hits:
-										rsQuery.size === 0
-											? []
-											: hits.map((item: any) =>
-													item.highlights
-														? {
-																_index:
-																	rsQuery.index ||
-																	this.config.index ||
-																	`default`,
-																_collection: this.config.collection,
-																_id: item._id,
-																// TODO add score pipeline
-																_score: 0,
-																_source: {
-																	...item,
-																	highlights: null,
-																},
-																highlight: item.highlights.map(
-																	(entity: any) => ({
-																		[entity.path]: entity.texts
-																			.map((text: any) =>
-																				text.type === 'text'
-																					? text.value
-																					: `<b>${text.value}</b>`,
-																			)
-																			.join(' '),
-																	}),
-																),
-														  }
-														: {
-																_index:
-																	rsQuery.index ||
-																	this.config.index ||
-																	`default`,
-																_collection: this.config.collection,
-																_id: item._id,
-																// TODO add score pipeline
-																_score: 0,
-																_source: item,
-														  },
-											  ),
-								},
-								error: null,
-								status: 200,
-							};
-
-							if (min || max || histogram) {
-								dataToReturn.aggregations = {};
-							}
-
-							if (min) {
-								dataToReturn.aggregations.min = {
-									value: min[0].min?.$numberInt
-										? parseInt(min[0].min?.$numberInt)
-										: min[0].min || 0,
-								};
-							}
-
-							if (max) {
-								dataToReturn.aggregations.max = {
-									value: max[0].max?.$numberInt
-										? parseInt(max[0].max?.$numberInt)
-										: max[0].max || 0,
-								};
-							}
-
-							if (histogram) {
-								const dataField = Array.isArray(rsQuery.dataField)
-									? `${rsQuery.dataField[0]}`
-									: `${rsQuery.dataField}`;
-								dataToReturn.aggregations[dataField] = {
-									buckets: histogram.map(
-										(item: { _id: string | number; count: any }) => ({
-											key: item._id,
-											doc_count: item?.count?.$numberInt
-												? parseInt(item?.count?.$numberInt)
-												: item?.count || 0,
-										}),
-									),
-								};
-							}
-
-							return dataToReturn;
-						}
+						return { rsQuery, took, error, raw, response };
 					} catch (err) {
+						const end = performance.now();
+						const took = Math.abs(end - start) || 1;
 						return {
-							id: item,
-							hits: null,
-							error: err.toString(),
-							status: 500,
+							rsQuery,
+							error: {
+								id: item,
+								hits: null,
+								error: err.toString(),
+								status: 500,
+							},
+							took,
 						};
 					}
 				}),
 			).then((res) => {
 				const totalEnd = performance.now();
-				const transformedRes: any = {
-					settings: {
-						took: Math.abs(totalEnd - totalStart) || 1,
-					},
-				};
+				const totalTimeTaken = Math.abs(totalEnd - totalStart) || 1;
+				const transformedRes = transformResponse(
+					totalTimeTaken,
+					this.config,
+					<ResponseObject[]>res,
+				);
 
-				res.forEach((item: any) => {
-					const { id, ...rest } = item;
-					transformedRes[id] = rest;
-				});
 				return transformedRes;
 			});
 		} catch (err) {
