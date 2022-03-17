@@ -42,4 +42,4 @@ The ReactiveSearch Realm project deploys the ReactiveSearch API as a transpiled 
 
 ## How To Use
 
-Go over the steps to deploy this project over [here](docs/deploy.md).
+Go over the steps to deploy this project over [here](https://docs.appbase.io/docs/reactivesearch/atlas-search/deploy/).
