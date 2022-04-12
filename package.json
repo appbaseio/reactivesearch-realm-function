@@ -34,15 +34,15 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/appbaseio-confidential/reactivesearch-realm-function.git"
+		"url": "git+https://github.com/appbaseio/reactivesearch-realm-function.git"
 	},
 	"keywords": [],
 	"author": "Lakhan Samani",
-	"license": "ISC",
+	"license": "Apache-2.0",
 	"bugs": {
-		"url": "https://github.com/appbaseio-confidential/reactivesearch-realm-function/issues"
+		"url": "https://github.com/appbaseio/reactivesearch-realm-function/issues"
 	},
-	"homepage": "https://github.com/appbaseio-confidential/reactivesearch-realm-function#readme",
+	"homepage": "https://github.com/appbaseio/reactivesearch-realm-function#readme",
 	"devDependencies": {
 		"@rollup/plugin-node-resolve": "^13.0.4",
 		"@rollup/plugin-typescript": "^8.2.5",

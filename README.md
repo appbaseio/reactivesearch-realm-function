@@ -7,7 +7,7 @@ The ReactiveSearch Realm project deploys the ReactiveSearch API as a transpiled 
 
 ## Setup
 
-- Clone repo: `git clone https://github.com/appbaseio-confidential/reactivesearch-realm-function.git`
+- Clone repo: `git clone https://github.com/appbaseio/reactivesearch-realm-function.git`
 - Change working dir: `cd reactivesearch-realm-function`
 - Install dependencies: `npm i`
 - Start local build with hot reload: `npm start`
@@ -42,4 +42,4 @@ The ReactiveSearch Realm project deploys the ReactiveSearch API as a transpiled 
 
 ## How To Use
 
-Go over the steps to deploy this project over [here](https://docs.appbase.io/docs/reactivesearch/atlas-search/deploy/).
+Go over the steps to deploy this project over [here](docs/deploy.md).
