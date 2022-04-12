@@ -66,7 +66,7 @@ export const RSQuerySchema = {
 	missingLabel: { type: String },
 	showMissing: { type: Boolean },
 
-	defaultQuery: { type: Object },
+	defaultQuery: { type: Array, each: { type: Object } },
 
 	customQuery: { type: Object },
 
