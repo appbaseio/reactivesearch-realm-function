@@ -118,8 +118,8 @@ Deploy ReactiveSearch API as a MongoDB Realm app function with a single command.
 
 ### Next steps
 
-Go over different search examples that can be run directly with the Realm deployed function over [here](/docs/reactivesearch/atlas-search/search-examples/).
+Go over different search examples that can be run directly with the Realm deployed function over [here](/docs/search-examples.md).
 
-Or jump to with testing the Realm function with a React UI over [here](/docs/reactivesearch/atlas-search/test-with-ui/).
+Or jump to with testing the Realm function with a React UI over [here](/docs/test-with-ui.md).
 
-You can also optionally deploy the search UI using MongoDB Realm's static hosting feature with one CLI command and a click. Read the Search UI hosting guide over [here](/docs/reactivesearch/atlas-search/static-hosting/).
+You can also optionally deploy the search UI using MongoDB Realm's static hosting feature with one CLI command and a click. Read the Search UI hosting guide over [here](/docs/static-hosting.md).
