@@ -90,13 +90,11 @@ try {
 			.replace('App description', ''),
 	);
 	let { http_endpoints } = appDescription;
-	http_endpoints.map((endpoint) =>
-		endpoint.webhooks.map((hook) => {
-			if (hook.name === WEBHOOK_NAME) {
-				webhookEndpoint = hook.url;
-			}
-		}),
-	);
+	http_endpoints.map((endpoint) =>{
+		if (endpoint.route === '/http_endpoint_reactivesearch') {
+			webhookEndpoint = endpoint.url;
+		}
+	});
 	bar.update(++step);
 	bar.stop();
 	console.info('\n Successfully deployed webhook.');

@@ -8,12 +8,6 @@ const { Base64 } = require('js-base64');
 
 const options = yargs
 	.usage('Usage: -webhookname <name>')
-	.option('webhookname', {
-		alias: 'name',
-		describe: 'Webhook Name',
-		type: 'string',
-		demandOption: true,
-	})
 	.option('app-authentication', {
 		alias: 'app_authentication',
 		describe: 'Application Authentication',
@@ -33,50 +27,51 @@ if (!Fs.existsSync(configPath)) {
 }
 
 const httpEndpointConfig = `
-{
-    "name": "http_endpoint",
-    "type": "http",
-    "config": {},
-    "version": 1
-}
+[
+    {
+        "route": "/http_endpoint_reactivesearch",
+        "http_method": "POST",
+        "function_name": "http_endpoint_reactivesearch",
+        "validation_method": "NO_VALIDATION",
+        "respond_result": true,
+        "fetch_custom_user_data": false,
+        "create_user_on_auth": false,
+        "disabled": false,
+        "return_type": "JSON"
+    }
+]
 `;
 
 const httpEndpointDirectory = Path.join(
 	__dirname,
-	`./realm-app/http_endpoints/http_endpoint`,
+	`./realm-app/http_endpoints`,
 );
 Fs.mkdirSync(httpEndpointDirectory, { recursive: true });
 Fs.writeFileSync(`${httpEndpointDirectory}/config.json`, httpEndpointConfig);
 
-// Create webhook directory
+// Create webhook directory (Updated:2022)
 const webhookDirectory = Path.join(
 	__dirname,
-	`./realm-app/http_endpoints/http_endpoint/incoming_webhooks/${webHookName}`,
+	`./realm-app/functions/`,
 );
 Fs.mkdirSync(webhookDirectory, { recursive: true });
 
+
 const webHookConfigFileContent = `
-{
-    "name": "${webHookName}",
-    "run_as_authed_user": false,
-    "run_as_user_id": "",
-    "run_as_user_id_script_source": "",
-    "can_evaluate": {},
-    "options": {
-        "httpMethod": "POST",
-        "validationMethod": "NO_VALIDATION"
-    },
-    "respond_result": true,
-    "disable_arg_logs": true,
-    "fetch_custom_user_data": false,
-    "create_user_on_auth": false
-}
+[
+    {
+        "name": "http_endpoint_reactivesearch",
+        "private": false,
+        "run_as_system": true,
+        "disable_arg_logs": true
+    }
+]
 `;
 
 const webHookConfigFilePath = Path.join(webhookDirectory, 'config.json');
 Fs.writeFileSync(webHookConfigFilePath, webHookConfigFileContent);
 
-const webHookSourceFilePath = Path.join(webhookDirectory, 'source.js');
+const webHookSourceFilePath = Path.join(webhookDirectory, 'http_endpoint_reactivesearch.js');
 
 if (!Fs.existsSync('dist')) {
 	Fs.mkdirSync('dist');
