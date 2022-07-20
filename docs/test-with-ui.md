@@ -15,9 +15,9 @@ nestedSidebar: 'atlas-search'
 
 Here's a faceted search experience powered by Atlas Search and React Searchbox UI library.
 
-Here's a React application built using the `@appbaseio/react-searchbox-mongodb` package.
+The React app is built using the `@appbaseio/react-searchbox` package.
 
-<iframe src="https://codesandbox.io/embed/romantic-bird-spqfr?fontsize=14&hidenavigation=1&theme=dark"
+<iframe src="https://codesandbox.io/embed/demo-project-searchbox-c7wxz6?fontsize=14&hidenavigation=1&theme=dark"
      style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
      title="romantic-bird-spqfr"
      allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
@@ -47,4 +47,4 @@ For more examples with React, refer to the Search examples with React guide over
 
 For more examples with Vue, refer to the Search examples with Vue guide over [here](/docs/reactivesearch/atlas-search/search-examples-with-vue/).
 
-This search UI can be deployed using MongoDB Realm's static hosting feature with one CLI command and a click. Read the Search UI hosting guide over [here](/docs/reactivesearch/atlas-search/static-hosting/).
+This search UI can be deployed using MongoDB App Service's static hosting feature with one CLI command and a click. Read the Search UI hosting guide over [here](/docs/reactivesearch/atlas-search/static-hosting/).

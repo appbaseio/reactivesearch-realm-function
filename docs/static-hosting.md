@@ -24,11 +24,11 @@ You can host the search UIs with MongoDB Atlas: App Services.
 
 ## Enabling Hosting
 
-You need to first enable hosting for your Realm application. Navigate to "Org > Project > Realm > Application" menu and click "Enable Hosting".
+You need to first enable hosting for App Services. Navigate to "Org > Project > App Services > Application" menu and click "Enable Hosting".
 
 ![](https://i.imgur.com/XQ9kGGt.png)
 
-Read more about enabling hosting in the official MongoDB Realm docs over [here](https://docs.mongodb.com/realm/hosting/enable-hosting/).
+Read more about enabling hosting in the official MongoDB App Services docs over [here](https://www.mongodb.com/docs/atlas/app-services/hosting/enable-hosting/).
 
 ## Uploading Search UI Files
 
