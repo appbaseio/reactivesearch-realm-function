@@ -40,6 +40,10 @@ The ReactiveSearch Realm project deploys the ReactiveSearch API as a transpiled 
     }'
   ```
 
-## How To Use
+## Deploy Project
 
 Go over the steps to deploy this project over [here](docs/deploy.md).
+
+## Static UI hosting
+
+Go over the steps to deploy the search UI with MongoDB App Services over [here](docs/static-hosting.md).
