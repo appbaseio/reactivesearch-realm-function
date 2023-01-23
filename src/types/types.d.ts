@@ -11,7 +11,7 @@ export type RequestStatus = `INACTIVE` | `PENDING` | `ERROR`;
 
 export type QueryFormat = `or` | `and`;
 
-export type QueryType = `search` | `term` | `geo` | `range`;
+export type QueryType = `search` | `term` | `geo` | `range` | `suggestion`;
 
 export type Unit = `mi` | `yd` | `ft` | `km` | `m` | `cm` | `mm` | `nmi`;
 
