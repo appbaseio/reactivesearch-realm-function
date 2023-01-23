@@ -521,38 +521,38 @@ export class ReactiveSearch {
 							rsQuery.size === 0
 								? []
 								: hits.map((item: any) =>
-										item.highlights
-											? {
-													_index:
-														rsQuery.index || this.config.index || `default`,
-													_collection: this.config.collection,
-													_id: item._id,
-													// TODO add score pipeline
-													_score: 0,
-													_source: {
-														...item,
-														highlights: null,
-													},
-													highlight: item.highlights.map((entity: any) => ({
-														[entity.path]: entity.texts
-															.map((text: any) =>
-																text.type === 'text'
-																	? text.value
-																	: `<b>${text.value}</b>`,
-															)
-															.join(' '),
-													})),
-											  }
-											: {
-													_index:
-														rsQuery.index || this.config.index || `default`,
-													_collection: this.config.collection,
-													_id: item._id,
-													// TODO add score pipeline
-													_score: 0,
-													_source: item,
-											  },
-								  ),
+									item.highlights
+										? {
+											_index:
+												rsQuery.index || this.config.index || `default`,
+											_collection: this.config.collection,
+											_id: item._id,
+											// TODO add score pipeline
+											_score: 0,
+											_source: {
+												...item,
+												highlights: null,
+											},
+											highlight: item.highlights.map((entity: any) => ({
+												[entity.path]: entity.texts
+													.map((text: any) =>
+														text.type === 'text'
+															? text.value
+															: `<b>${text.value}</b>`,
+													)
+													.join(' '),
+											})),
+										}
+										: {
+											_index:
+												rsQuery.index || this.config.index || `default`,
+											_collection: this.config.collection,
+											_id: item._id,
+											// TODO add score pipeline
+											_score: 0,
+											_source: item,
+										},
+								),
 					},
 					error: null,
 					status: 200,
