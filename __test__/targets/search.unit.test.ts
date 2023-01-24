@@ -2,7 +2,7 @@ import {
 	getHighlightQuery,
 	getQueryStringQuery,
 	getSearchAggregation,
-	getSearchQuery,
+	getSearchOrSuggestionQuery,
 	getSearchSortByQuery,
 } from '../../src/targets/search';
 import { ConfigType } from '../../src/types/types';
@@ -449,8 +449,8 @@ test('getHighlightQuery when highlight is true, dataField is a wildcard and high
 	expect(result).toStrictEqual(expected);
 });
 
-test('getSearchQuery when highlight is true', () => {
-	const result = getSearchQuery(
+test('getSearchOrSuggestionQuery when highlight is true', () => {
+	const result = getSearchOrSuggestionQuery(
 		{
 			value: 'Apart',
 			dataField: 'data',
@@ -499,8 +499,8 @@ test('getSearchQuery when highlight is true', () => {
 	expect(result).toStrictEqual(expected);
 });
 
-test('getSearchQuery when highlight is true and performing wildcard highlight', () => {
-	const result = getSearchQuery(
+test('getSearchOrSuggestionQuery when highlight is true and performing wildcard highlight', () => {
+	const result = getSearchOrSuggestionQuery(
 		{
 			value: 'Apart',
 			dataField: 'data',

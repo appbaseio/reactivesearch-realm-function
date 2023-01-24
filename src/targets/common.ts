@@ -212,10 +212,10 @@ export const getFuzziness = (
 	query: RSQuery<string>,
 ):
 	| {
-			fuzzy: {
-				maxEdits: number;
-			};
-	  }
+		fuzzy: {
+			maxEdits: number;
+		};
+	}
 	| {} => {
 	const queryLength = query?.value?.length || 0;
 	let fuzziness: string | number | undefined = query.fuzziness;
@@ -284,6 +284,25 @@ export const getAutoCompleteQuery = (query: RSQuery<string>): any => {
 						query: value,
 						score: { boost: { value: x.weight } },
 						...fuzziness,
+					},
+				})),
+			},
+		};
+	}
+	return null;
+};
+
+export const getPhraseQuery = (query: RSQuery<string>): any => {
+	const { value } = query;
+	let fields: DataField[] | null = getFieldsFromDataField(query.dataField);
+	if (fields) {
+		return {
+			compound: {
+				should: fields.map((x) => ({
+					phrase: {
+						path: x.field,
+						query: value,
+						score: { boost: { value: x.weight } },
 					},
 				})),
 			},

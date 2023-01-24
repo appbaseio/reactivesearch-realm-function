@@ -6,7 +6,7 @@ import Schema from '../validate/schema.js';
 import { generateTermRelevantQuery } from '../targets/common';
 import { getGeoQuery } from '../targets/geo';
 import { getRangeQuery } from '../targets/range';
-import { getSearchQuery } from '../targets/search';
+import { getSearchOrSuggestionQuery } from '../targets/search';
 import { getTermQuery } from '../targets/term';
 
 export const buildQueryPipeline = (
@@ -368,8 +368,8 @@ export const getQueriesMap = (
 				item.type = `search`;
 			}
 
-			if (item.type === `search`) {
-				res[itemId].mongoQuery = getSearchQuery(item, config);
+			if (item.type === `search` || item.type === `suggestion`) {
+				res[itemId].mongoQuery = getSearchOrSuggestionQuery(item, config);
 			}
 
 			if (item.type === `geo`) {
@@ -377,7 +377,7 @@ export const getQueriesMap = (
 				// this helps in loading all the data on map initially
 				if (!item.value) {
 					item.type = 'search';
-					res[itemId].mongoQuery = getSearchQuery(item, config);
+					res[itemId].mongoQuery = getSearchOrSuggestionQuery(item, config);
 				} else {
 					res[itemId].mongoQuery = getGeoQuery(item, config);
 				}
