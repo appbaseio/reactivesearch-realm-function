@@ -307,6 +307,18 @@ export const getPhraseQuery = (query: RSQuery<string>): any => {
 				})),
 			},
 		};
+	} else {
+		return {
+			compound: {
+				should: [
+					{
+						phrase: {
+							path: { wildcard: "*" },
+							query: value,
+						},
+					}
+				],
+			},
+		};
 	}
-	return null;
 };
