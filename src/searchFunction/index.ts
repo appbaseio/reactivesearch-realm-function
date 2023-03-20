@@ -434,7 +434,7 @@ export class ReactiveSearch {
 		const errors = [];
 		for (const x of data) {
 			// If x is `defaultQuery` and the value is {}, set it to null
-			if (x.defaultQuery && typeof(x) == "object") {
+			if (x.defaultQuery && typeof(x.defaultQuery) == "object") {
 				x.defaultQuery = null
 			}
 
