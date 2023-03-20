@@ -433,6 +433,11 @@ export class ReactiveSearch {
 	verify = (data: RSQuery<any>[]): any => {
 		const errors = [];
 		for (const x of data) {
+			// If x is `defaultQuery` and the value is {}, set it to null
+			if (x.defaultQuery && typeof(x) == "object") {
+				x.defaultQuery = null
+			}
+
 			const error = this.schema.validate(x);
 			if (error.length > 0) {
 				errors.push(error.toString());
