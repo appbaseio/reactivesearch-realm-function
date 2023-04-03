@@ -1,11 +1,11 @@
 import { ASCENDING, DESCENDING } from '../constants';
 import { ConfigType, DataField, RSQuery } from '../types/types';
 import {
-	getAutoCompleteQuery,
 	getFieldsFromDataField,
 	getFuzziness,
 	getIncludeExcludeFields,
 	getPaginationMap,
+	getPhraseQuery,
 	getStringFieldsFromDataField,
 	getSynonymsQuery,
 } from './common';
@@ -39,7 +39,7 @@ export const getSearchAggregation = (
 };
 
 // TODO set return type
-export const getSearchQuery = (
+export const getSearchOrSuggestionQuery = (
 	query: RSQuery<string>,
 	config: ConfigType,
 ): any => {
@@ -47,15 +47,26 @@ export const getSearchQuery = (
 		let searchQuery: any = [];
 		const { value } = query;
 
+		// If type is not set, we will set it to `search`
+		// since it is the default type
+		if (query.type == null) query.type = `search`
+
 		if (value && value.length) {
 			const shouldAggregation = [];
 			const highlightQuery = getHighlightQuery(query);
 			const isWildCardHighlightSearch =
 				highlightQuery?.highlight?.path?.wildcard !== undefined;
 
-			const search = getSearchAggregation(query, isWildCardHighlightSearch);
-			if (search) {
-				shouldAggregation.push(search);
+			if (query.type === 'search') {
+				const search = getSearchAggregation(query, isWildCardHighlightSearch);
+				if (search) {
+					shouldAggregation.push(search);
+				}
+			} else {
+				const autocomplete = getPhraseQuery(query);
+				if (autocomplete) {
+					shouldAggregation.push(autocomplete);
+				}
 			}
 
 			const synonyms = getSynonymsQuery(query);
@@ -63,18 +74,13 @@ export const getSearchQuery = (
 				shouldAggregation.push(synonyms);
 			}
 
-			const autocomplete = getAutoCompleteQuery(query);
-			if (autocomplete) {
-				shouldAggregation.push(autocomplete);
-			}
-
 			const compoundQuery: any =
 				shouldAggregation.length > 0
 					? {
-							compound: {
-								should: shouldAggregation,
-							},
-					  }
+						compound: {
+							should: shouldAggregation,
+						},
+					}
 					: {};
 
 			const q = { $search: { ...compoundQuery, ...highlightQuery } };

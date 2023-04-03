@@ -54,7 +54,7 @@ export const getFieldsFromDataField = (
 };
 
 export const getIncludeExcludeFields = (query: RSQuery<any>): any => {
-	let { includeFields = [], excludeFields = [], highlight } = query;
+	let { includeFields = ["*"], excludeFields = [], highlight } = query;
 
 	if (
 		includeFields.length === 0 &&
@@ -212,10 +212,10 @@ export const getFuzziness = (
 	query: RSQuery<string>,
 ):
 	| {
-			fuzzy: {
-				maxEdits: number;
-			};
-	  }
+		fuzzy: {
+			maxEdits: number;
+		};
+	}
 	| {} => {
 	const queryLength = query?.value?.length || 0;
 	let fuzziness: string | number | undefined = query.fuzziness;
@@ -290,4 +290,35 @@ export const getAutoCompleteQuery = (query: RSQuery<string>): any => {
 		};
 	}
 	return null;
+};
+
+export const getPhraseQuery = (query: RSQuery<string>): any => {
+	const { value } = query;
+	let fields: DataField[] | null = getFieldsFromDataField(query.dataField);
+	if (fields) {
+		return {
+			compound: {
+				should: fields.map((x) => ({
+					phrase: {
+						path: x.field,
+						query: value,
+						score: { boost: { value: x.weight } },
+					},
+				})),
+			},
+		};
+	} else {
+		return {
+			compound: {
+				should: [
+					{
+						phrase: {
+							path: { wildcard: "*" },
+							query: value,
+						},
+					}
+				],
+			},
+		};
+	}
 };

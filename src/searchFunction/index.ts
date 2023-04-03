@@ -6,7 +6,7 @@ import Schema from '../validate/schema.js';
 import { generateTermRelevantQuery } from '../targets/common';
 import { getGeoQuery } from '../targets/geo';
 import { getRangeQuery } from '../targets/range';
-import { getSearchQuery } from '../targets/search';
+import { getSearchOrSuggestionQuery } from '../targets/search';
 import { getTermQuery } from '../targets/term';
 
 export const buildQueryPipeline = (
@@ -368,8 +368,8 @@ export const getQueriesMap = (
 				item.type = `search`;
 			}
 
-			if (item.type === `search`) {
-				res[itemId].mongoQuery = getSearchQuery(item, config);
+			if (item.type === `search` || item.type === `suggestion`) {
+				res[itemId].mongoQuery = getSearchOrSuggestionQuery(item, config);
 			}
 
 			if (item.type === `geo`) {
@@ -377,7 +377,7 @@ export const getQueriesMap = (
 				// this helps in loading all the data on map initially
 				if (!item.value) {
 					item.type = 'search';
-					res[itemId].mongoQuery = getSearchQuery(item, config);
+					res[itemId].mongoQuery = getSearchOrSuggestionQuery(item, config);
 				} else {
 					res[itemId].mongoQuery = getGeoQuery(item, config);
 				}
@@ -433,6 +433,11 @@ export class ReactiveSearch {
 	verify = (data: RSQuery<any>[]): any => {
 		const errors = [];
 		for (const x of data) {
+			// If x is `defaultQuery` and the value is {}, set it to null
+			if (x.defaultQuery && typeof(x.defaultQuery) == "object") {
+				x.defaultQuery = null
+			}
+
 			const error = this.schema.validate(x);
 			if (error.length > 0) {
 				errors.push(error.toString());
@@ -521,38 +526,38 @@ export class ReactiveSearch {
 							rsQuery.size === 0
 								? []
 								: hits.map((item: any) =>
-										item.highlights
-											? {
-													_index:
-														rsQuery.index || this.config.index || `default`,
-													_collection: this.config.collection,
-													_id: item._id,
-													// TODO add score pipeline
-													_score: 0,
-													_source: {
-														...item,
-														highlights: null,
-													},
-													highlight: item.highlights.map((entity: any) => ({
-														[entity.path]: entity.texts
-															.map((text: any) =>
-																text.type === 'text'
-																	? text.value
-																	: `<b>${text.value}</b>`,
-															)
-															.join(' '),
-													})),
-											  }
-											: {
-													_index:
-														rsQuery.index || this.config.index || `default`,
-													_collection: this.config.collection,
-													_id: item._id,
-													// TODO add score pipeline
-													_score: 0,
-													_source: item,
-											  },
-								  ),
+									item.highlights
+										? {
+											_index:
+												rsQuery.index || this.config.index || `default`,
+											_collection: this.config.collection,
+											_id: item._id,
+											// TODO add score pipeline
+											_score: 0,
+											_source: {
+												...item,
+												highlights: null,
+											},
+											highlight: item.highlights.map((entity: any) => ({
+												[entity.path]: entity.texts
+													.map((text: any) =>
+														text.type === 'text'
+															? text.value
+															: `<b>${text.value}</b>`,
+													)
+													.join(' '),
+											})),
+										}
+										: {
+											_index:
+												rsQuery.index || this.config.index || `default`,
+											_collection: this.config.collection,
+											_id: item._id,
+											// TODO add score pipeline
+											_score: 0,
+											_source: item,
+										},
+								),
 					},
 					error: null,
 					status: 200,

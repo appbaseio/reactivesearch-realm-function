@@ -11,7 +11,7 @@ export const RSQuerySchema = {
 
 	id: { type: String },
 
-	type: { type: String, enum: [`search`, `term`, `geo`, `range`] },
+	type: { type: String, enum: [`search`, `term`, `geo`, `range`, 'suggestion'] },
 
 	react: { and: { type: [String, Array] }, or: { type: [String, Array] } },
 
