@@ -491,7 +491,6 @@ test('getSearchOrSuggestionQuery when highlight is true', () => {
 				},
 			},
 		},
-		{ $project: { highlights: { $meta: 'searchHighlights' } } },
 		{ $sort: { data: -1 } },
 		{ $facet: { hits: [{ $limit: 10 }], total: [{ $count: 'count' }] } },
 	];
@@ -545,7 +544,6 @@ test('getSearchOrSuggestionQuery when highlight is true and performing wildcard 
 				},
 			},
 		},
-		{ $project: { highlights: { $meta: 'searchHighlights' } } },
 		{ $sort: { data: -1 } },
 		{ $facet: { hits: [{ $limit: 10 }], total: [{ $count: 'count' }] } },
 	];

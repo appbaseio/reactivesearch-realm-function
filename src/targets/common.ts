@@ -54,7 +54,7 @@ export const getFieldsFromDataField = (
 };
 
 export const getIncludeExcludeFields = (query: RSQuery<any>): any => {
-	let { includeFields = [], excludeFields = [], highlight } = query;
+	let { includeFields = ["*"], excludeFields = [], highlight } = query;
 
 	if (
 		includeFields.length === 0 &&
